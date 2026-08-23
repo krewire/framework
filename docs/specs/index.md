@@ -36,6 +36,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-KAKQL](./KWF-CLI-KAKQL-cli-errors-diagnostics.md) | CLI Errors & Diagnostics | Draft | KWF-5XJFC |
 | [KWF-FGNZ9](./KWF-CLI-FGNZ9-cli-configuration.md) | CLI Configuration | Draft | KWF-5XJFC |
 | [KWF-PZ5JU](./KWF-CLI-PZ5JU-cli-scaffolding.md) | CLI Scaffolding | Draft | KWF-5XJFC |
+| [KWF-TEST-M4P9Q](./KWF-TEST-M4P9Q-framework-test-helpers.md) | Framework Test Helpers — MVP (`framework/test`) | Draft | KWL-TEST-P8M4L |
 
 ## Conventions
 
