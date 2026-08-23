@@ -69,3 +69,55 @@ func TestKiw_GoAndJSParity(t *testing.T) {
 		t.Errorf("body")
 	}
 }
+
+func TestLoadFromDir_PublicOverridesGenerated(t *testing.T) {
+	dir := t.TempDir()
+	os.MkdirAll(filepath.Join(dir, "pages"), 0o755)
+	os.MkdirAll(filepath.Join(dir, "public", "assets"), 0o755)
+	os.WriteFile(filepath.Join(dir, "krewire.yaml"), []byte("title: T\ntheme:\n  default: dark\n"), 0o644)
+	os.WriteFile(filepath.Join(dir, "pages", "index.kiw"), []byte("<p>hi</p>"), 0o644)
+	// public/assets/theme.css must override the generated theme.css
+	os.WriteFile(filepath.Join(dir, "public", "assets", "theme.css"), []byte("/* custom */"), 0o644)
+
+	site, err := LoadFromDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, ok := site.AssetBody("assets/theme.css")
+	if !ok {
+		t.Fatal("theme.css missing")
+	}
+	if body != "/* custom */" {
+		t.Errorf("public did not override generated theme.css: %q", body[:min(40, len(body))])
+	}
+}
+
+func TestLoadFromDir_ContentSlugPages(t *testing.T) {
+	dir := t.TempDir()
+	os.MkdirAll(filepath.Join(dir, "pages", "blog"), 0o755)
+	os.MkdirAll(filepath.Join(dir, "layouts"), 0o755)
+	os.MkdirAll(filepath.Join(dir, "content", "blog"), 0o755)
+	os.WriteFile(filepath.Join(dir, "pages", "blog", "[slug].kiw"),
+		[]byte("---\ntitle: Post\n---\n<article>{{.Content}}</article>\n<style>article{margin:2rem}</style>"), 0o644)
+	os.WriteFile(filepath.Join(dir, "layouts", "Base.kiw"),
+		[]byte("<html><body>{{.Content}}</body></html>"), 0o644)
+	os.WriteFile(filepath.Join(dir, "content", "blog", "hello-world.md"),
+		[]byte("---\ntitle: Hello World\ndate: 2026-01-02\n---\nHi **there**"), 0o644)
+
+	site, err := LoadFromDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := t.TempDir()
+	if _, err := site.Build(out); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(out, "blog", "hello-world", "index.html"))
+	if err != nil {
+		t.Fatalf("dynamic route not materialized: %v", err)
+	}
+	html := string(b)
+	if !strings.Contains(html, "<article") || !strings.Contains(html, "<strong>there</strong>") {
+		t.Errorf("slug page missing content: %s", html)
+	}
+}

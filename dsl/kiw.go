@@ -19,10 +19,10 @@ var (
 // JS/TS (string templates) without a custom toolchain.
 type KiwModule struct {
 	Frontmatter map[string]any `yaml:",inline" json:"frontmatter"`
-	Body        string          `json:"body"`
-	Styles      []string        `json:"styles"`
-	Scripts     []string        `json:"scripts"`
-	Raw         string          `json:"-"`
+	Body        string         `json:"body"`
+	Styles      []string       `json:"styles"`
+	Scripts     []string       `json:"scripts"`
+	Raw         string         `json:"-"`
 }
 
 // ParseKiw parses a .kiw file content into a KiwModule.
