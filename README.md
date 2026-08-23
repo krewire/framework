@@ -72,16 +72,20 @@ GREET_GREETING=Halo go run ./examples/greet hello --name Alice
 
 ## Specifications
 
-Requirements live in `docs/specs/` with `KWF-*` IDs. Start with the unified vision `KWF-M8K2Q`, then per-area specs:
+For generic use the framework requires no specs — just `go get` and import `github.com/krewire/framework/*`.
+
+For Krewire ecosystem development, requirements live in `docs/specs/` with `KWF-*` IDs (spec-driven is opt-in). Start with the unified vision `KWF-M8K2Q`, then per-area specs:
 
 - `KWF-M07QS` Web framework, `KWF-PT8OD` SSG, `KWF-0Z671` UI, `KWF-C4087` App
 - `KWF-WASM-T4X9P` WASM client runtime
 - `KWF-INFRA-B7N3D` Cloud provider abstraction
 - `KWF-SVC-L5H2F` Microservice & worker patterns
 
+Testing helpers live in `framework/test` — usable with or without spec tagging (`ftest.Spec` is optional, helpers like `Equal`, `Contains`, `NewRequest` are generic).
+
 ## Contributing
 
-Contributions are welcome. Run `gofmt` and `go vet` before submitting, ensure all tests pass, and follow the spec-driven workflow in [`AGENTS.md`](../AGENTS.md).
+Contributions are welcome. Run `gofmt` and `go vet` before submitting, ensure all tests pass. For Krewire ecosystem changes, follow the spec-driven workflow in [`AGENTS.md`](../AGENTS.md) (optional for generic users).
 
 ## License
 
