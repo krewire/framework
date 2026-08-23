@@ -40,6 +40,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-AST-K7Q2M](./KWF-AST-K7Q2M-assets-storage-system.md) | Static Assets, Resources & App Storage (`framework/assets`, `framework/storage`) | Draft | KWF-M07QS, KWF-C4087 |
 | [KWF-WEB-P3V8X](./KWF-WEB-P3V8X-expressive-http.md) | Expressive HTTP: Routes, Controllers, Request/Response, Middleware | Draft | KWF-M07QS |
 | [KWF-WEB-R9T4C](./KWF-WEB-R9T4C-http-security-state.md) | HTTP Security & State: Headers, CSRF, XSS, Cache, Session, Cookie | Draft | KWF-WEB-P3V8X, KWF-AST-K7Q2M |
+| [KWF-WEB-B2X7D](./KWF-WEB-B2X7D-auth-policy-gates.md) | Auth: Basic, JWT (HS256), Policy Gates (before/after) | Draft | KWF-WEB-P3V8X, KWF-WEB-R9T4C |
 
 ## Conventions
 
