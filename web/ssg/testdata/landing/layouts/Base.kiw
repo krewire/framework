@@ -1,0 +1,7 @@
+<html>
+<head><title>{{.Title}}</title></head>
+<body>{{.Content}}</body>
+</html>
+<style>
+body { font-family: sans-serif; margin: 0; }
+</style>

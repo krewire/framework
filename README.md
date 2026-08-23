@@ -28,9 +28,11 @@ All workloads share a single `krewire.yaml` configuration (validated by [`libs`]
 framework/
 ├── tui/        # CLI application model
 ├── web/        # HTTP server, routing, middleware
-│   └── ssg/    # Declarative SSG (Astro-inspired)
+│   └── ssg/    # File-based SSG (Astro-inspired, .kiw DSL)
+├── dsl/        # Kiw DSL (.kiw) — frontmatter YAML + html/template + scoped CSS, parseable to Go & JS/TS
 ├── ui/         # Theme, palette, scoped CSS
 ├── app/        # Fullstack assembly + DI container
+├── test/       # Test helpers (generic, spec-driven opt-in)
 ├── runtime/    # Client runtime (WASM) — planned
 ├── worker/     # Background jobs — planned
 ├── service/    # Microservice patterns — planned

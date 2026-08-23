@@ -8,7 +8,9 @@ Aligned to the unified vision `KWF-M8K2Q` (specs `KWF-T4X9P`/`B7N3D`/`L5H2F`): f
 framework/
 ├── tui/                  # CLI app model — flag/slog/term, `tui.App` harness
 ├── web/                  # HTTP routing, middleware, html/template
-│   └── ssg/              # Declarative SSG: layouts/components/pages/assets → site/
+│   └── ssg/              # File-based SSG: .kiw DSL (pages/components/layouts) → site/
+├── dsl/                  # Kiw DSL (.kiw) — YAML frontmatter + html/template + style/script, Go & JS/TS native
+├── test/                 # Test helpers — generic, no spec required
 ├── ui/                   # Theme, palette, scoped CSS (data-kiw-component/layout)
 ├── app/                  # Fullstack assembly, DI container, modular monolith (KWF-5ZHQV)
 ├── runtime/              # WASM client runtime — planned (KWF-T4X9P)
