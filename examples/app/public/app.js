@@ -1,0 +1,1 @@
+console.log("krewire monolith app loaded");
