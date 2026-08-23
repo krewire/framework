@@ -56,6 +56,6 @@ framework → libs (core, term, config, validate)
 
 ## Conventions
 
-- Documentation in English, Markdown, spec-driven (`internal/docs/specs/framework/` in `krewire/internal`); requirements and tests carry `Scope: Workspace/Module/Domain/Package/Service/Func` (Krewire Workspace ≠ `go.work`, `Module ⊃ Package` per Go, `Service` = `main` package) (`KWL-ARCH-J2K9Q` → `KWL-TEST-P8M4L`).
+- Documentation in English, Markdown, spec-driven (`docs/specs/`); requirements and tests carry `Scope: Workspace/Module/Domain/Package/Service/Func` (`KWL-ARCH-J2K9Q` → `KWL-TEST-P8M4L`).
 - Quality gates: `gofmt -l .`, `go vet ./...`, `go test ./...` in each Go repo; per-kind `kiw build` / `kiw build --plan` spot-checks.
 - Cross-repo testing via `go.work` workspace (`./framework`, `./libs`, etc.) at hub root; `go work sync` updates `go.work.sum`.
