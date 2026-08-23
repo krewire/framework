@@ -15,6 +15,7 @@ It is the engine behind [`mdbind`](https://github.com/krewire/mdbind), [`krewire
 | Static sites (SSG) | `web/ssg` — declarative layouts/components/pages + assets | ✅ Shipped |
 | Theming & UI | `ui` — Theme, palette, scoped CSS | ✅ Shipped |
 | Fullstack / Monolith | `app` — assembly + DI container, modular layout | ✅ Shipped |
+| Assets & Storage | `assets` — multi-source store, ETag/cache, fingerprint+manifest · `storage` — KV (memory/file) + DI provider | ✅ Shipped |
 | Frontend (WASM) | `runtime` — Go→WASM, VDOM, widgets, hydration islands | 🔜 KWF-T4X9P |
 | Workers | `worker` — queues, cron, retries, DLQ | 🔜 KWF-L5H2F |
 | Microservice | `service` / `web/gateway` — registry, gateway, resilience, tracing | 🔜 KWF-L5H2F |
@@ -31,6 +32,8 @@ framework/
 │   └── ssg/    # File-based SSG (Astro-inspired, .kiw DSL)
 ├── dsl/        # Kiw DSL (.kiw) — frontmatter YAML + html/template + scoped CSS, parseable to Go & JS/TS
 ├── ui/         # Theme, palette, scoped CSS
+├── assets/     # Static assets & resources: multi-source store (dir/embed), ETag+Cache-Control, fingerprint manifest
+├── storage/    # App KV storage: memory + filesystem backends, context-aware, app.Provider DI binding
 ├── app/        # Fullstack assembly + DI container
 ├── test/       # Test helpers (generic, spec-driven opt-in)
 ├── runtime/    # Client runtime (WASM) — planned

@@ -12,6 +12,8 @@ framework/
 ├── dsl/                  # Kiw DSL (.kiw) — YAML frontmatter + html/template + style/script, Go & JS/TS native
 ├── test/                 # Test helpers — generic, no spec required
 ├── ui/                   # Theme, palette, scoped CSS (data-kiw-component/layout)
+├── assets/               # Static assets & resources — multi-source Store (dir/embed.FS), ETag/Cache-Control, fingerprint manifest
+├── storage/              # App KV storage — Memory/File backends, context-aware, Provider for DI
 ├── app/                  # Fullstack assembly, DI container, modular monolith (KWF-5ZHQV)
 ├── runtime/              # WASM client runtime — planned (KWF-T4X9P)
 │   ├── js/               # DOM bridge (syscall/js)
