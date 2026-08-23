@@ -36,6 +36,12 @@ type Router struct {
 
 	base   string
 	parent *Router
+	// chain holds group-scoped middleware applied to routes registered
+	// through this router (nested groups inherit).
+	chain []Middleware
+	// named maps route names to their segments for reverse URL generation
+	// (root only).
+	named map[string][]segment
 
 	built http.Handler
 	dirty bool
@@ -78,14 +84,33 @@ func (r *Router) Patch(pattern string, h HandlerFunc) {
 }
 
 // Handle registers a handler for the given HTTP method and path pattern.
-// Path segments of the form "{name}" become parameters.
+// Path segments of the form "{name}" become parameters. Any middleware on the
+// router's group chain wraps the handler with matched params injected.
 func (r *Router) Handle(method, pattern string, h HandlerFunc) {
 	if h == nil {
 		h = func(http.ResponseWriter, *http.Request, Params) {}
 	}
+	h = applyChain(r.chain, h)
 	root := r.root()
 	root.routes = append(root.routes, &Route{method: method, segments: parsePattern(joinPattern(r.base, pattern)), handle: h})
 	root.dirty = true
+}
+
+// applyChain folds route-level middleware around h, outermost first, adapting
+// standard http.Handler middleware so handlers keep receiving Params.
+func applyChain(chain []Middleware, h HandlerFunc) HandlerFunc {
+	for i := len(chain) - 1; i >= 0; i-- {
+		mw := chain[i]
+		next := h
+		h = func(w http.ResponseWriter, req *http.Request, p Params) {
+			var inner HandlerFunc = next
+			stub := http.HandlerFunc(func(rw http.ResponseWriter, rr *http.Request) {
+				inner(rw, rr, p)
+			})
+			mw(stub).ServeHTTP(w, req)
+		}
+	}
+	return h
 }
 
 // Use registers middleware applied to every route in registration order.
@@ -96,13 +121,18 @@ func (r *Router) Use(mw ...Middleware) {
 }
 
 // Group returns a scoped router sharing the parent's middleware. Routes and
-// static dirs registered on the group are mounted under prefix.
-func (r *Router) Group(prefix string) *Router {
+// static dirs registered on the group are mounted under prefix. Optional mws
+// scope middleware to exactly this group's routes; nested groups inherit.
+// Use (on any router) remains global.
+func (r *Router) Group(prefix string, mws ...Middleware) *Router {
 	base := strings.Trim(r.base, "/")
 	if p := strings.Trim(prefix, "/"); p != "" {
 		base += "/" + p
 	}
-	return &Router{base: "/" + strings.Trim(base, "/"), parent: r.root()}
+	chain := make([]Middleware, 0, len(r.chain)+len(mws))
+	chain = append(chain, r.chain...)
+	chain = append(chain, mws...)
+	return &Router{base: "/" + strings.Trim(base, "/"), parent: r.root(), chain: chain}
 }
 
 // Static serves files from dir under the URL prefix.

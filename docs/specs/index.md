@@ -38,6 +38,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-PZ5JU](./KWF-CLI-PZ5JU-cli-scaffolding.md) | CLI Scaffolding | Draft | KWF-5XJFC |
 | [KWF-TEST-M4P9Q](./KWF-TEST-M4P9Q-framework-test-helpers.md) | Framework Test Helpers — MVP (`framework/test`) | Draft | KWL-TEST-P8M4L |
 | [KWF-AST-K7Q2M](./KWF-AST-K7Q2M-assets-storage-system.md) | Static Assets, Resources & App Storage (`framework/assets`, `framework/storage`) | Draft | KWF-M07QS, KWF-C4087 |
+| [KWF-WEB-P3V8X](./KWF-WEB-P3V8X-expressive-http.md) | Expressive HTTP: Routes, Controllers, Request/Response, Middleware | Draft | KWF-M07QS |
 
 ## Conventions
 
