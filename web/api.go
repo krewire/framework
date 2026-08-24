@@ -1,6 +1,8 @@
 package web
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -34,7 +36,9 @@ func MiddlewareChain(mws ...Middleware) Middleware {
 
 // RecoverMiddleware logs panics — together with the recovered goroutine's
 // stack (KWL-P8W2N KWF-HTTPV-005) — and turns them into a 500 response,
-// keeping internals away from the client.
+// keeping internals away from the client. Responses carry a correlation id
+// mirrored into the log line so client reports map to server traces
+// (KWL-P8W2N KWF-HTTPV-011).
 func RecoverMiddleware(logger *slog.Logger) Middleware {
 	if logger == nil {
 		logger = slog.Default()
@@ -43,18 +47,35 @@ func RecoverMiddleware(logger *slog.Logger) Middleware {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			defer func() {
 				if rec := recover(); rec != nil {
+					id := correlationID()
 					logger.Error("panic recovered",
 						"panic", rec,
+						"correlation_id", id,
 						"stack", callerStack(),
 						"method", r.Method,
 						"path", r.URL.Path,
 					)
-					Error(w, Internal("internal server error"))
+					msg := "internal server error"
+					if id != "" {
+						msg = fmt.Sprintf("internal server error (id %s)", id)
+						w.Header().Set("X-Correlation-Id", id)
+					}
+					Error(w, Internal(msg))
 				}
 			}()
 			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+// correlationID returns a short random hex identifier linking an error
+// response to its server-side log record.
+func correlationID() string {
+	var b [4]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		return ""
+	}
+	return hex.EncodeToString(b[:])
 }
 
 // callerStack renders the current goroutine's call stack, skipping the

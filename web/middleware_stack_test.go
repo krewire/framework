@@ -70,3 +70,26 @@ func TestKWL_HTTPV_006_App_DefaultsRecoveryAndAccessLog(t *testing.T) {
 func panicMarkerHandler(w http.ResponseWriter, _ *http.Request) {
 	panic("kaboom-marker")
 }
+
+// Spec: KWL-P8W2N KWF-HTTPV-011 S5 Scope: Package
+func TestKWF_HTTPV_011_RecoverResponse_CarriesCorrelationIdMirroredInLog(t *testing.T) {
+	var buf bytes.Buffer
+	logger := slog.New(slog.NewTextHandler(&buf, nil))
+
+	mw := RecoverMiddleware(logger)
+	handler := mw(http.HandlerFunc(panicMarkerHandler))
+
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/panic", nil))
+
+	id := rec.Header().Get("X-Correlation-Id")
+	if id == "" {
+		t.Fatal("response missing X-Correlation-Id header")
+	}
+	if !strings.Contains(rec.Body.String(), id) {
+		t.Errorf("body %q does not carry correlation id %q", rec.Body.String(), id)
+	}
+	if !strings.Contains(buf.String(), id) {
+		t.Errorf("log line does not mirror the correlation id:\n%s", buf.String())
+	}
+}
