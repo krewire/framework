@@ -19,8 +19,8 @@ the toolchain by language — SSR in Go, interactivity in JS.
 
 The unified framework (KWF-M8K2Q G2) requires a Go-native client runtime:
 components renderable on both server and browser, initial content visible
-without JavaScript, interactivity hydrated progressively — the "Astro islands"
-pattern, but with Go as the single language. v1 targets the standard Go
+without JavaScript, interactivity hydrated progressively — progressive
+hydration with Go as the single language. v1 targets the standard Go
 WASM backend (`GOOS=js GOARCH=wasm`), not TinyGo, to keep the full standard
 library and simplify tooling.
 
@@ -44,8 +44,8 @@ library and simplify tooling.
 - G4 — Component model with lifecycle (`OnMount`, `OnUnmount`) and composable
   hooks (`useState`, `useEffect`, `useMemo` via Go generics) shared by server
   and client renders.
-- G5 — Hydration of islands: `client:load` / `client:idle` / `client:visible`
-  directives connect SSR HTML to client components without double rendering.
+- G5 — Progressive hydration: `hydrate="load"` / `"idle"` / `"visible"`
+  mount points connect SSR HTML to client components without double rendering.
 - G6 — Starter widget set sufficient for a product dashboard: layout and basic
   input/display widgets.
 - G7 — Theme and scoped CSS from `framework/ui` compile to a shape both the
@@ -115,18 +115,18 @@ library and simplify tooling.
 | FRK-WASM-033  | Violating hook rules (conditional call) panics in tests and is          | Should   |
 |               | diagnosed via `go vet`-friendly function naming.                        |          |
 
-### 5.5 Hydration & Islands
+### 5.5 Hydration & Mount Points
 
 | ID            | Requirement                                                            | Priority |
 | ------------- | ---------------------------------------------------------------------- | -------- |
-| FRK-WASM-040  | SSG recognizes `client:load`, `client:idle`, `client:visible` on a    | Must     |
-|               | component instance and emits `data-kiw-island` markers + props JSON.     |          |
+| FRK-WASM-040  | SSG recognizes `hydrate="load"`, `hydrate="idle"`, `hydrate="visible"` | Must     |
+|               | on a component instance and emits `data-kiw-mount` markers + props JSON. |          |
 | FRK-WASM-041  | Client boot scans markers, instantiates matching components, and        | Must     |
 |               | attaches listeners without re-rendering SSR text nodes (text parity).   |          |
 | FRK-WASM-042  | Content is readable and routes navigable before WASM loads (graceful   | Must     |
 |               | degradation): SSR HTML is always complete.                              |          |
-| FRK-WASM-043  | When hydration text mismatches, a console warning identifies the island | Should   |
-|               | name and prop key without crashing the page.                            |          |
+| FRK-WASM-043  | When hydration text mismatches, a console warning identifies the mount  | Should   |
+|               | point name and prop key without crashing the page.                      |          |
 
 ### 5.6 Starter Widgets
 
@@ -150,14 +150,14 @@ v1 catalog (installed under `runtime/widgets`):
 |               | `data-kiw-theme`; SSG injects them once in `<head>`, runtime reuses.    |          |
 | FRK-WASM-061  | SSG scoped CSS (`data-kiw-component` compounding) and runtime-injected   | Must     |
 |               | styles produce identical computed styles for the same component name.    |          |
-| FRK-WASM-062  | Route-level theme overrides propagate to hydrated islands via inherited  | Should   |
-|               | CSS vars, requiring no per-island stylesheet.                            |          |
+| FRK-WASM-062  | Route-level theme overrides propagate to hydrated mounts via inherited  | Should   |
+|               | CSS vars, requiring no per-mount stylesheet.                            |          |
 
 ### 5.8 Size & Performance Budgets
 
 | ID            | Requirement                                                            | Priority |
 | ------------- | ---------------------------------------------------------------------- | -------- |
-| FRK-WASM-070  | Hello-world app with one island is ≤ 800 KB gzipped total (`.wasm` +   | Must     |
+| FRK-WASM-070  | Hello-world app with one mount point is ≤ 800 KB gzipped total (`.wasm` +   | Must     |
 |               | JS glue) measured on the CI fixture.                                    |          |
 | FRK-WASM-071  | First hydration completes within 500ms after WASM instantiate on the    | Should   |
 |               | CI fixture (Chrome headless), excluding network.                        |          |
@@ -166,7 +166,7 @@ v1 catalog (installed under `runtime/widgets`):
 ## 6. Non-Functional Requirements
 
 - NFR1 — **SSR/client parity** is deterministic: `RenderHTML(Comp(props))`
-  equals the server-emitted island HTML after prop canonicalization.
+  equals the server-emitted mount HTML after prop canonicalization.
 - NFR2 — **Accessibility**: SSR output preserves semantic tags and label
   associations before hydration; client hydration does not regress AX.
 - NFR3 — **Quality gates**: `gofmt`, `go vet ./...`, `go test ./...` in
@@ -176,7 +176,7 @@ v1 catalog (installed under `runtime/widgets`):
 
 ## 7. Success Criteria
 
-- S1 — A counter island built from `ListView` + `Button` + `useState` renders
+- S1 — A counter mount point built from `ListView` + `Button` + `useState` renders
   via SSR, hydrates, and increments on click in a headless browser test.
 - S2 — `krewire build` on the fixture produces `site/_assets/runtime.*.wasm`
   and a `site/index.html` whose `curl` output is readable without JS.
@@ -198,6 +198,7 @@ v1 catalog (installed under `runtime/widgets`):
 ## 9. References
 
 - Go WebAssembly: https://go.dev/wiki/WebAssembly
-- Astro islands: https://docs.astro.build/en/concepts/islands/
+- React hydration (`hydrateRoot`): https://react.dev/reference/react-dom/client/hydrateRoot
+- Astro islands architecture (prior art for progressive hydration): https://docs.astro.build/en/concepts/islands/
 - Flutter rendering pipeline: https://docs.flutter.dev/resources/architecture
 - HMR/VDOM tradeoff analysis: https://crafts.astro.build/

@@ -10,6 +10,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-CMBZJ](./KWF-META-CMBZJ-krewire-meta-framework.md) | Krewire Meta-Framework — Initial Specification | Draft | Shipped | — |
 | [KWF-M07QS](./KWF-WEB-M07QS-krewire-web-framework.md) | Krewire Web Framework | Draft | Shipped | KWF-CMBZJ |
 | [KWF-DF3PL](./KWF-SSG-DF3PL-file-site-pipeline.md) | File-Based Site Pipeline (`.kiw` Modules) | Draft | Shipped | KWF-M07QS, KWF-PT8OD |
+| [KWF-N4K8Q](./KWF-DSL-N4K8Q-kiw-unified-dsl.md) | Kiw Unified DSL — Seamless HTML · CSS · JS/TS · Go · Rust in One File | Draft | Planned | KWF-DF3PL, KWF-PT8OD, KWF-0Z671 |
 | [KWF-PT8OD](./KWF-SSG-PT8OD-static-site-generator.md) | Static Site Generator | Draft | Shipped | KWF-M07QS |
 | [KWF-C4087](./KWF-APP-C4087-krewire-app-framework.md) | Krewire App Framework (assembly) | Draft | Shipped | KWF-M07QS |
 | [KWF-C9WLJ](./KWF-DI-C9WLJ-app-container-service-providers.md) | App Container & Service Providers | Draft | Shipped | KWF-CMBZJ |
@@ -26,7 +27,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-PPUWX](./KWF-UI-PPUWX-layout-ui-system.md) | Layout & UI System | Draft | Shipped | KWF-0Z671 |
 | [KWF-V0TMZ](./KWF-UI-V0TMZ-web-theming-system.md) | UI Theming System | Draft | Shipped | KWF-0Z671 |
 | [KWF-230KF](./KWF-HTTP-230KF-http-api-pipeline.md) | HTTP & API Pipeline | Draft | Shipped | KWF-M07QS |
-| [KWF-T4X9P](./KWF-WASM-T4X9P-wasm-client-runtime.md) | WASM Client Runtime — Go-Native Frontend | Draft | Planned | KWF-M8K2Q, KWF-0Z671, KWF-PT8OD |
+| [KWF-T4X9P](./KWF-WASM-T4X9P-wasm-client-runtime.md) | WASM Client Runtime — Go-Native Frontend | Draft | Partial | KWF-M8K2Q, KWF-0Z671, KWF-PT8OD |
 | [KWF-B7N3D](./KWF-INFRA-B7N3D-cloud-provider-abstraction.md) | Cloud Provider Abstraction — Multi-Cloud Library-First IaC | Draft | Planned | KWF-M8K2Q |
 | [KWF-L5H2F](./KWF-SVC-L5H2F-microservice-patterns.md) | Microservice & Worker Patterns | Draft | Planned | KWF-M8K2Q, KWF-5ZHQV |
 | [KWF-F2TQC](./KWF-JS-F2TQC-js-ts-framework-integration.md) | JS/TS Framework Integration — Future Bridge | Draft | Planned | KWF-0Z671, KWF-PT8OD |
