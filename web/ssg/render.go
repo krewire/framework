@@ -124,6 +124,23 @@ func (s *Site) collectedCSS() string {
 	return out.String()
 }
 
+// dict builds a map from alternating key-value pairs for template calls like
+// {{component "Card" (dict "Title" "Go" "Desc" "...")}} — frontmatter-free.
+func dict(values ...any) (map[string]any, error) {
+	if len(values)%2 != 0 {
+		return nil, fmt.Errorf("dict: odd number of arguments")
+	}
+	m := make(map[string]any, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		k, ok := values[i].(string)
+		if !ok {
+			return nil, fmt.Errorf("dict: key must be string, got %T", values[i])
+		}
+		m[k] = values[i+1]
+	}
+	return m, nil
+}
+
 // prepare parses component and layout templates into one template set.
 func (s *Site) prepare() error {
 	if s.set != nil {
@@ -135,6 +152,7 @@ func (s *Site) prepare() error {
 	}
 	funcs["component"] = s.renderComponent
 	funcs["mount"] = s.renderMount
+	funcs["dict"] = dict
 	set := template.New("").Funcs(funcs)
 	compNames := make([]string, 0, len(s.comps))
 	for name := range s.comps {

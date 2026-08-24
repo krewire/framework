@@ -20,11 +20,13 @@ export interface KiwModule {
   body: string
   styles: string[]
   scripts: string[]
+  markdown: string[]
   raw: string
 }
 
 const styleRe = /<style[^>]*>([\s\S]*?)<\/style>/gi
 const scriptRe = /<script[^>]*>([\s\S]*?)<\/script>/gi
+const markdownRe = /<markdown[^>]*>([\s\S]*?)<\/markdown>/gi
 
 export function parseKiw(src: string): KiwModule {
   let frontmatter: Record<string, any> = {}
@@ -55,11 +57,20 @@ export function parseKiw(src: string): KiwModule {
     return ""
   })
 
+  const markdown: string[] = []
+  body = body.replace(markdownRe, (_m, inner) => {
+    markdown.push(inner.trim())
+    // Keep markdown position by injecting raw markdown (Go side renders to HTML)
+    // JS consumers can render with a markdown lib if needed.
+    return "\n" + inner.trim() + "\n"
+  })
+
   return {
     frontmatter,
     body: body.trim(),
     styles,
     scripts,
+    markdown,
     raw: src,
   }
 }

@@ -5,13 +5,27 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 	"gopkg.in/yaml.v3"
 )
 
 var (
-	styleRe  = regexp.MustCompile(`(?is)<style[^>]*>(.*?)</style>`)
-	scriptRe = regexp.MustCompile(`(?is)<script[^>]*>(.*?)</script>`)
+	styleRe    = regexp.MustCompile(`(?is)<style[^>]*>(.*?)</style>`)
+	scriptRe   = regexp.MustCompile(`(?is)<script[^>]*>(.*?)</script>`)
+	markdownRe = regexp.MustCompile(`(?is)<markdown[^>]*>(.*?)</markdown>`)
 )
+
+var mdRenderer = html.NewRenderer(html.RendererOptions{
+	Flags: html.CommonFlags | html.HrefTargetBlank,
+})
+
+func newMDParser() *parser.Parser {
+	return parser.NewWithExtensions(
+		parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock,
+	)
+}
 
 // KiwModule is the parsed result of a .kiw file.
 // It is JSON-serializable and intentionally mirrors the JS parser output
@@ -22,6 +36,7 @@ type KiwModule struct {
 	Body        string         `json:"body"`
 	Styles      []string       `json:"styles"`
 	Scripts     []string       `json:"scripts"`
+	Markdown    []string       `json:"markdown"`
 	Raw         string         `json:"-"`
 }
 
@@ -81,6 +96,27 @@ func ParseKiw(src string) (*KiwModule, error) {
 		}
 	}
 	body = scriptRe.ReplaceAllString(body, "")
+
+	markdowns := markdownRe.FindAllStringSubmatch(body, -1)
+	for _, mm := range markdowns {
+		if len(mm) > 1 {
+			m.Markdown = append(m.Markdown, strings.TrimSpace(mm[1]))
+		}
+	}
+	body = markdownRe.ReplaceAllStringFunc(body, func(match string) string {
+		sub := markdownRe.FindStringSubmatch(match)
+		if len(sub) < 2 {
+			return ""
+		}
+		inner := strings.TrimSpace(sub[1])
+		if inner == "" {
+			return ""
+		}
+		p := newMDParser()
+		doc := p.Parse([]byte(inner))
+		rendered := markdown.Render(doc, mdRenderer)
+		return "\n" + strings.TrimSpace(string(rendered)) + "\n"
+	})
 
 	m.Body = strings.TrimSpace(body)
 	return m, nil

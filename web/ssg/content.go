@@ -60,15 +60,16 @@ type Collection struct {
 	Config CollectionConfig
 }
 
-// markdownParser is the shared markdown parser.
-var markdownParser = parser.NewWithExtensions(
-	parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock,
-)
-
-// htmlRenderer is the shared HTML renderer.
+// htmlRenderer is the shared HTML renderer (safe for concurrent use).
 var htmlRenderer = html.NewRenderer(html.RendererOptions{
 	Flags: html.CommonFlags | html.HrefTargetBlank,
 })
+
+func newMarkdownParser() *parser.Parser {
+	return parser.NewWithExtensions(
+		parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock,
+	)
+}
 
 // ParseContent parses a Markdown file with YAML frontmatter.
 func ParseContent(filePath string, baseDir string) (*ParsedContent, error) {
@@ -99,7 +100,7 @@ func ParseContent(filePath string, baseDir string) (*ParsedContent, error) {
 
 	// Render markdown to HTML
 	md := []byte(strings.TrimSpace(parts[2]))
-	doc := markdownParser.Parse(md)
+	doc := newMarkdownParser().Parse(md)
 	htmlBytes := markdown.Render(doc, htmlRenderer)
 
 	// Determine slug and URL
@@ -268,6 +269,6 @@ func slugify(s string) string {
 
 // markdownFunc is the template helper for inline markdown rendering.
 func markdownFunc(s string) template.HTML {
-	doc := markdownParser.Parse([]byte(s))
+	doc := newMarkdownParser().Parse([]byte(s))
 	return template.HTML(markdown.Render(doc, htmlRenderer))
 }
