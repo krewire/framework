@@ -36,8 +36,10 @@ type LayoutData struct {
 
 // Page is one output page of the site.
 type Page struct {
-	// Path is the output URL: "/" for the root, "/about" for a clean URL, or
-	// "/about.html" for an explicit filename.
+	// Path is the page route: "/" for the root, extensionless file-based
+	// routes like "/about" or "/docs/quickstart", or an explicit filename
+	// like "/404.html". Each route emits a sibling .html file: "/" ->
+	// "index.html", "/about" -> "about.html".
 	Path string
 	// Title is passed to the layout.
 	Title string

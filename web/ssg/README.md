@@ -7,11 +7,12 @@ Build static sites from `.kiw` files (see [`framework/dsl`](../../dsl)) — Astr
 ```
 project/
 ├── krewire.yaml        # metadata only: title, description, theme, output
-├── pages/              # one .kiw per route (dir-based, trailing slashes)
+├── pages/              # one .kiw per route (file-based, extensionless)
 │   ├── index.kiw       # → /
+│   ├── about.kiw       # → /about
 │   └── blog/
-│       ├── index.kiw   # → /blog/  (listing via .Collections)
-│       └── [slug].kiw  # → /blog/<slug>/ for each content/blog/*.md
+│       ├── index.kiw   # → /blog  (listing via .Collections)
+│       └── [slug].kiw  # → /blog/<slug> for each content/blog/*.md
 ├── components/*.kiw    # reusable; invoked with {{component "Name"}}
 ├── layouts/*.kiw       # shells with {{.Content}}; default Base.kiw
 ├── content/<name>/*.md # collections (frontmatter + Markdown)
@@ -75,6 +76,7 @@ created, err := ssg.BuildFromConfig(cfg, outDir)
 
 ## Rules
 
+- Routes are file-based and extensionless; each emits a sibling `.html` file: `/` → `index.html`, `/about` → `about.html`, `/docs/quickstart` → `docs/quickstart.html`
 - Scoped CSS: `<style>` blocks rewrite under `[data-kiw-component="name"]`; `:root` stays global
 - Files starting with `_` are partials — never routed
 - `public/` overrides machine-generated assets at the same path

@@ -41,7 +41,8 @@ func (i fi) ModTime() time.Time { return time.Time{} }
 func (i fi) IsDir() bool        { return false }
 func (i fi) Sys() any           { return nil }
 
-// pageRelPath maps a page path to a filesystem path: "/" -> "index.html", etc.
+// pageRelPath maps a page route to a sibling .html file: "/" -> "index.html",
+// "/about" -> "about.html", "/docs/quickstart" -> "docs/quickstart.html".
 func pageRelPath(p string) string {
 	p = strings.TrimPrefix(p, "/")
 	if p == "" {
@@ -50,7 +51,7 @@ func pageRelPath(p string) string {
 	if strings.HasSuffix(p, ".html") {
 		return p
 	}
-	return filepath.Join(filepath.FromSlash(p), "index.html")
+	return filepath.FromSlash(p) + ".html"
 }
 
 // cleanAssetPath normalizes an asset path, refusing directory traversal.

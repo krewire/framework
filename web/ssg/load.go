@@ -119,7 +119,7 @@ func LoadFromDir(root string) (*Site, error) {
 				if slug == "" {
 					slug = strings.TrimSuffix(filepath.Base(item.Path), ".md")
 				}
-				route := "/" + filepath.ToSlash(filepath.Join(dir, slug)) + "/"
+				route := "/" + filepath.ToSlash(filepath.Join(dir, slug))
 				title := strFromFM(mod.Frontmatter, "title", item.Config.Title)
 				if title == "" {
 					title = meta.Title
@@ -333,7 +333,6 @@ func routeFromRel(rel string) string {
 	}
 	if strings.HasSuffix(rel, "/index") {
 		rel = strings.TrimSuffix(rel, "/index")
-		return "/" + rel + "/"
 	}
-	return "/" + rel + "/"
+	return "/" + rel
 }

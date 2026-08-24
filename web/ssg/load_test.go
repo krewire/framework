@@ -112,7 +112,7 @@ func TestLoadFromDir_ContentSlugPages(t *testing.T) {
 	if _, err := site.Build(out); err != nil {
 		t.Fatal(err)
 	}
-	b, err := os.ReadFile(filepath.Join(out, "blog", "hello-world", "index.html"))
+	b, err := os.ReadFile(filepath.Join(out, "blog", "hello-world.html"))
 	if err != nil {
 		t.Fatalf("dynamic route not materialized: %v", err)
 	}

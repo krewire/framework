@@ -19,7 +19,7 @@ embed one hundred markup blocks inside a single YAML document.
 This specification refounds authoring on source **files** in the Astro model:
 
 - `pages/` — one `.kiw` file per route, split by frontmatter + template + scoped
-  style. Routes are derived from the filesystem (dir-based, trailing slashes).
+  style. Routes are derived from the filesystem (file-based, extensionless).
 - `components/` — reusable `.kiw` modules, invoked from templates by name.
 - `layouts/` — `.kiw` page shells with a content slot.
 - `content/` — Markdown collections (frontmatter + body) auto-discovered from
@@ -47,8 +47,8 @@ conceptual dead-end:
 
 - G1 — Author pages, components, and layouts as **files**, never as YAML
   inline markup.
-- G2 — Derive routes from the `pages/` filesystem tree with dir-based,
-  trailing-slash URLs.
+- G2 — Derive routes from the `pages/` filesystem tree with file-based,
+  extensionless URLs emitted as sibling `.html` files.
 - G3 — Make `krewire.yaml` metadata-only and write-once.
 - G4 — Unify site authoring behind **one file-based engine**; markdown book
   content (`manuscript/`) becomes a leaf of the same pipeline.
@@ -96,8 +96,8 @@ conceptual dead-end:
 
 | ID          | Requirement                                                       | Priority |
 | ----------- | ----------------------------------------------------------------- | -------- |
-| FRK-FLS-020 | `pages/index.kiw` → `/`; `pages/about.kiw` → `/about/` (dir-owned, trailing slash); `pages/docs/quickstart.kiw` → `/docs/quickstart/`. | Must |
-| FRK-FLS-021 | A page's `[slug].kiw` in `pages/<name>/` becomes a dynamic route materialized for every item in the `content/<name>` collection, at `/name/:slug/`. | Must |
+| FRK-FLS-020 | `pages/index.kiw` → `/`; `pages/about.kiw` → `/about`, emitted as `about.html`; `pages/docs/quickstart.kiw` → `/docs/quickstart`, emitted as `docs/quickstart.html`; `pages/docs/index.kiw` → `/docs`. No trailing slashes anywhere. | Must |
+| FRK-FLS-021 | A page's `[slug].kiw` in `pages/<name>/` becomes a dynamic route materialized for every item in the `content/<name>` collection, at `/name/:slug`, emitted as `name/:slug.html`. | Must |
 | FRK-FLS-022 | Page data merges site metadata (`Site.Title`, `Theme`), global `Data`, frontmatter, and — for `[slug]` pages — the matched collection item's params. | Must |
 | FRK-FLS-023 | A page's `layout` frontmatter names a `layouts/` file; absence resolves to `layouts/Base.kiw` when present, else the built-in document shell. | Must |
 
@@ -128,7 +128,7 @@ conceptual dead-end:
 
 | ID          | Requirement                                                       | Priority |
 | ----------- | ----------------------------------------------------------------- | -------- |
-| FRK-FLS-060 | A `manuscript/` directory (mdbind book) is loadable through the same file pipeline: chapters become a collection with a book layout and dir-based navigation; no book-specific engine survives separately except the manuscript parser. | Must |
+| FRK-FLS-060 | A `manuscript/` directory (mdbind book) is loadable through the same file pipeline: chapters become a collection with a book layout and file-based navigation; no book-specific engine survives separately except the manuscript parser. | Must |
 
 ## 6. Non-Functional Requirements
 
@@ -139,7 +139,7 @@ conceptual dead-end:
 ## 7. Success Criteria
 
 - S1 — A site with `pages/index.kiw`, `components/Header.kiw`, `layouts/Base.kiw`, `public/` builds while `krewire.yaml` holds metadata alone.
-- S2 — `pages/blog/[slug].kiw` + `content/blog/*.md` produce `/blog/<slug>/` pages with scoped styles and correct per-item data.
+- S2 — `pages/blog/[slug].kiw` + `content/blog/*.md` produce `/blog/<slug>` pages with scoped styles and correct per-item data.
 - S3 — No markup exists anywhere in `krewire.yaml`.
 - S4 — `layouts/Base.kiw`'s style is scoped; `component "Header"` output carries `data-kiw-component`.
 - S5 — `gofmt`, `go vet`, `go test` green across `framework`, `krewire`, `mdbind`.

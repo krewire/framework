@@ -79,29 +79,15 @@ func (s *Site) Handler() http.Handler {
 	mux := http.NewServeMux()
 	for _, p := range s.pages {
 		pp := p
-		seen := map[string]bool{}
-		paths := []string{p.Path}
-		if !strings.HasSuffix(p.Path, ".html") {
-			clean := strings.TrimSuffix(p.Path, "/")
-			if slash := clean + "/"; !seen[slash] {
-				paths = append(paths, slash)
+		mux.HandleFunc(p.Path, func(w http.ResponseWriter, r *http.Request) {
+			body, err := s.renderPage(pp)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 			}
-		}
-		for _, rp := range paths {
-			if seen[rp] {
-				continue
-			}
-			seen[rp] = true
-			mux.HandleFunc(rp, func(w http.ResponseWriter, r *http.Request) {
-				body, err := s.renderPage(pp)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				_, _ = io.WriteString(w, body)
-			})
-		}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = io.WriteString(w, body)
+		})
 	}
 	for name, body := range s.assets {
 		assetName, assetBody := name, body

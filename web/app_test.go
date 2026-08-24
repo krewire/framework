@@ -89,7 +89,7 @@ func TestAppExportByteMatchesSSR(t *testing.T) {
 	if string(want) != live.Body.String() {
 		t.Error("exported index.html differs from live SSR render")
 	}
-	about, err := os.ReadFile(filepath.Join(out, "about", "index.html"))
+	about, err := os.ReadFile(filepath.Join(out, "about.html"))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -108,7 +108,7 @@ func ParseContent(filePath string, baseDir string) (*ParsedContent, error) {
 	if slug == "" {
 		slug = strings.TrimSuffix(filepath.Base(rel), filepath.Ext(rel))
 	}
-	url := "/" + strings.TrimSuffix(rel, filepath.Ext(rel)) + "/"
+	url := "/" + strings.TrimSuffix(rel, filepath.Ext(rel))
 
 	return &ParsedContent{
 		Config:  cfg,
@@ -249,10 +249,6 @@ func (c *Collection) GenerateOutputPath(p *ParsedContent) string {
 		out = strings.ReplaceAll(out, ":year", fmt.Sprintf("%04d", p.RawDate.Year()))
 		out = strings.ReplaceAll(out, ":month", fmt.Sprintf("%02d", p.RawDate.Month()))
 		out = strings.ReplaceAll(out, ":day", fmt.Sprintf("%02d", p.RawDate.Day()))
-	}
-	// Ensure trailing slash for clean URLs
-	if !strings.HasSuffix(out, "/") && !strings.Contains(out, ".") {
-		out += "/"
 	}
 	return "/" + strings.TrimPrefix(out, "/")
 }

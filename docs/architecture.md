@@ -55,7 +55,7 @@ framework/
 
 ```
 framework → libs (core, kern, term, config, validate)
-         ↘ mdbind ← docs (book kind, dir-based routing)
+         ↘ mdbind ← docs (book kind, file-based routing)
 ```
 
 
