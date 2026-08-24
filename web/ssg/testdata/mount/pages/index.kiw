@@ -1,0 +1,11 @@
+---
+title: "Mount Demo"
+layout: Base
+---
+
+<h1>{{.Title}}</h1>
+{{mount "Counter" "load" .}}
+
+<style>
+h1 { color: var(--primary); }
+</style>

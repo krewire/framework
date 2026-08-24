@@ -134,6 +134,7 @@ func (s *Site) prepare() error {
 		funcs[name] = fn
 	}
 	funcs["component"] = s.renderComponent
+	funcs["mount"] = s.renderMount
 	set := template.New("").Funcs(funcs)
 	compNames := make([]string, 0, len(s.comps))
 	for name := range s.comps {
