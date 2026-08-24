@@ -4,7 +4,7 @@ Design documents for the Krewire Framework. Written before implementation for an
 
 ## Index
 
-See [`index.md`](./index.md) for the full specification list (29 specs, ordered by impact-to-effort then dependency chain).
+See [`index.md`](./index.md) for the full specification list (33 specs, ordered by impact-to-effort then dependency chain).
 
 ## Naming
 

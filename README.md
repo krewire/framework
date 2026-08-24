@@ -2,7 +2,11 @@
 
 **Krewire Framework** is the unified Go framework for every web-service workload. One import path powers CLI tools, HTTP backends, static sites, documentation sites, reactive frontends (Go→WASM), fullstack monoliths, background workers, microservices, and cloud infrastructure.
 
-It is the engine behind [`mdbind`](https://github.com/krewire/mdbind), [`krewire`](https://github.com/krewire/krewire), and every Krewire project built by `krewire new` / `krewire init`.
+It is a product of [Krewire](https://github.com/krewire), an Indonesia-based
+open-source community building a digital ecosystem that is secure,
+sustainable, and scalable at a cost that is close to free.
+
+It is the engine behind [`mdbind`](https://github.com/krewire/mdbind), [`kiw`](https://github.com/krewire/kiw), and every Krewire project built by `kiw new` / `kiw init`.
 
 > Unified vision: [`KWF-M8K2Q`](docs/specs/KWF-ARCH-M8K2Q-unified-framework-vision.md) — with WASM runtime [`KWF-T4X9P`](docs/specs/KWF-WASM-T4X9P-wasm-client-runtime.md), cloud infra [`KWF-B7N3D`](docs/specs/KWF-INFRA-B7N3D-cloud-provider-abstraction.md), and microservice/worker [`KWF-L5H2F`](docs/specs/KWF-SVC-L5H2F-microservice-patterns.md).
 
@@ -10,18 +14,19 @@ It is the engine behind [`mdbind`](https://github.com/krewire/mdbind), [`krewire
 
 | Workload | Package | Status |
 |----------|---------|--------|
-| CLI tools | `cli` — App, Command, flag/slog/term integration | ✅ Shipped |
-| Backend / HTTP API | `web` — Router, middleware, `web.App` | ✅ Shipped |
-| Static sites (SSG) | `web/ssg` — declarative layouts/components/pages + assets | ✅ Shipped |
-| Theming & UI | `ui` — Theme, palette, scoped CSS | ✅ Shipped |
-| Fullstack / Monolith | `app` — assembly + DI container, modular layout | ✅ Shipped |
-| Assets & Storage | `assets` — multi-source store, ETag/cache, fingerprint+manifest · `storage` — KV (memory/file) + DI provider | ✅ Shipped |
-| Frontend (WASM) | `runtime` — Go→WASM, VDOM, widgets, hydration islands | 🔜 KWF-T4X9P |
-| Workers | `worker` — queues, cron, retries, DLQ | 🔜 KWF-L5H2F |
-| Microservice | `service` / `web/gateway` — registry, gateway, resilience, tracing | 🔜 KWF-L5H2F |
-| Cloud Infra | `infra` — provider abstraction, state/locking, AWS + Kubernetes | 🔜 KWF-B7N3D |
+| CLI tools (`cli`) | `framework/tui` — App, Command, flag/slog/term integration | ✅ Shipped |
+| Backend / HTTP API (`app`) | `framework/web` — Router, middleware, `web.App` | ✅ Shipped |
+| Static sites (`site`) | `framework/web/ssg` — declarative layouts/components/pages + assets | ✅ Shipped |
+| Documentation sites (`book`) | [`mdbind`](https://github.com/krewire/mdbind) — manuscript compiler | ✅ Shipped |
+| Fullstack / Monolith (`app`) | `framework/app` — assembly + DI container, modular layout | ✅ Shipped |
+| Frontend client (`site`) | `runtime` — Go→WASM, VDOM, widgets, hydration islands | 🔜 KWF-T4X9P |
+| Workers (`worker`) | `worker` — queues, cron, retries, DLQ | 🔜 KWF-L5H2F |
+| Microservice (`service`) | `service` — registry, gateway, resilience, tracing | 🔜 KWF-L5H2F |
+| Cloud Infra (`infra`) | `infra` — provider abstraction, state/locking, AWS + Kubernetes | 🔜 KWF-B7N3D |
 
-All workloads share a single `krewire.yaml` configuration (validated by [`libs`](https://github.com/krewire/libs)) and a single CLI (`krewire`).
+Cross-cutting packages (not workloads): `ui` — Theme, palette, scoped CSS · `assets` — multi-source store, ETag/cache, fingerprint+manifest · `storage` — KV (memory/file) + DI provider.
+
+All workloads share a single `krewire.yaml` configuration (validated by [`libs`](https://github.com/krewire/libs)) and a single CLI (`kiw`).
 
 ## Package Layout
 
@@ -44,7 +49,7 @@ framework/
 └── examples/   # Runnable examples (greet, app)
 ```
 
-Related primitives live in [`libs`](https://github.com/krewire/libs) (`core`, `term`, `config`, `validate`).
+Related primitives live in [`libs`](https://github.com/krewire/libs) (`core`, `kern`, `term`, `config`, `validate`); the framework composes them via `kern`.
 
 ## Getting Started
 

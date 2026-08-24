@@ -7,7 +7,7 @@ Aligned to the unified vision `KWF-M8K2Q` (specs `KWF-T4X9P`/`B7N3D`/`L5H2F`): f
 ```
 framework/
 ├── tui/                  # CLI app model — flag/slog/term, `tui.App` harness
-├── web/                  # HTTP routing, middleware, html/template
+├── web/                  # HTTP layer: expressive routes/groups/controllers, request/response, generic handlers; security headers, CSRF/XSS, cache, sessions/cookies; Basic/JWT auth + policy gates; middleware, html/template
 │   └── ssg/              # File-based SSG: .kiw DSL (pages/components/layouts) → site/
 ├── dsl/                  # Kiw DSL (.kiw) — YAML frontmatter + html/template + style/script, Go & JS/TS native
 ├── test/                 # Test helpers — generic, no spec required
@@ -35,6 +35,7 @@ framework/
 │   ├── schema/           # Canonical kinds: Compute/Database/Storage/Network/DNS/Certificate/SecretRef
 │   ├── state/            # Local file + S3/GCS + DynamoDB/Consul locking
 │   └── providers/        # aws/ (ECS/Lambda/RDS/S3/CloudFront/Route53) + k8s/ (Deployment/Service/Ingress)
+├── framework/              # Meta-package — Name, Version, Banner()
 ├── docs/                 # Public docs (this folder)
 ├── examples/
 │   ├── greet/            # `cli` minimal example
@@ -45,15 +46,15 @@ framework/
 **Design decisions:**
 
 - **Modular at every Scope (SRP/SoC/High Cohesion).** Industry standard: **Single Responsibility Principle** (SOLID), **Separation of Concerns** (Parnas/Dijkstra), **High Cohesion/Low Coupling** (Constantine), **Unix "Do one thing well"**. Never stack many unrelated funcs in one module; one `Package`/`Func` = one reason to change. Maps to `KWL-ARCH-J2K9Q` `Module→Package→Service→Func` and `KWF-5ZHQV` modular monolith.
-- **Import path = workload slice.** `import "github.com/krewire/framework/runtime"` only when frontend interactivity is needed; `app` alone imports `cli`/`web`/`ui`/`app`.
+- **Import path = workload slice.** `import "github.com/krewire/framework/runtime"` only when frontend interactivity is needed; `app` alone imports `tui`/`web`/`ui`/`app`.
 - **Stdlib-first.** `net/http`, `html/template`, `flag`, `log/slog` before third-party; OTel and NATS are the only planned external deps.
 - **SSR/hydration parity.** `web/ssg` emits `data-kiw-island` markers; `runtime` hydrates without re-rendering text nodes.
-- **Go workspace at hub root.** `go.work` lists all 7 repos (`./framework`, `./libs`, etc.); cross-repo vet/test via `go vet/test ./libs/...` from hub.
+- **Go workspace at hub root.** `go.work` lists all 5 repos (`./framework`, `./libs`, etc.); cross-repo vet/test via `go vet/test ./libs/...` from hub.
 
 ## Dependency Graph
 
 ```
-framework → libs (core, term, config, validate)
+framework → libs (core, kern, term, config, validate)
          ↘ mdbind ← docs (book kind, dir-based routing)
 ```
 
