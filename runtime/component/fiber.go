@@ -48,7 +48,7 @@ type Fiber struct {
 	cursor  int
 	mounted bool
 	prev    *vdom.VNode
-	events  map[string]func(context.Context)
+	events  map[string]Handler
 
 	pendingEffects []*hook
 }

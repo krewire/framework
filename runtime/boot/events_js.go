@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"syscall/js"
+
+	"github.com/krewire/framework/runtime/component"
 )
 
 const (
@@ -42,7 +44,7 @@ func (j *job) bindEvents() {
 			continue
 		}
 		if j.handlers == nil {
-			j.handlers = map[string]func(context.Context){}
+			j.handlers = map[string]component.Handler{}
 		}
 		j.handlers[eventType+" "+name] = fn
 		installListener(eventType)
@@ -58,6 +60,20 @@ func (j *job) bindEvents() {
 type errSilent struct{ msg string }
 
 func (e errSilent) Error() string { return e.msg }
+
+// eventPayload snapshots the neutral fields the widget kit relies on.
+func eventPayload(ev js.Value) component.Event {
+	t := ev.Get("target")
+	checked := false
+	if c := t.Get("checked"); !c.IsUndefined() {
+		checked = c.Bool()
+	}
+	v := ""
+	if val := t.Get("value"); !val.IsUndefined() {
+		v = val.String()
+	}
+	return component.Event{Value: v, Checked: checked}
+}
 
 func installListener(eventType string) {
 	if listened[eventType] {
@@ -98,6 +114,6 @@ func dispatch(eventType string, ev js.Value) {
 		return
 	}
 	if fn := j.handlers[eventType+" "+name]; fn != nil {
-		fn(context.Background())
+		fn(context.Background(), eventPayload(ev))
 	}
 }

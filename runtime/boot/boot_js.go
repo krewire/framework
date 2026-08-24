@@ -54,7 +54,7 @@ type job struct {
 	name     string
 	props    component.Props
 	fiber    *component.Fiber
-	handlers map[string]func(context.Context)
+	handlers map[string]component.Handler
 }
 
 func newJob(el js.Value, name string) (*job, error) {

@@ -12,8 +12,8 @@ import (
 // Spec: KWF-T4X9P FRK-WASM-041 Scope: Package
 func TestFRK_WASM_041_UseEvent_RegisterLookupAndRefresh(t *testing.T) {
 	var calls []string
-	handler := func(tag string) func(context.Context) {
-		return func(context.Context) { calls = append(calls, tag) }
+	handler := func(tag string) Handler {
+		return func(context.Context, Event) { calls = append(calls, tag) }
 	}
 
 	useV := "v1"
@@ -30,7 +30,7 @@ func TestFRK_WASM_041_UseEvent_RegisterLookupAndRefresh(t *testing.T) {
 	if got == nil {
 		t.Fatal("handler not registered")
 	}
-	got(context.Background())
+	got(context.Background(), Event{})
 	if len(calls) != 1 || calls[0] != "v1" {
 		t.Fatalf("invoke = %v", calls)
 	}
@@ -41,7 +41,7 @@ func TestFRK_WASM_041_UseEvent_RegisterLookupAndRefresh(t *testing.T) {
 	if h := f.Handler("click", "inc"); h == nil {
 		t.Fatal("re-registered handler missing")
 	} else {
-		h(context.Background())
+		h(context.Background(), Event{})
 	}
 	if len(calls) != 1 || calls[0] != "v2" {
 		t.Fatalf("refreshed invoke = %v", calls)
@@ -61,7 +61,7 @@ func TestFRK_WASM_033_UseEvent_OutsideRenderPanics(t *testing.T) {
 			t.Fatal("want HookRuleError outside render scope")
 		}
 	}()
-	UseEvent("click", "x", func(context.Context) {})
+	UseEvent("click", "x", func(context.Context, Event) {})
 }
 
 // Spec: KWF-T4X9P FRK-WASM-041 Scope: Package
@@ -69,7 +69,7 @@ func TestFRK_WASM_041_UseEvent_EmptyArgsPanicWithDiagnostic(t *testing.T) {
 	switcher := true
 	comp := &fn{body: func() *vdom.VNode {
 		if switcher {
-			UseEvent("", "x", func(context.Context) {})
+			UseEvent("", "x", func(context.Context, Event) {})
 		}
 		return vdom.El("p", nil, vdom.Text("x"))
 	}}
