@@ -26,6 +26,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-0Z671](./KWF-UI-0Z671-krewire-ui-framework.md) | Krewire UI Framework | Draft | Shipped | KWF-M07QS |
 | [KWF-PPUWX](./KWF-UI-PPUWX-layout-ui-system.md) | Layout & UI System | Draft | Shipped | KWF-0Z671 |
 | [KWF-V0TMZ](./KWF-UI-V0TMZ-web-theming-system.md) | UI Theming System | Draft | Shipped | KWF-0Z671 |
+| [KWF-T9X2K](./KWF-UI-T9X2K-tailwind-support.md) | Tailwind CSS Support in .kiw DSL and Site Pipeline | Draft | Planned | KWF-DSL-N4K8Q, KWF-0Z671, KWF-PT8OD |
 | [KWF-230KF](./KWF-HTTP-230KF-http-api-pipeline.md) | HTTP & API Pipeline | Draft | Shipped | KWF-M07QS |
 | [KWF-T4X9P](./KWF-WASM-T4X9P-wasm-client-runtime.md) | WASM Client Runtime — Go-Native Frontend | Draft | Partial | KWF-M8K2Q, KWF-0Z671, KWF-PT8OD |
 | [KWF-B7N3D](./KWF-INFRA-B7N3D-cloud-provider-abstraction.md) | Cloud Provider Abstraction — Multi-Cloud Library-First IaC | Draft | Planned | KWF-M8K2Q |
