@@ -32,6 +32,9 @@ type LayoutData struct {
 	Content template.HTML
 	// Data is the page's data value.
 	Data any
+	// Version is the site version from krewire.yaml, exposed for layout
+	// chrome (badges) as {{.Version}}.
+	Version string
 }
 
 // Page is one output page of the site.

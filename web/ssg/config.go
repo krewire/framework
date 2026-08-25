@@ -17,6 +17,9 @@ type Config struct {
 	// Description is the site description, injected into every page's data as
 	// .Description.
 	Description string `yaml:"description"`
+	// Version is the product/site version, injected into every page's data as
+	// .Version so chrome and badges never hardcode it.
+	Version string `yaml:"version"`
 	// Output is the directory the site is exported to. Consumers may ignore it
 	// and supply their own output path.
 	Output string `yaml:"output"`
@@ -174,6 +177,9 @@ func (c *Config) pageData() map[string]any {
 	}
 	if c.Description != "" {
 		data["Description"] = c.Description
+	}
+	if c.Version != "" {
+		data["Version"] = c.Version
 	}
 	if c.Theme != nil {
 		data["Theme"] = c.theme()

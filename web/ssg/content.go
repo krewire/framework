@@ -9,9 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/html"
-	"github.com/gomarkdown/markdown/parser"
+	"github.com/krewire/libs/markdown"
 	"gopkg.in/yaml.v3"
 )
 
@@ -60,17 +58,6 @@ type Collection struct {
 	Config CollectionConfig
 }
 
-// htmlRenderer is the shared HTML renderer (safe for concurrent use).
-var htmlRenderer = html.NewRenderer(html.RendererOptions{
-	Flags: html.CommonFlags | html.HrefTargetBlank,
-})
-
-func newMarkdownParser() *parser.Parser {
-	return parser.NewWithExtensions(
-		parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock,
-	)
-}
-
 // ParseContent parses a Markdown file with YAML frontmatter.
 func ParseContent(filePath string, baseDir string) (*ParsedContent, error) {
 	data, err := os.ReadFile(filePath)
@@ -98,10 +85,13 @@ func ParseContent(filePath string, baseDir string) (*ParsedContent, error) {
 		}
 	}
 
-	// Render markdown to HTML
+	// Render markdown to HTML via shared libs/markdown (Goldmark GFM).
 	md := []byte(strings.TrimSpace(parts[2]))
-	doc := newMarkdownParser().Parse(md)
-	htmlBytes := markdown.Render(doc, htmlRenderer)
+	htmlStr, err := markdown.Render(md)
+	if err != nil {
+		return nil, fmt.Errorf("content: markdown render error in %s: %w", filePath, err)
+	}
+	htmlBytes := []byte(htmlStr)
 
 	// Determine slug and URL
 	rel, _ := filepath.Rel(baseDir, filePath)
@@ -269,6 +259,6 @@ func slugify(s string) string {
 
 // markdownFunc is the template helper for inline markdown rendering.
 func markdownFunc(s string) template.HTML {
-	doc := newMarkdownParser().Parse([]byte(s))
-	return template.HTML(markdown.Render(doc, htmlRenderer))
+	html, _ := markdown.Render([]byte(s))
+	return template.HTML(html)
 }

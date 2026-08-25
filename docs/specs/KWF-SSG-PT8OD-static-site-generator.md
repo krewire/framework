@@ -19,7 +19,10 @@ that declares them.
 
 This specification defines an Astro/Svelte-inspired static site generator
 (`web/ssg`) that composes `html/template` components and layouts into a static
-website with a single build step.
+website with a single build step. Markdown rendering (collections and
+`<markdown>` in `.kiw`) is via `libs/markdown` (`KWL-Q3N8P`), shared with
+`mdbind`, so a site and a book can be depended on together and progressively
+enhanced in the same `go.mod` and built to the same `.krewire/build`.
 
 ## 2. Problem Statement
 
@@ -75,8 +78,9 @@ Every consumer reinvents the same composition and asset-collection logic.
 ## 6. Non-Functional Requirements
 
 - NFR1 — **Memory safety.** The `unsafe` package must not be used.
-- NFR2 — **Minimal dependencies.** HTML parsing uses `golang.org/x/net/html`; no JavaScript or CSS tooling.
+- NFR2 — **Minimal dependencies.** HTML parsing uses `golang.org/x/net/html`; Markdown via `libs/markdown` (Goldmark GFM); no JavaScript or CSS tooling.
 - NFR3 — **Quality gates.** `gofmt`, `go vet ./...`, and `go test ./...` must pass.
+- NFR4 — **Progressive co-existence.** `framework` and `mdbind` can be required together; `kiw build` with both `manuscript/` and `pages/*.kiw`/`ssg:` present builds both into `.krewire/build`.
 
 ## 7. Success Criteria
 
@@ -95,6 +99,7 @@ Every consumer reinvents the same composition and asset-collection logic.
 | [KWF-PPUWX](./KWF-UI-PPUWX-layout-ui-system.md) | Layout & UI System (registry + Go-native components) |
 | [KWF-0F2EB](./KWF-WEB-0F2EB-server-frontend-pipeline.md) | Server & Frontend Rendering Pipeline (shared page model) |
 | [KWF-F2TQC](./KWF-JS-F2TQC-js-ts-framework-integration.md) | JS/TS Framework Integration (future bridge) |
+| [KWL-Q3N8P](https://github.com/krewire/libs/blob/main/docs/specs/KWL-MARKDOWN-Q3N8P-shared-markdown-renderer.md) | Shared Markdown Renderer (libs) |
 
 ## 9. References
 

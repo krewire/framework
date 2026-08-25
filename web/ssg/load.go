@@ -252,6 +252,7 @@ func loadMeta(root string) *meta {
 		var raw struct {
 			Title       string `yaml:"title"`
 			Description string `yaml:"description"`
+			Version     string `yaml:"version"`
 			Theme       *struct {
 				Default string            `yaml:"default"`
 				Light   map[string]string `yaml:"light"`
@@ -264,6 +265,12 @@ func loadMeta(root string) *meta {
 			}
 			if raw.Description != "" {
 				m.Description = raw.Description
+			}
+			if raw.Version != "" {
+				if m.Data == nil {
+					m.Data = map[string]any{}
+				}
+				m.Data["Version"] = raw.Version
 			}
 			if raw.Theme != nil {
 				t := &ui.Theme{Default: raw.Theme.Default}

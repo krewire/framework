@@ -5,9 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/html"
-	"github.com/gomarkdown/markdown/parser"
+	"github.com/krewire/libs/markdown"
 	"gopkg.in/yaml.v3"
 )
 
@@ -16,16 +14,6 @@ var (
 	scriptRe   = regexp.MustCompile(`(?is)<script[^>]*>(.*?)</script>`)
 	markdownRe = regexp.MustCompile(`(?is)<markdown[^>]*>(.*?)</markdown>`)
 )
-
-var mdRenderer = html.NewRenderer(html.RendererOptions{
-	Flags: html.CommonFlags | html.HrefTargetBlank,
-})
-
-func newMDParser() *parser.Parser {
-	return parser.NewWithExtensions(
-		parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock,
-	)
-}
 
 // KiwModule is the parsed result of a .kiw file.
 // It is JSON-serializable and intentionally mirrors the JS parser output
@@ -112,10 +100,8 @@ func ParseKiw(src string) (*KiwModule, error) {
 		if inner == "" {
 			return ""
 		}
-		p := newMDParser()
-		doc := p.Parse([]byte(inner))
-		rendered := markdown.Render(doc, mdRenderer)
-		return "\n" + strings.TrimSpace(string(rendered)) + "\n"
+		rendered, _ := markdown.Render([]byte(inner))
+		return "\n" + strings.TrimSpace(rendered) + "\n"
 	})
 
 	m.Body = strings.TrimSpace(body)

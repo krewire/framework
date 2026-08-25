@@ -71,11 +71,18 @@ func (s *Site) renderPage(p *Page) (string, error) {
 		return "", fmt.Errorf("ssg: undefined layout %q", p.Layout)
 	}
 	s.markUsed(p.Layout)
+	version := ""
+	if m, ok := p.Data.(map[string]any); ok {
+		if v, ok := m["Version"].(string); ok {
+			version = v
+		}
+	}
 	var buf bytes.Buffer
 	if err := s.set.ExecuteTemplate(&buf, p.Layout, LayoutData{
 		Title:   p.Title,
 		Content: root,
 		Data:    p.Data,
+		Version: version,
 	}); err != nil {
 		return "", err
 	}
