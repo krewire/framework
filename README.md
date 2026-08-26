@@ -1,6 +1,6 @@
 # Krewire Framework
 
-**Krewire Framework** is the unified Go framework for every web-service workload — [`https://github.com/krewire/framework`](https://github.com/krewire/framework). One import path powers CLI tools, HTTP backends, static sites, documentation sites, reactive frontends (Go→WASM), fullstack monoliths, background workers, microservices, and cloud infrastructure.
+**Krewire Framework** is the unified Go framework for every web-service workload — `github.com/krewire/framework`. One import path powers CLI tools, HTTP backends, static sites, documentation sites, reactive frontends (Go→WASM), fullstack monoliths, background workers, microservices, and cloud infrastructure.
 
 It is a product of [Krewire](https://github.com/krewire), an Indonesia-based
 open-source community building a digital ecosystem that is secure,
