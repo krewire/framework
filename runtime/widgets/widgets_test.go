@@ -15,7 +15,7 @@ func render(c component.Component) string {
 	return vdom.RenderHTML(f.Render())
 }
 
-// Spec: KWF-T4X9P FRK-WASM-050 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-050 Scope: Unit
 func TestFRK_WASM_050_Layout_GoldenHTML(t *testing.T) {
 	got := vdom.RenderHTML(Column(Row(Text("a"), SizedBox(10, 20))))
 	want := `<div class="kiw-column"><div class="kiw-row">` +
@@ -30,7 +30,7 @@ func TestFRK_WASM_050_Layout_GoldenHTML(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-051 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-051 Scope: Unit
 func TestFRK_WASM_051_Text_ClassOpt(t *testing.T) {
 	got := vdom.RenderHTML(Text("hi", ClassOpt("accent")))
 	if got != `<span class="kiw-text accent">hi</span>` {
@@ -38,7 +38,7 @@ func TestFRK_WASM_051_Text_ClassOpt(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-052 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-052 Scope: Unit
 func TestFRK_WASM_052_Button_ClickDispatchesHandler(t *testing.T) {
 	var pressed int
 	b := Button("+1", func(context.Context, component.Event) { pressed++ })
@@ -58,7 +58,7 @@ func TestFRK_WASM_052_Button_ClickDispatchesHandler(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-052 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-052 Scope: Unit
 func TestFRK_WASM_052_Input_EmitsValueAndDeliversPayload(t *testing.T) {
 	var got string
 	in := Input("USD", func(v string) { got = v })
@@ -73,7 +73,7 @@ func TestFRK_WASM_052_Input_EmitsValueAndDeliversPayload(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-052 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-052 Scope: Unit
 func TestFRK_WASM_052_CheckboxAndSwitch_CheckedStateAndPayload(t *testing.T) {
 	var state bool
 	cb := Checkbox(true, "Subscribe", func(b bool) { state = b })
@@ -95,7 +95,7 @@ func TestFRK_WASM_052_CheckboxAndSwitch_CheckedStateAndPayload(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-054 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-054 Scope: Unit
 func TestFRK_WASM_054_ListView_KeysSurviveReconciliation(t *testing.T) {
 	list := ListView([]Item{
 		{Key: "b", Node: ListTile("Beta", nil, nil)},

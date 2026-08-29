@@ -5,11 +5,11 @@ import (
 	"io"
 	"testing"
 
-	"github.com/krewire/libs/core"
+	"github.com/krewire/libs/vein"
 )
 
-func successHandler(*flag.FlagSet) core.ExitCode {
-	return core.ExitCodeSuccess
+func successHandler(*flag.FlagSet) vein.ExitCode {
+	return vein.ExitCodeSuccess
 }
 
 func testApp() *App {
@@ -21,22 +21,22 @@ func testApp() *App {
 
 func TestRunDispatchesToKnownCommand(t *testing.T) {
 	app := testApp()
-	if got := app.Run([]string{"ping"}); got != core.ExitCodeSuccess {
-		t.Errorf("Run() = %v, want %v", got, core.ExitCodeSuccess)
+	if got := app.Run([]string{"ping"}); got != vein.ExitCodeSuccess {
+		t.Errorf("Run() = %v, want %v", got, vein.ExitCodeSuccess)
 	}
 }
 
 func TestRunEmptyIsUsage(t *testing.T) {
 	app := testApp()
-	if got := app.Run(nil); got != core.ExitCodeUsage {
-		t.Errorf("Run() = %v, want %v", got, core.ExitCodeUsage)
+	if got := app.Run(nil); got != vein.ExitCodeUsage {
+		t.Errorf("Run() = %v, want %v", got, vein.ExitCodeUsage)
 	}
 }
 
 func TestRunUnknownCommandIsUsage(t *testing.T) {
 	app := testApp()
-	if got := app.Run([]string{"nope"}); got != core.ExitCodeUsage {
-		t.Errorf("Run() = %v, want %v", got, core.ExitCodeUsage)
+	if got := app.Run([]string{"nope"}); got != vein.ExitCodeUsage {
+		t.Errorf("Run() = %v, want %v", got, vein.ExitCodeUsage)
 	}
 }
 
@@ -46,33 +46,33 @@ func TestRunParseErrorIsUsage(t *testing.T) {
 			fs.String("name", "", "name of the target")
 		}, successHandler))
 	app.stderr = io.Discard
-	if got := app.Run([]string{"ping", "--nope"}); got != core.ExitCodeUsage {
-		t.Errorf("Run() = %v, want %v", got, core.ExitCodeUsage)
+	if got := app.Run([]string{"ping", "--nope"}); got != vein.ExitCodeUsage {
+		t.Errorf("Run() = %v, want %v", got, vein.ExitCodeUsage)
 	}
 }
 
 func TestRunHelpGeneral(t *testing.T) {
 	app := testApp()
 	app.stderr = io.Discard
-	if got := app.Run([]string{"help"}); got != core.ExitCodeSuccess {
-		t.Errorf("Run(help) = %v, want %v", got, core.ExitCodeSuccess)
+	if got := app.Run([]string{"help"}); got != vein.ExitCodeSuccess {
+		t.Errorf("Run(help) = %v, want %v", got, vein.ExitCodeSuccess)
 	}
-	if got := app.Run([]string{"--help"}); got != core.ExitCodeSuccess {
-		t.Errorf("Run(--help) = %v, want %v", got, core.ExitCodeSuccess)
+	if got := app.Run([]string{"--help"}); got != vein.ExitCodeSuccess {
+		t.Errorf("Run(--help) = %v, want %v", got, vein.ExitCodeSuccess)
 	}
-	if got := app.Run([]string{"-h"}); got != core.ExitCodeSuccess {
-		t.Errorf("Run(-h) = %v, want %v", got, core.ExitCodeSuccess)
+	if got := app.Run([]string{"-h"}); got != vein.ExitCodeSuccess {
+		t.Errorf("Run(-h) = %v, want %v", got, vein.ExitCodeSuccess)
 	}
 }
 
 func TestRunHelpCommand(t *testing.T) {
 	app := testApp()
 	app.stderr = io.Discard
-	if got := app.Run([]string{"help", "ping"}); got != core.ExitCodeSuccess {
-		t.Errorf("Run(help ping) = %v, want %v", got, core.ExitCodeSuccess)
+	if got := app.Run([]string{"help", "ping"}); got != vein.ExitCodeSuccess {
+		t.Errorf("Run(help ping) = %v, want %v", got, vein.ExitCodeSuccess)
 	}
-	if got := app.Run([]string{"help", "unknown"}); got != core.ExitCodeUsage {
-		t.Errorf("Run(help unknown) = %v, want %v", got, core.ExitCodeUsage)
+	if got := app.Run([]string{"help", "unknown"}); got != vein.ExitCodeUsage {
+		t.Errorf("Run(help unknown) = %v, want %v", got, vein.ExitCodeUsage)
 	}
 }
 
@@ -86,8 +86,8 @@ func TestRunCommandHelpAliases(t *testing.T) {
 		{"ping", "-help"},
 	}
 	for _, args := range aliases {
-		if got := app.Run(args); got != core.ExitCodeSuccess {
-			t.Errorf("Run(%v) = %v, want %v", args, got, core.ExitCodeSuccess)
+		if got := app.Run(args); got != vein.ExitCodeSuccess {
+			t.Errorf("Run(%v) = %v, want %v", args, got, vein.ExitCodeSuccess)
 		}
 	}
 }

@@ -11,7 +11,7 @@
 
 ## 1. Summary
 
-The **`.kiw` unified DSL** is Krewire's single-file component format that unifies **HTML, Markdown, scoped CSS, and JS/TS/Go/Rust** with deterministic compilation via `krewire build`. One file, one toolchain: HTML/Markdown describes structure and prose, CSS is scoped by default, `script[lang]` selects the execution tier (`server` in Go, `client` in JS/TS, `compute` in Rust/WASM), and a shared `props` schema generates types for all three languages from one frontmatter declaration. This spec extends `KWF-DF3PL` (file-based `.kiw` modules) while preserving backward compatibility and the `KWF-M8K2Q` one-CLI promise. Markdown and frontmatter are optional conveniences within the same content pipeline — not separate tiers.
+The **`.kiw` unified DSL** is Krewire's single-file component format that unifies **HTML, Markdown, scoped CSS, and JS/TS/Go/Rust** with deterministic compilation via `krewire build`. One file, one toolchain: HTML/Markdown describes structure and prose, CSS is scoped by default, `script[lang]` selects the execution tier (`server` in Go, `client` in Go via WASM `KWF-T4X9P` as primary — no need to write JS, `js/ts` slot remains when needed —, `compute` in Rust/WASM), and a shared `props` schema generates types for all languages from one frontmatter declaration. High-impact effortless design: Go is the primary frontend path, JS/TS is an opt-in escape hatch. This spec extends `KWF-DF3PL` (file-based `.kiw` modules) while preserving backward compatibility and the `KWF-M8K2Q` one-CLI promise. Markdown and frontmatter are optional conveniences within the same content pipeline — not separate tiers.
 
 ## 2. Background & Context
 
@@ -112,10 +112,12 @@ Template, component composition, and Markdown are facets of the same **content t
 
 #### D. Script Tiers (JS/TS · Go · Rust)
 
+High-impact effortless: **Go is primary for client** (WASM `KWF-T4X9P`), `js/ts` is opt-in escape hatch when needed; `rust` compute opt-in.
+
 | ID | Requirement | Priority | RFC 2119 |
 |----|-------------|----------|----------|
-| FRK-DSL-030 | `<script>` without `lang` **MUST** default to `lang="js"` `hydrate="load"`. Explicit `lang="js|ts|go|rust"` **MUST** select the tier. Unknown `lang` **MUST** error with `ExitCodeUsage` and did-you-mean. | Must | MUST |
-| FRK-DSL-031 | `client` tier: `<script lang="js|ts" hydrate="load|idle|visible">` **MUST** bundle with `esbuild` (or `framework` JS glue) to `site/_assets/<name>.<hash>.js`, injected with `type="module"` and mount marker `data-kiw-mount`. Modules instantiate lazily per hydrate value; a failed load/instantiation logs a console warning naming the mount point and never blanks the page or blocks sibling mounts (`KWF-T4X9P FRK-WASM-042/043`). SSR HTML **MUST** remain complete when JS is disabled (graceful degradation). | Must | MUST |
+| FRK-DSL-030 | `<script>` without `lang` **MUST** default to `lang="js"` `hydrate="load"` for backward compat. Explicit `lang="js|ts|go|rust"` **MUST** select the tier. Unknown `lang` **MUST** error with `ExitCodeUsage` and did-you-mean. `lang="go"` with `hydrate` selects **client WASM** tier — the primary frontend path without needing to write JS. | Must | MUST |
+| FRK-DSL-031 | `client` tier: `<script lang="go|js|ts" hydrate="load|idle|visible">` **MUST** bundle: `js|ts` via `esbuild` to `site/_assets/<name>.<hash>.js`; `go` via `GOOS=js GOARCH=wasm` to `site/_assets/<name>.<hash>.wasm` + JS glue reusing shared `runtime.wasm` when possible. All injected with `type="module"` and mount marker `data-kiw-mount`, instantiate lazily per hydrate value; failed load logs console warning naming mount point and never blanks page or blocks siblings (`KWF-T4X9P FRK-WASM-042/043`). SSR HTML **MUST** remain complete when JS/WASM disabled (graceful degradation). JS is not required — Go WASM is sufficient. | Must | MUST |
 | FRK-DSL-032 | `server` tier: `<script lang="go" server>` **MUST** compile as Go code with access to `context.Context`, `Props`, and `framework/*` imports. It **MUST** expose `Load`, `Action`, or `Handler` funcs that the SSR pipeline calls to populate props; errors propagate to build diagnostics. | Must | MUST |
 | FRK-DSL-033 | `compute` tier: `<script lang="rust" compute>` **MUST** compile via `cargo` to `wasm32-unknown-unknown` (`site/_assets/<name>.<hash>.wasm`). Rust **MUST** use `#[kiw::export]` (proc-macro shim) to declare exports callable from Go (`$compute`) and TS (`$compute`). Compilation runs inside `krewire build` — authors never invoke cargo/go manually (G6); the Go client runtime (`KWF-T4X9P`) is likewise emitted once per site as a single shared `runtime.<hash>.wasm`, not per component. Failure without toolchain **MUST** be actionable (install hint). | Must | MUST |
 | FRK-DSL-034 | Cross-tier calls **MUST** be code-generated: Go server funcs callable from TS via typed `fetch` RPC (`/__kiw/actions/<name>`), Rust exports callable from Go via WASM import and from TS via `wasm-bindgen`-like glue (generated `.js` next to `.wasm`). No manual `syscall/js` in author code. | Must | MUST |
@@ -148,6 +150,8 @@ Template, component composition, and Markdown are facets of the same **content t
 
 ### 6.1 Architecture
 
+High-impact effortless: client is Go WASM by default; `js/ts` optional.
+
 ```
 pages/counter.kiw
   ┌─ frontmatter (YAML) ─┐
@@ -155,7 +159,8 @@ pages/counter.kiw
   ├─ <template> (HTML) ──┤──► html/template + VDOM (KWF-T4X9P)
   ├─ <style scoped> ─────┤──► ui.Theme scoping → site/_assets/counter.<hash>.css
   ├─ <script lang=go server> ──► Go package .krewire/gen/kiw/counter/server.go → SSR
-  ├─ <script lang=ts hydrate="load"> ──► esbuild → site/_assets/counter.<hash>.js (mount point)
+  ├─ <script lang=go hydrate="load"> ──► GOOS=js GOARCH=wasm → site/_assets/counter.<hash>.wasm (primary, no JS needed)
+  ├─ <script lang=ts hydrate="load"> ──► esbuild → site/_assets/counter.<hash>.js (opt-in when JS needed)
   └─ <script lang=rust compute> ──► cargo build --target wasm32 → site/_assets/counter.<hash>.wasm
                                           ↕ generated bindings
                                     Go WASM import + TS glue
@@ -256,7 +261,13 @@ func Load(ctx context.Context, p CounterProps) (CounterProps, error) {
 }
 </script>
 
+<script lang="go" hydrate="load">
+  var count = $props.initial
+  func increment() { count += 1 }
+</script>
+
 <script lang="ts" hydrate="load">
+  // opt-in: only when you need JS interop
   let count = $props.initial
   function increment() { count += 1; $compute.heavy(count) }
 </script>

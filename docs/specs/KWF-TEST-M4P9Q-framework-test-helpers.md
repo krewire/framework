@@ -15,7 +15,13 @@ Krewire is spec-driven and workspace-driven. Existing tests are scattered: `fram
 
 The ecosystem needs a minimal `framework/test` package that is stdlib-only (except `libs/core` for spec types), zero-cost when not imported, and that makes `KWL-TEST-P8M4L` compliance trivial: tagging a test with `Spec: KWL-XXX` and asserting with helpers that produce clear failures.
 
-## 2. Goals
+## 2. Problem Statement
+
+- **Current pain:** No generic `framework/test` helpers exist — each package reimplements `Equal`, `Contains`, `Golden`, and `httptest` boilerplate with inconsistent `t.Helper()` and golden handling (`UPDATE_GOLDEN`). `KWL-TEST-P8M4L` traceability is unenforced.
+- **Affected consumers:** `framework` contributors, `framework/web`/`ui`/`mdbind` authors, and reviewers auditing spec-to-test links.
+- **Cost of leaving unsolved:** Test helpers drift per package, `gofmt`/`go vet` diverge, and spec IDs cannot be `grep`-found, so coverage stays invisible and onboarding repeats helpers.
+
+## 3. Goals
 
 - G1 — Single import `github.com/krewire/framework/test` gives all MVP helpers; zero deps beyond stdlib + `libs/core` (optional).
 - G2 — Covers the most common framework test patterns: equality, `NoError`, HTTP handler testing, file/golden snapshots for SSG/UI, temp-dir helpers.
@@ -23,13 +29,13 @@ The ecosystem needs a minimal `framework/test` package that is stdlib-only (exce
 - G4 — Idiomatic: helpers take `*testing.T` and call `t.Helper()`, use `cmp` not reflection magic, work with table-driven tests.
 - G5 — Backward compatible: existing `TestFoo` tests keep passing; adoption is opt-in.
 
-## 3. Non-Goals
+## 4. Non-Goals
 
 - NG1 — Not a testify replacement (no `assert` package with 50 functions); only ~10 helpers for MVP.
 - NG2 — Not a new test runner; still `go test ./...` via `kiw test`.
 - NG3 — Not covering `framework/runtime` (WASM), `framework/service`/`worker`/`infra` in MVP (future).
 
-## 4. Requirements
+## 5. Requirements
 
 ### 4.1 Package & Scope
 
@@ -83,7 +89,7 @@ The ecosystem needs a minimal `framework/test` package that is stdlib-only (exce
 - NFR2 — Zero-cost when not imported.
 - NFR3 — Docs in English, Markdown, spec-driven.
 
-## 6. Success Criteria
+## 7. Success Criteria
 
 - S1 — `go test ./framework/test -count=1` passes; `gofmt -l .` empty.
 - S2 — One migrated test uses `ftest.Equal`/`ftest.Contains` and `ftest.Spec`.

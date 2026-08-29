@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-// Spec: KWF-T4X9P FRK-WASM-040 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-040 Scope: Unit
 func TestFRK_WASM_040_MountTemplateFuncEmitsMarkers(t *testing.T) {
 	site, err := LoadFromDir("testdata/mount")
 	if err != nil {
@@ -48,7 +48,7 @@ func TestFRK_WASM_040_MountTemplateFuncEmitsMarkers(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-040 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-040 Scope: Unit
 func TestFRK_WASM_040_MountRejectsUnknownHydrateValue(t *testing.T) {
 	site, err := LoadFromDir("testdata/mount")
 	if err != nil {

@@ -8,12 +8,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/krewire/libs/auth"
 	ftest "github.com/krewire/framework/test"
 )
 
 var testSecret = []byte("kiw-test-secret")
 
-// Spec: KWF-WEB-B2X7D FRK-AUTH-010 Scope: Package
+// Spec: KWF-WEB-B2X7D FRK-AUTH-010 Scope: Unit
 func TestFRK_AUTH_010_BasicAuth(t *testing.T) {
 	verify := func(id, pass string) (*Identity, error) {
 		if id == "alice" && pass == "wonder" {
@@ -75,7 +76,7 @@ func sign(sub string, ttl time.Duration, extra Claims) string {
 	return tok
 }
 
-// Spec: KWF-WEB-B2X7D FRK-AUTH-020+021 Scope: Package
+// Spec: KWF-WEB-B2X7D FRK-AUTH-020+021 Scope: Unit
 func TestFRK_AUTH_020_JWT_SignParseAndMiddleware(t *testing.T) {
 	// round trip
 	claims, err := ParseJWT(testSecret, sign("bob", time.Minute, Claims{"roles": []string{"admin"}}))
@@ -127,7 +128,7 @@ func TestFRK_AUTH_020_JWT_SignParseAndMiddleware(t *testing.T) {
 	ftest.EqualStatus(t, doAuth(strings.Join(parts, ".")), http.StatusUnauthorized)
 
 	// alg none swap -> 401
-	noneHeader, _ := b64JSON(map[string]any{"alg": "none", "typ": "JWT"})
+	noneHeader, _ := auth.B64JSON(map[string]any{"alg": "none", "typ": "JWT"})
 	payload := parts[1]
 	forged := noneHeader + "." + payload + "."
 	ftest.EqualStatus(t, doAuth(forged), http.StatusUnauthorized)
@@ -137,7 +138,7 @@ func TestFRK_AUTH_020_JWT_SignParseAndMiddleware(t *testing.T) {
 	ftest.EqualStatus(t, doAuth(otherTok), http.StatusUnauthorized)
 }
 
-// Spec: KWF-WEB-B2X7D FRK-AUTH-030+031 Scope: Package
+// Spec: KWF-WEB-B2X7D FRK-AUTH-030+031 Scope: Unit
 func TestFRK_AUTH_030_PolicyGates_Before(t *testing.T) {
 	jwtMW := JWTAuth(testSecret, func(o *JWTOptions) { o.ContinueOnMissing = true })
 	adminGate := Require(Authenticated(), WithRoles("admin"))
@@ -186,7 +187,7 @@ func TestFRK_AUTH_030_PolicyGates_Before(t *testing.T) {
 	}
 }
 
-// Spec: KWF-WEB-B2X7D FRK-AUTH-032 Scope: Package
+// Spec: KWF-WEB-B2X7D FRK-AUTH-032 Scope: Unit
 func TestFRK_AUTH_032_AfterRequest_Observer(t *testing.T) {
 	var seenStatus int
 	var seenPath string
@@ -204,7 +205,7 @@ func TestFRK_AUTH_032_AfterRequest_Observer(t *testing.T) {
 	}
 }
 
-// Spec: KWF-WEB-B2X7D FRK-AUTH-033 Scope: Package
+// Spec: KWF-WEB-B2X7D FRK-AUTH-033 Scope: Unit
 func TestFRK_AUTH_033_PolicySet_Registry(t *testing.T) {
 	gates := PolicySet{
 		"reader": WithRoles("reader"),

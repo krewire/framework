@@ -19,20 +19,26 @@ Krewire apps and sites need three storage-shaped concerns today, handled ad hoc:
 
 This specification introduces two flat packages following the ecosystem's "one package = one concern" rule.
 
-## 2. Goals
+## 2. Problem Statement
+
+- **Current pain:** Assets and storage are handled ad-hoc per workload — `site` copies `public/`, `app` embeds `assets/`, no unified `framework/assets` or `framework/storage` contract for gzip, fingerprinting, or S3/gcs. No typed `Assets` API and no storage abstraction.
+- **Affected consumers:** `framework` authors, `site`/`book` pipeline maintainers, and `app` teams serving static files.
+- **Cost of leaving unsolved:** Duplicate asset pipelines per kind, no cache-busting, and storage backends diverge, so `krewire build` cannot guarantee reproducible output.
+
+## 3. Goals
 
 - G1 — `framework/assets`: one `Store` that unifies asset sources (directory, `embed.FS`) into a single namespace, serves them over HTTP with correct content types, `ETag`, and `Cache-Control`, supports content-hash fingerprinting with a template-facing manifest.
 - G2 — `framework/storage`: a small context-aware KV contract with memory and filesystem backends, zero-cost when unused, idiomatic `(value, ok, error)` reads.
 - G3 — Both integrate with the existing DI container (`app.Provider`) and HTTP layer without new dependencies beyond stdlib (+`gopkg.in/yaml.v3` already in use).
 - G4 — Resources are just read-only sources: an `embed.FS` mounted in `assets.Store` is the resource mechanism; structured helpers (`assets.JSON`/`assets.YAML`) decode embedded documents.
 
-## 3. Non-Goals
+## 4. Non-Goals
 
 - NG1 — No CDN upload/sync, no image processing, no S3 backend (future).
 - NG2 — No database-backed storage; KV covers MVP app state. Sessions/uploads build on it later.
 - NG3 — No changes to `web/ssg` output pipeline (its `public/` remains authoritative for static export).
 
-## 4. Requirements
+## 5. Requirements
 
 ### assets
 
@@ -58,7 +64,7 @@ This specification introduces two flat packages following the ecosystem's "one p
 - NFR1 — stdlib-only (plus existing yaml dep); `gofmt -l .`, `go vet ./...`, `go test ./...` green.
 - NFR2 — Deterministic: `List` sorted; `Manifest` stable ordering when marshaled via sorted keys.
 
-## 6. Success Criteria
+## 7. Success Criteria
 
 - S1 — A store mounting `testdata/...` serves CSS with `text/css`, matching ETag → `304`, mismatched → `200`.
 - S2 — Fingerprinted request hits `HandlerImmutable` with `immutable` cache header; manifest maps original name.

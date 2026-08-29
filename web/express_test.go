@@ -20,7 +20,7 @@ func mw(tag string, marks *[]string) Middleware {
 	}
 }
 
-// Spec: KWF-WEB-P3V8X FRK-WEX-002 Scope: Package
+// Spec: KWF-WEB-P3V8X FRK-WEX-002 Scope: Unit
 func TestFRK_WEX_002_GroupScopedMiddleware(t *testing.T) {
 	var marks []string
 	r := NewRouter()
@@ -50,7 +50,7 @@ func TestFRK_WEX_002_GroupScopedMiddleware(t *testing.T) {
 	}
 }
 
-// Spec: KWF-WEB-P3V8X FRK-WEX-001+003 Scope: Package
+// Spec: KWF-WEB-P3V8X FRK-WEX-001+003 Scope: Unit
 func TestFRK_WEX_001_RouteBuilder_NameAndURL(t *testing.T) {
 	r := NewRouter()
 	called := ""
@@ -86,7 +86,7 @@ func TestFRK_WEX_001_RouteBuilder_NameAndURL(t *testing.T) {
 	}
 }
 
-// Spec: KWF-WEB-P3V8X FRK-WEX-004 Scope: Package
+// Spec: KWF-WEB-P3V8X FRK-WEX-004 Scope: Unit
 func TestFRK_WEX_004_ControllerRegistration(t *testing.T) {
 	r := NewRouter()
 	r.Register(&pingController{})
@@ -111,7 +111,7 @@ type listQuery struct {
 	OK   bool     `query:"ok"`
 }
 
-// Spec: KWF-WEB-P3V8X FRK-WEX-021 Scope: Package
+// Spec: KWF-WEB-P3V8X FRK-WEX-021 Scope: Unit
 func TestFRK_WEX_021_HQ_QueryBinding(t *testing.T) {
 	r := NewRouter()
 	r.GET("/list").Handle(HQ(func(req *Request, q *listQuery) (any, error) {
@@ -140,7 +140,7 @@ type createIn struct {
 	Name string `json:"name" validate:"required"`
 }
 
-// Spec: KWF-WEB-P3V8X FRK-WEX-010+020 Scope: Package
+// Spec: KWF-WEB-P3V8X FRK-WEX-010+020 Scope: Unit
 func TestFRK_WEX_020_H_BodyBindingAndResponseBuilder(t *testing.T) {
 	r := NewRouter()
 	r.POST("/items").Handle(H(func(req *Request, in *createIn) (any, error) {
@@ -183,7 +183,7 @@ func TestFRK_WEX_020_H_BodyBindingAndResponseBuilder(t *testing.T) {
 	ftest.EqualStatus(t, rec3, http.StatusNoContent)
 }
 
-// Spec: KWF-WEB-P3V8X FRK-WEX-011 Scope: Package
+// Spec: KWF-WEB-P3V8X FRK-WEX-011 Scope: Unit
 func TestFRK_WEX_011_ResponseBuilderVariants(t *testing.T) {
 	// Redirect
 	rs := Respond().Redirect("/login", http.StatusSeeOther)

@@ -39,7 +39,7 @@ func AfterRequest(fn func(r *http.Request, status int)) Middleware {
 func Authenticated() Policy {
 	return func(r *Request) error {
 		if IdentityFrom(r.Context()) == nil {
-			return Unauthorized("authentication required")
+			return &HTTPError{Status: 401, Code: "unauthorized", Message: "authentication required"}
 		}
 		return nil
 	}
@@ -51,14 +51,14 @@ func WithRoles(roles ...string) Policy {
 	return func(r *Request) error {
 		id := IdentityFrom(r.Context())
 		if id == nil {
-			return Unauthorized("authentication required")
+			return &HTTPError{Status: 401, Code: "unauthorized", Message: "authentication required"}
 		}
 		for _, want := range roles {
 			if id.HasRole(want) {
 				return nil
 			}
 		}
-		return Forbidden("insufficient role")
+		return &HTTPError{Status: 403, Code: "forbidden", Message: "insufficient role"}
 	}
 }
 

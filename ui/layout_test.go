@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"strings"
 	"testing"
+
+	ftest "github.com/krewire/framework/test"
 )
 
 func TestLayoutRenderCompleteDocument(t *testing.T) {
@@ -123,4 +125,82 @@ func TestLayoutRendersStylesheets(t *testing.T) {
 	if !strings.Contains(out, `<link rel="stylesheet" href="/assets/style.css">`) {
 		t.Error("second stylesheet must emit too")
 	}
+}
+
+// --- UI Testing Framework (KWF-TEST-U9K3M) — Layout with HTMLAssert ---
+
+// Spec: KWF-TEST-U9K3M KWF-TST-U9K-010 Scope: Unit
+func TestKWF_TST_U9K_010_Layout_HTMLAssert(t *testing.T) {
+	ftest.Spec(t, "KWF-TEST-U9K3M", "KWF-TST-U9K-010")
+	l := Layout{
+		Title:  "Krewire",
+		Header: template.HTML(`<header data-ui-component="header"><span>brand</span></header>`),
+		Main:   template.HTML(`<p>content</p><nav><a href="/a">a</a><a href="/b">b</a></nav>`),
+		Aside:  template.HTML(`<nav>side</nav>`),
+		Footer: template.HTML(`<footer data-ui-component="footer"><span>footer</span></footer>`),
+	}
+	html := string(l.Render())
+	ftest.HTML(t, html).
+		Has("html", 1).
+		Has("head", 1).
+		Has("title", 1).
+		HasText("title", "Krewire").
+		Has("body", 1).
+		Has("header", 1).
+		Has("main", 1).
+		Has("aside", 1).
+		Has("footer", 1).
+		Has("nav a", 2).
+		Attr("html", "lang", "en")
+}
+
+// Spec: KWF-TEST-U9K3M KWF-TST-U9K-011 Scope: Unit
+func TestKWF_TST_U9K_011_Layout_Snapshot(t *testing.T) {
+	ftest.Spec(t, "KWF-TEST-U9K3M", "KWF-TST-U9K-011")
+	l := Layout{
+		Title: "Snapshot",
+		Main:  template.HTML("<p>hello</p>"),
+	}
+	ftest.Snapshot(t, "ui_layout_snapshot", string(l.Render()))
+}
+
+// Spec: KWF-TEST-U9K3M KWF-TST-U9K-011 Scope: Unit
+func TestKWF_TST_U9K_011_Layout_OmittedRegions_HTMLAssert(t *testing.T) {
+	ftest.Spec(t, "KWF-TEST-U9K3M", "KWF-TST-U9K-011")
+	l := Layout{Main: template.HTML("<p>content</p>")}
+	html := string(l.Render())
+	a := ftest.HTML(t, html)
+	if a.Count("header") != 0 {
+		t.Errorf("header should be omitted, got %d", a.Count("header"))
+	}
+	if a.Count("footer") != 0 {
+		t.Errorf("footer should be omitted")
+	}
+	if a.Count("aside") != 0 {
+		t.Errorf("aside should be omitted")
+	}
+	a.Has("main", 1).Has("p", 1).HasText("p", "content")
+}
+
+// Spec: KWF-TEST-U9K3M KWF-TST-U9K-012 Scope: Unit
+func TestKWF_TST_U9K_012_Layout_ThemeIntegration(t *testing.T) {
+	ftest.Spec(t, "KWF-TEST-U9K3M", "KWF-TST-U9K-012")
+	th := &Theme{Default: "dark", Light: Palette{Primary: "#111111"}}
+	l := Layout{Title: "T", Main: template.HTML("<p>x</p>"), Theme: th}
+	html := string(l.Render())
+	ftest.HTML(t, html).Has("html", 1).Attr("html", "data-theme", "auto")
+	ftest.ThemeSnapshot(t, "ui_layout_theme", html)
+}
+
+// Spec: KWF-TEST-U9K3M KWF-TST-U9K-013 Scope: Unit
+func TestKWF_TST_U9K_013_Layout_GoldenHTML(t *testing.T) {
+	ftest.Spec(t, "KWF-TEST-U9K3M", "KWF-TST-U9K-013")
+	l := Layout{
+		Title:       "Golden",
+		Description: "desc",
+		Stylesheets: []string{"/assets/app.abc123.css", "/assets/ui.css"},
+		Main:        template.HTML("<p>golden</p>"),
+	}
+	html := string(l.Render())
+	ftest.GoldenHTML(t, "ui_layout_golden", html)
 }

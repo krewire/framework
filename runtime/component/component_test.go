@@ -16,7 +16,7 @@ type fn struct{ body func() *vdom.VNode }
 
 func (c *fn) Render() *vdom.VNode { return c.body() }
 
-// Spec: KWF-T4X9P FRK-WASM-030 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-030 Scope: Unit
 func TestFRK_WASM_030_Fiber_LifecycleHooksAndShouldUpdateGate(t *testing.T) {
 	var events []string
 
@@ -54,7 +54,7 @@ func TestFRK_WASM_030_Fiber_LifecycleHooksAndShouldUpdateGate(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-031 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-031 Scope: Unit
 func TestFRK_WASM_031_UseState_PersistsAndSchedulesRender(t *testing.T) {
 	r := &fakeRenderer{}
 	var set func(int)
@@ -83,7 +83,7 @@ func TestFRK_WASM_031_UseState_PersistsAndSchedulesRender(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM_031 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM_031 Scope: Unit
 func TestFRK_WASM_031_UseMemoAndUseRef_StableAcrossRenders(t *testing.T) {
 	computes := 0
 	var ref *Ref[string]
@@ -111,7 +111,7 @@ func TestFRK_WASM_031_UseMemoAndUseRef_StableAcrossRenders(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM_031 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM_031 Scope: Unit
 func TestFRK_WASM_031_UseEffect_CommitRunsCleanupAndDepSemantics(t *testing.T) {
 	// Use a ref for the effect's state to avoid mutating the dependency
 	var runLog Ref[[]string]
@@ -177,7 +177,7 @@ func TestFRK_WASM_031_UseEffect_CommitRunsCleanupAndDepSemantics(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-033 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-033 Scope: Unit
 func TestFRK_WASM_033_HookRules_ConditionalCallPanics(t *testing.T) {
 	switcher := false
 	comp := &fn{body: func() *vdom.VNode {
@@ -206,7 +206,7 @@ func TestFRK_WASM_033_HookRules_ConditionalCallPanics(t *testing.T) {
 	t.Fatal("expected panic on conditional hook call")
 }
 
-// Spec: KWF-T4X9P FRK-WASM-033 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-033 Scope: Unit
 func TestFRK_WASM_033_HookRules_FewerHooksAndOutsideScopePanics(t *testing.T) {
 	dropHook := false
 	comp := &fn{body: func() *vdom.VNode {
@@ -238,7 +238,7 @@ func TestFRK_WASM_033_HookRules_FewerHooksAndOutsideScopePanics(t *testing.T) {
 	}()
 }
 
-// Spec: KWF-T4X9P FRK-WASM-032 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-032 Scope: Unit
 func TestFRK_WASM_032_Register_LookupDuplicatesUnknownAndNames(t *testing.T) {
 	factory := func(p Props) Component {
 		label := p["label"]

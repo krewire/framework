@@ -3,7 +3,7 @@ package schedule
 
 import "testing"
 
-// Spec: KWF-T4X9P FRK-WASM-012 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-012 Scope: Unit
 func TestFRK_WASM_012_AddBatchesPerFrameAndDedupes(t *testing.T) {
 	var fired []string
 	var frames int
@@ -42,7 +42,7 @@ func TestFRK_WASM_012_AddBatchesPerFrameAndDedupes(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-012 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-012 Scope: Unit
 func TestFRK_WASM_012_FlushDrainsWithoutFrame(t *testing.T) {
 	var fired []int
 	sch := New[int](func(item int) { fired = append(fired, item) })
@@ -66,7 +66,7 @@ func TestFRK_WASM_012_FlushDrainsWithoutFrame(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-012 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-012 Scope: Unit
 func TestFRK_WASM_012_ReentrantAddDuringFlushIsQueued(t *testing.T) {
 	var fired []string
 	var sch *Scheduler[string]

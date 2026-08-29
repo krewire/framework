@@ -6,6 +6,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 
 | SpecID    | Title                                      | Status | Impl Status | Depends On |
 | --------- | ------------------------------------------ | ------ | ----------- | ---------- |
+| [KWF-ARCH-P7L2Q](./KWF-ARCH-P7L2Q-progressive-pipeline.md) | Progressive Pipeline — Static → Monolith → Services → Mesh | Draft | — | KWF-M8K2Q, KWF-5ZHQV, KWF-T4X9P, KWF-B7N3D, KWF-L5H2F |
 | [KWF-M8K2Q](./KWF-ARCH-M8K2Q-unified-framework-vision.md) | Unified Framework Vision — One Framework for Every Web Service Workload | Draft | — | KWF-CMBZJ |
 | [KWF-CMBZJ](./KWF-META-CMBZJ-krewire-meta-framework.md) | Krewire Meta-Framework — Initial Specification | Draft | Shipped | — |
 | [KWF-M07QS](./KWF-WEB-M07QS-krewire-web-framework.md) | Krewire Web Framework | Draft | Shipped | KWF-CMBZJ |
@@ -37,6 +38,10 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-KAKQL](./KWF-CLI-KAKQL-cli-errors-diagnostics.md) | CLI Errors & Diagnostics | Draft | Shipped | KWF-5XJFC |
 | [KWF-FGNZ9](./KWF-CLI-FGNZ9-cli-configuration.md) | CLI Configuration | Draft | Planned | KWF-5XJFC |
 | [KWF-TEST-M4P9Q](./KWF-TEST-M4P9Q-framework-test-helpers.md) | Framework Test Helpers — MVP (`framework/test`) | Draft | Shipped | KWL-TEST-P8M4L |
+| [KWF-TEST-P4R3N](./KWF-TEST-P4R3N-krewire-testing-framework.md) | Krewire Testing Framework (`framework/test`) | Draft | Shipped | KWF-TEST-M4P9Q, KWL-TEST-P8M4L |
+| [KWF-TEST-H7P4L](./KWF-TEST-H7P4L-http-testing-framework.md) | Krewire HTTP Testing Framework (`framework/test`) | Draft | Shipped | KWF-TEST-P4R3N |
+| [KWF-TEST-U9K3M](./KWF-TEST-U9K3M-ui-testing-framework.md) | Krewire UI Testing Framework (`framework/test`) | Draft | Shipped | KWF-TEST-P4R3N |
+| [KWF-TEST-N8R2Q](./KWF-TEST-N8R2Q-browser-testing-framework.md) | Krewire Browser Testing Framework (`framework/test/browser`) | Draft | Shipped | KWF-TEST-P4R3N |
 | [KWF-AST-K7Q2M](./KWF-AST-K7Q2M-assets-storage-system.md) | Static Assets, Resources & App Storage (`framework/assets`, `framework/storage`) | Draft | Shipped | KWF-M07QS, KWF-C4087 |
 | [KWF-WEB-P3V8X](./KWF-WEB-P3V8X-expressive-http.md) | Expressive HTTP: Routes, Controllers, Request/Response, Middleware | Draft | Shipped | KWF-M07QS |
 | [KWF-WEB-R9T4C](./KWF-WEB-R9T4C-http-security-state.md) | HTTP Security & State: Headers, CSRF, XSS, Cache, Session, Cookie | Draft | Shipped | KWF-WEB-P3V8X, KWF-AST-K7Q2M |

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Spec: KWF-T4X9P FRK-WASM-041 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-041 Scope: Unit
 func TestFRK_WASM_041_FlattenProps_ScalarsAndNull(t *testing.T) {
 	got, err := FlattenProps([]byte(`{"label":"Count","initial":0,"ratio":1.5,"on":true,"empty":null}`))
 	if err != nil {
@@ -33,7 +33,7 @@ func TestFRK_WASM_041_FlattenProps_ScalarsAndNull(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-041 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-041 Scope: Unit
 func TestFRK_WASM_041_FlattenProps_NestedEncodedAsString(t *testing.T) {
 	got, err := FlattenProps([]byte(`{"deep":{"k":[1,2]}}`))
 	if err != nil {

@@ -21,20 +21,26 @@ Constraints honored: stdlib-only crypto (`crypto/hmac`, `crypto/sha256`,
 `crypto/subtle`, `encoding/base64`) — no external JWT dependency; identities and
 policies compose as plain middlewares with `Use`/`Group`/route `.Use`.
 
-## 2. Goals
+## 2. Problem Statement
+
+- **Current pain:** No uniform auth/policy gates — `framework/web` has no `RequireAuth`, `RequireRole`, or `Policy` helpers. Each app reimplements JWT parsing, role checks, and 401/403 handling with inconsistent `Code` and `Message`.
+- **Affected consumers:** `app`/`service` authors, security reviewers, and `framework/web` maintainers auditing `401`/`403` envelopes.
+- **Cost of leaving unsolved:** Authz bugs slip past `strings.Contains` checks, `Code` diverges per service, and `framework/web` cannot offer a `Use(AuthMiddleware)` battery.
+
+## 3. Goals
 
 - G1 — `BasicAuth`: RFC-7617 parsing, pluggable verifier, proper `WWW-Authenticate` challenge, `Identity` in context.
 - G2 — Minimal correct JWT: HS256 sign/verify with `exp` enforcement, alg pinning (rejects `none`/other algs), Bearer extraction, claims surfaced on the identity.
 - G3 — Policy gates: composable `Policy` funcs run before the handler via `Require(...)`; post-handler observers via `AfterRequest`; built-ins `Authenticated()` and `WithRoles(...)`.
 - G4 — Named policy registry so route groups declare intent: `web.PolicySet{"admin": ...}.Require("admin")`.
 
-## 3. Non-Goals
+## 4. Non-Goals
 
 - NG1 — No RS256/ES256/JWKS (HMAC shared-secret MVP); no refresh-token machinery.
 - NG2 — No login endpoints/user store — verifiers are injected by the app.
 - NG3 — No RBAC graph; roles are plain strings on the identity.
 
-## 4. Requirements
+## 5. Requirements
 
 ### Identity
 
@@ -70,7 +76,7 @@ policies compose as plain middlewares with `Use`/`Group`/route `.Use`.
 - NFR2 — Middlewares compose unchanged with `Use`/`Group(prefix, mws...)`/`RouteBuilder.Use`.
 - NFR3 — Table-tested: credential matrix, JWT tamper/expiry/alg-swap matrix, gate order.
 
-## 6. Success Criteria
+## 7. Success Criteria
 
 - S1 — Basic flow: valid creds ⇒ handler sees identity; bad password ⇒ 401 + challenge header; garbage header ⇒ 401 (verifier untouched).
 - S2 — JWT flow: round-trip claims incl. roles; tampered payload/signature ⇒ 401; `exp` past ⇒ 401; header claiming `alg:none` ⇒ 401.

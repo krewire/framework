@@ -22,6 +22,8 @@ type Tailwind struct{}
 
 func (t *Tailwind) Name() string { return "tailwind" }
 
+func (t *Tailwind) Aliases() []string { return []string{"twcss", "tailwindcss"} }
+
 func (t *Tailwind) Detect(root string) bool {
 	for _, name := range []string{"tailwind.config.js", "tailwind.config.cjs", "tailwind.config.ts"} {
 		if _, err := os.Stat(filepath.Join(root, name)); err == nil {
@@ -66,6 +68,142 @@ func (t *Tailwind) Build(root, outDir string) error {
 	}
 	if lastErr != nil {
 		slog.Warn("tailwind: CLI not available, skipping", "err", lastErr, "hint", "npm install -D tailwindcss")
+	}
+	return nil
+}
+
+const tailwindConfigTemplate = `/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["pages/**/*.kiw","components/**/*.kiw","layouts/**/*.kiw","content/**/*.md"],
+  theme: {
+    extend: {
+      colors: {
+        primary: "var(--color-primary)",
+      },
+    },
+  },
+  plugins: [],
+}
+`
+
+const tailwindInputTemplate = `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+`
+
+// Add installs tailwind at version ("" or "latest" means latest) — part of scalable plugin system.
+func (t *Tailwind) Add(root, version string) error {
+	if version == "" || version == "latest" {
+		version = "latest"
+	}
+	pkg := "tailwindcss@" + version
+	if version == "latest" {
+		pkg = "tailwindcss@latest"
+	}
+	slog.Info("tailwind: installing", "package", pkg, "root", root)
+	if err := ensureTailwindConfig(root); err != nil {
+		return err
+	}
+	if err := ensureTailwindInput(root); err != nil {
+		return err
+	}
+	if err := npmInstall(root, pkg, true); err != nil {
+		slog.Warn("tailwind: npm install failed, config files still created", "err", err, "hint", "run npm install -D "+pkg+" manually")
+		return err
+	}
+	slog.Info("tailwind: installed", "package", pkg)
+	return nil
+}
+
+// Remove uninstalls tailwind.
+func (t *Tailwind) Remove(root string) error {
+	slog.Info("tailwind: removing", "root", root)
+	removed := 0
+	for _, name := range []string{"tailwind.config.js", "tailwind.config.cjs", "tailwind.config.ts"} {
+		p := filepath.Join(root, name)
+		if _, err := os.Stat(p); err == nil {
+			if err := os.Remove(p); err != nil {
+				return fmt.Errorf("tailwind: remove %s: %w", name, err)
+			}
+			removed++
+			slog.Info("tailwind: removed", "file", name)
+		}
+	}
+	// do not delete assets/tailwind.css if user customized — only if it matches template
+	input := filepath.Join(root, "assets", "tailwind.css")
+	if data, err := os.ReadFile(input); err == nil {
+		if string(data) == tailwindInputTemplate {
+			_ = os.Remove(input)
+			slog.Info("tailwind: removed", "file", "assets/tailwind.css")
+		} else {
+			slog.Info("tailwind: kept customized assets/tailwind.css")
+		}
+	}
+	if err := npmUninstall(root, "tailwindcss"); err != nil {
+		slog.Warn("tailwind: npm uninstall failed", "err", err)
+		return err
+	}
+	if removed == 0 {
+		slog.Info("tailwind: already not installed")
+	}
+	return nil
+}
+
+func ensureTailwindConfig(root string) error {
+	for _, name := range []string{"tailwind.config.js", "tailwind.config.cjs", "tailwind.config.ts"} {
+		if _, err := os.Stat(filepath.Join(root, name)); err == nil {
+			return nil
+		}
+	}
+	path := filepath.Join(root, "tailwind.config.js")
+	if err := os.WriteFile(path, []byte(tailwindConfigTemplate), 0o644); err != nil {
+		return fmt.Errorf("tailwind: write config: %w", err)
+	}
+	slog.Info("tailwind: created", "file", "tailwind.config.js")
+	return nil
+}
+
+func ensureTailwindInput(root string) error {
+	path := filepath.Join(root, "assets", "tailwind.css")
+	if _, err := os.Stat(path); err == nil {
+		return nil
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return fmt.Errorf("tailwind: mkdir assets: %w", err)
+	}
+	if err := os.WriteFile(path, []byte(tailwindInputTemplate), 0o644); err != nil {
+		return fmt.Errorf("tailwind: write input: %w", err)
+	}
+	slog.Info("tailwind: created", "file", "assets/tailwind.css")
+	return nil
+}
+
+func npmInstall(root, pkg string, dev bool) error {
+	args := []string{"install", pkg}
+	if dev {
+		args = []string{"install", "-D", pkg}
+	}
+	if _, err := exec.LookPath("npm"); err != nil {
+		return fmt.Errorf("npm not found in PATH")
+	}
+	cmd := exec.Command("npm", args...)
+	cmd.Dir = root
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("npm install %s: %v: %s", pkg, err, string(out))
+	}
+	return nil
+}
+
+func npmUninstall(root, pkg string) error {
+	if _, err := exec.LookPath("npm"); err != nil {
+		return fmt.Errorf("npm not found in PATH")
+	}
+	cmd := exec.Command("npm", "uninstall", pkg)
+	cmd.Dir = root
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("npm uninstall %s: %v: %s", pkg, err, string(out))
 	}
 	return nil
 }

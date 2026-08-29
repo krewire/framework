@@ -8,7 +8,7 @@ Aligned to the unified vision `KWF-M8K2Q` (specs `KWF-T4X9P`/`B7N3D`/`L5H2F`): f
 framework/
 ├── tui/                  # CLI app model — flag/slog/term, `tui.App` harness
 ├── web/                  # HTTP layer: expressive routes/groups/controllers, request/response, generic handlers; security headers, CSRF/XSS, cache, sessions/cookies; Basic/JWT auth + policy gates; middleware, html/template
-│   └── ssg/              # File-based SSG: .kiw DSL (pages/components/layouts) → site/
+│   └── ssg/              # File-based SSG: .kiw DSL (pages/components/layouts) → .krewire/build
 ├── dsl/                  # Kiw DSL (.kiw) — YAML frontmatter + html/template + style/script, Go & JS/TS native
 ├── test/                 # Test helpers — generic, no spec required
 ├── ui/                   # Theme, palette, scoped CSS (data-kiw-component/layout)
@@ -45,7 +45,8 @@ framework/
 
 **Design decisions:**
 
-- **Modular at every Scope (SRP/SoC/High Cohesion).** Industry standard: **Single Responsibility Principle** (SOLID), **Separation of Concerns** (Parnas/Dijkstra), **High Cohesion/Low Coupling** (Constantine), **Unix "Do one thing well"**. Never stack many unrelated funcs in one module; one `Package`/`Func` = one reason to change. Maps to `KWL-ARCH-J2K9Q` `Module→Package→Service→Func` and `KWF-5ZHQV` modular monolith.
+- **Progressive pipeline (`KWF-ARCH-P7L2Q`).** `P0 site/book → P1 islands (runtime) → P2 app → P3 modular monolith → P4 headless (optional) → P5 services+workers+infra (parallel) → P6 mesh` (ceiling). Each stage opt-in, zero-cost when unused, reversible by provider swap.
+- **Modular at every Scope (SRP/SoC/High Cohesion).** Industry standard: **Single Responsibility Principle** (SOLID), **Separation of Concerns** (Parnas/Dijkstra), **High Cohesion/Low Coupling** (Constantine), **Unix "Do one thing well"**. Never stack many unrelated funcs in one module; one `Unit` = one reason to change. Maps to `KWL-ARCH-J2K9Q` `Workspace→Module→Domain→Service→Unit` and `KWF-5ZHQV` modular monolith.
 - **Import path = workload slice.** `import "github.com/krewire/framework/runtime"` only when frontend interactivity is needed; `app` alone imports `tui`/`web`/`ui`/`app`.
 - **Stdlib-first.** `net/http`, `html/template`, `flag`, `log/slog` before third-party; OTel and NATS are the only planned external deps.
 - **SSR/hydration parity.** `web/ssg` emits `data-kiw-island` markers; `runtime` hydrates without re-rendering text nodes.
@@ -61,6 +62,6 @@ framework → libs (core, kern, term, config, validate)
 
 ## Conventions
 
-- Documentation in English, Markdown, spec-driven (`docs/specs/`); requirements and tests carry `Scope: Workspace/Module/Domain/Package/Service/Func` (`KWL-ARCH-J2K9Q` → `KWL-TEST-P8M4L`).
+- Documentation in English, Markdown, spec-driven (`docs/specs/`); requirements and tests carry `Scope: Workspace/Module/Domain/Service/Unit` (`KWL-ARCH-J2K9Q` → `KWL-TEST-P8M4L`).
 - Quality gates: `gofmt -l .`, `go vet ./...`, `go test ./...` in each Go repo; per-kind `kiw build` / `kiw build --plan` spot-checks.
 - Cross-repo testing via `go.work` workspace (`./framework`, `./libs`, etc.) at hub root; `go work sync` updates `go.work.sum`.

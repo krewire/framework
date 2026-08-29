@@ -22,7 +22,13 @@ This spec adds five cohesive middlewares/helpers to `framework/web`, composing
 with the expressive layer (`Group`, `Use`, `H`) and reusing `storage.KV` as a
 session backend.
 
-## 2. Goals
+## 2. Problem Statement
+
+- **Current pain:** No cohesive security/state middlewares — `SecurityHeaders`, `CORS`, `CSRF`, `Session`, `Cookie`/`JWT`, `Cache` are missing or scattered. Each `app` hard-codes `X-Frame-Options`/`SameSite` with different defaults and no `Secure`/`HttpOnly` audit.
+- **Affected consumers:** `framework/web` authors, `app` teams serving SSR+API on cheap infra, and security reviewers.
+- **Cost of leaving unsolved:** Security headers and cookie attributes diverge per service, `Session` is not `net/http`-typed, and `framework/web` cannot claim `secure by default`.
+
+## 3. Goals
 
 - G1 — One-line security headers with sane defaults and explicit configuration.
 - G2 — CSRF double-submit tokens bound to the session when present, verified in constant time on unsafe methods, exposed to handlers/templates.
@@ -30,13 +36,13 @@ session backend.
 - G4 — Server-side sessions: pluggable store (memory + any `storage.KV`), lazy TTL, fixation-safe regeneration, sliding expiration, HttpOnly cookie.
 - G5 — Fluent cookie builder and `Request.CookieVal`.
 
-## 3. Non-Goals
+## 4. Non-Goals
 
 - NG1 — No HTML sanitizer (template escaping + CSP remain the XSS strategy; a sanitizer would need fuzz-hardened maintenance).
 - NG2 — No encrypted/signed cookies (future); session payloads stay server-side.
 - NG3 — No distributed session locking.
 
-## 4. Requirements
+## 5. Requirements
 
 ### Security headers & XSS
 
@@ -78,7 +84,7 @@ session backend.
 - NFR1 — stdlib + `golang.org/x/crypto` avoided: tokens via `crypto/rand`; compare via `crypto/subtle`.
 - NFR2 — Middlewares compose with `Use`/`Group`/`H` unchanged; all behavior table-tested including full `SecurityHeaders→Sessions→CSRF` stack.
 
-## 6. Success Criteria
+## 7. Success Criteria
 
 - S1 — Stack test: POST without token ⇒ 403; with issued token in header ⇒ 200; session-bound token survives Rotate invalidating the old one; expired session behaves as new.
 - S2 — KV-backed session equals memory-backed behavior in the shared contract test.

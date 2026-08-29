@@ -15,18 +15,36 @@
  * For JS, treat body as string template and replace {{.X}} / {{X}} / {X}.
  */
 
+export interface StyleBlock { lang: string; scoped: boolean; content: string }
+export interface ScriptBlock { lang: string; hydrate: string; server: boolean; compute: boolean; content: string }
+
 export interface KiwModule {
   frontmatter: Record<string, any>
   body: string
   styles: string[]
   scripts: string[]
+  styleBlocks: StyleBlock[]
+  scriptBlocks: ScriptBlock[]
   markdown: string[]
   raw: string
 }
 
-const styleRe = /<style[^>]*>([\s\S]*?)<\/style>/gi
-const scriptRe = /<script[^>]*>([\s\S]*?)<\/script>/gi
+const styleRe = /<style([^>]*)>([\s\S]*?)<\/style>/gi
+const scriptRe = /<script([^>]*)>([\s\S]*?)<\/script>/gi
 const markdownRe = /<markdown[^>]*>([\s\S]*?)<\/markdown>/gi
+const attrRe = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g
+
+function parseAttrs(tag: string): Record<string, string> {
+  const out: Record<string, string> = {}
+  let m: RegExpExecArray | null
+  attrRe.lastIndex = 0
+  while ((m = attrRe.exec(tag)) !== null) {
+    const key = m[1].toLowerCase()
+    const val = m[2] ?? m[3] ?? m[4] ?? ""
+    out[key] = val
+  }
+  return out
+}
 
 export function parseKiw(src: string): KiwModule {
   let frontmatter: Record<string, any> = {}
@@ -46,14 +64,28 @@ export function parseKiw(src: string): KiwModule {
   }
 
   const styles: string[] = []
-  body = body.replace(styleRe, (_m, inner) => {
-    styles.push(inner.trim())
+  const styleBlocks: StyleBlock[] = []
+  body = body.replace(styleRe, (_m, attrs, inner) => {
+    const a = parseAttrs(attrs)
+    const content = inner.trim()
+    styles.push(content)
+    const lang = (a["lang"] || "css").toLowerCase()
+    styleBlocks.push({ lang, scoped: "scoped" in a, content })
     return ""
   })
 
   const scripts: string[] = []
-  body = body.replace(scriptRe, (_m, inner) => {
-    scripts.push(inner.trim())
+  const scriptBlocks: ScriptBlock[] = []
+  body = body.replace(scriptRe, (_m, attrs, inner) => {
+    const a = parseAttrs(attrs)
+    const content = inner.trim()
+    scripts.push(content)
+    let lang = (a["lang"] || "js").toLowerCase()
+    let hydrate = (a["hydrate"] || "").toLowerCase()
+    const server = "server" in a
+    const compute = "compute" in a
+    if ((lang === "js" || lang === "ts" || lang === "go") && !server && !compute && !hydrate) hydrate = "load"
+    scriptBlocks.push({ lang, hydrate, server, compute, content })
     return ""
   })
 
@@ -70,6 +102,8 @@ export function parseKiw(src: string): KiwModule {
     body: body.trim(),
     styles,
     scripts,
+    styleBlocks,
+    scriptBlocks,
     markdown,
     raw: src,
   }

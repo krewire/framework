@@ -9,7 +9,7 @@ import (
 	"github.com/krewire/framework/runtime/vdom"
 )
 
-// Spec: KWF-T4X9P FRK-WASM-041 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-041 Scope: Unit
 func TestFRK_WASM_041_UseEvent_RegisterLookupAndRefresh(t *testing.T) {
 	var calls []string
 	handler := func(tag string) Handler {
@@ -54,7 +54,7 @@ func TestFRK_WASM_041_UseEvent_RegisterLookupAndRefresh(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-033 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-033 Scope: Unit
 func TestFRK_WASM_033_UseEvent_OutsideRenderPanics(t *testing.T) {
 	defer func() {
 		if _, ok := recover().(*HookRuleError); !ok {
@@ -64,7 +64,7 @@ func TestFRK_WASM_033_UseEvent_OutsideRenderPanics(t *testing.T) {
 	UseEvent("click", "x", func(context.Context, Event) {})
 }
 
-// Spec: KWF-T4X9P FRK-WASM-041 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-041 Scope: Unit
 func TestFRK_WASM_041_UseEvent_EmptyArgsPanicWithDiagnostic(t *testing.T) {
 	switcher := true
 	comp := &fn{body: func() *vdom.VNode {

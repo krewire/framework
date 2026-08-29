@@ -7,62 +7,26 @@ import (
 	"encoding/hex"
 	"net/http"
 	"regexp"
-	"strings"
+
+	"github.com/krewire/libs/sec"
 )
 
 // SecurityOptions tunes the security-headers middleware.
-type SecurityOptions struct {
-	// CSP overrides the default Content-Security-Policy
-	// ("default-src 'self'").
-	CSP string
-	// Frame sets X-Frame-Options: DENY (default) or SAMEORIGIN.
-	Frame string
-	// HSTS, when > 0, enables Strict-Transport-Security with the given
-	// max-age in seconds.
-	HSTS int
-	// PermissionsPolicy, when set, is emitted verbatim.
-	PermissionsPolicy string
-}
+//
+// Deprecated: use sec.SecurityOptions.
+type SecurityOptions = sec.SecurityOptions
 
 var tagStripper = regexp.MustCompile(`<[^>]*>`)
 
-// StripTags removes HTML tags from s — a defense-in-depth helper for fields
-// that must be plain text. Escaping remains html/template's job.
+// StripTags removes HTML tags from s — delegates to sec as heart of defense.
 func StripTags(s string) string {
-	return strings.TrimSpace(tagStripper.ReplaceAllString(s, ""))
+	return sec.StripTags(s)
 }
 
 // SecurityHeaders returns middleware applying browser hardening headers.
-// Defaults: nosniff, frame DENY, strict referrer, CSP default-src 'self'.
+// Delegates to sec as heart of defense; web re-exports for backward compat.
 func SecurityHeaders(opts ...func(*SecurityOptions)) Middleware {
-	o := &SecurityOptions{}
-	for _, f := range opts {
-		f(o)
-	}
-	csp := o.CSP
-	if csp == "" {
-		csp = "default-src 'self'"
-	}
-	frame := o.Frame
-	if frame == "" {
-		frame = "DENY"
-	}
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			h := w.Header()
-			setOnce(h, "X-Content-Type-Options", "nosniff")
-			setOnce(h, "X-Frame-Options", frame)
-			setOnce(h, "Referrer-Policy", "strict-origin-when-cross-origin")
-			setOnce(h, "Content-Security-Policy", csp)
-			if o.HSTS > 0 {
-				setOnce(h, "Strict-Transport-Security", "max-age="+strconvItoa(o.HSTS)+"; includeSubDomains")
-			}
-			if o.PermissionsPolicy != "" {
-				setOnce(h, "Permissions-Policy", o.PermissionsPolicy)
-			}
-			next.ServeHTTP(w, r)
-		})
-	}
+	return Middleware(sec.SecurityHeaders(opts...))
 }
 
 func setOnce(h http.Header, key, val string) {

@@ -4,50 +4,26 @@ import (
 	"context"
 	"net/http"
 	"strings"
+
+	"github.com/krewire/libs/auth"
 )
 
-// Identity is the authenticated caller. Method names the credential scheme
-// ("basic" or "jwt"); Claims carries raw verified claims for JWT.
-type Identity struct {
-	// Subject is the stable caller identifier (basic identifier / JWT "sub").
-	Subject string
-	// Method is the credential scheme that produced the identity.
-	Method string
-	// Roles are plain role strings merged from credentials.
-	Roles []string
-	// Claims holds raw JWT claims; nil for basic auth.
-	Claims map[string]any
-}
-
-// HasRole reports whether the identity carries the role.
-func (id *Identity) HasRole(role string) bool {
-	for _, r := range id.Roles {
-		if r == role {
-			return true
-		}
-	}
-	return false
-}
-
-type identityCtxKey struct{}
+// Identity is the authenticated caller.
+//
+// Deprecated: use auth.Identity.
+type Identity = auth.Identity
 
 // IdentityFrom returns the request identity, nil when anonymous.
-func IdentityFrom(ctx context.Context) *Identity {
-	id, _ := ctx.Value(identityCtxKey{}).(*Identity)
-	return id
-}
+func IdentityFrom(ctx context.Context) *auth.Identity { return auth.IdentityFrom(ctx) }
 
 // Identity returns the request identity for expressive handlers.
-func (r *Request) Identity() *Identity { return IdentityFrom(r.Context()) }
+func (r *Request) Identity() *auth.Identity { return auth.IdentityFrom(r.Context()) }
 
-func withIdentity(ctx context.Context, id *Identity) context.Context {
-	return context.WithValue(ctx, identityCtxKey{}, id)
+func withIdentity(ctx context.Context, id *auth.Identity) context.Context {
+	return auth.WithIdentity(ctx, id)
 }
 
-// Unauthorized returns a 401 HTTPError.
-func Unauthorized(message string) *HTTPError {
-	return &HTTPError{Status: http.StatusUnauthorized, Code: "unauthorized", Message: message}
-}
+
 
 // authParam splits an Authorization header into scheme and parameter.
 func authParam(h string) (scheme, param string, ok bool) {
@@ -60,3 +36,8 @@ func authParam(h string) (scheme, param string, ok bool) {
 	}
 	return parts[0], parts[1], true
 }
+
+// Ensure auth helpers are available for web's policy
+var _ = auth.IdentityFrom
+var _ = http.StatusUnauthorized
+var _ = strings.SplitN

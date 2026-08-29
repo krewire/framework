@@ -36,6 +36,7 @@ type App struct {
 	providers []Provider
 	container *Container
 	opts      []Option
+	hooks     []Hook
 }
 
 // NewApp returns an App assembling the given providers. No providers is valid

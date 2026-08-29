@@ -22,7 +22,7 @@ func kvBackends(t *testing.T) map[string]KV {
 	}
 }
 
-// Spec: KWF-AST-K7Q2M FRK-AST-010 Scope: Package
+// Spec: KWF-AST-K7Q2M FRK-AST-010 Scope: Unit
 func TestFRK_AST_010_KVContract_AllBackends(t *testing.T) {
 	ctx := context.Background()
 	for name, kv := range kvBackends(t) {
@@ -64,7 +64,7 @@ func TestFRK_AST_010_KVContract_AllBackends(t *testing.T) {
 	}
 }
 
-// Spec: KWF-AST-K7Q2M FRK-AST-012 Scope: Package
+// Spec: KWF-AST-K7Q2M FRK-AST-012 Scope: Unit
 func TestFRK_AST_012_FileKV_RejectsTraversal(t *testing.T) {
 	kv, err := NewFile(t.TempDir())
 	if err != nil {
@@ -76,7 +76,7 @@ func TestFRK_AST_012_FileKV_RejectsTraversal(t *testing.T) {
 	}
 }
 
-// Spec: KWF-AST-K7Q2M FRK-AST-013 Scope: Package
+// Spec: KWF-AST-K7Q2M FRK-AST-013 Scope: Unit
 func TestFRK_AST_013_Provider_BindsIntoContainer(t *testing.T) {
 	c, err := app.NewApp(Provider(NewMemory())).Build()
 	if err != nil {

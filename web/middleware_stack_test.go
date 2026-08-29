@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-// Spec: KWL-P8W2N KWF-HTTPV-005 S1 Scope: Package
+// Spec: KWL-P8W2N KWF-HTTPV-005 S1 Scope: Unit
 func TestKWL_HTTPV_005_RecoverMiddleware_LogsStackAndHidesInternals(t *testing.T) {
 	var buf bytes.Buffer
 	logger := slog.New(slog.NewTextHandler(&buf, nil))
@@ -36,7 +36,7 @@ func TestKWL_HTTPV_005_RecoverMiddleware_LogsStackAndHidesInternals(t *testing.T
 	}
 }
 
-// Spec: KWL-P8W2N KWF-HTTPV-006 Scope: Package
+// Spec: KWL-P8W2N KWF-HTTPV-006 Scope: Unit
 func TestKWL_HTTPV_006_App_DefaultsRecoveryAndAccessLog(t *testing.T) {
 	var buf bytes.Buffer
 	prev := slog.Default()
@@ -71,7 +71,7 @@ func panicMarkerHandler(w http.ResponseWriter, _ *http.Request) {
 	panic("kaboom-marker")
 }
 
-// Spec: KWL-P8W2N KWF-HTTPV-011 S5 Scope: Package
+// Spec: KWL-P8W2N KWF-HTTPV-011 S5 Scope: Unit
 func TestKWF_HTTPV_011_RecoverResponse_CarriesCorrelationIdMirroredInLog(t *testing.T) {
 	var buf bytes.Buffer
 	logger := slog.New(slog.NewTextHandler(&buf, nil))

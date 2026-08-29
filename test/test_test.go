@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-010 Scope: Package
+// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-010 Scope: Unit
 func TestKWF_TST_M4P_010_Equal_Valid(t *testing.T) {
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-010")
 	// should not fail for equal
@@ -16,21 +16,21 @@ func TestKWF_TST_M4P_010_Equal_Valid(t *testing.T) {
 	Equal(t, 123, 123)
 }
 
-// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-011 Scope: Package
+// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-011 Scope: Unit
 func TestKWF_TST_M4P_011_NoError_HasError(t *testing.T) {
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-011")
 	NoError(t, nil)
 	HasError(t, os.ErrNotExist)
 }
 
-// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-012 Scope: Package
+// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-012 Scope: Unit
 func TestKWF_TST_M4P_012_Contains_Valid(t *testing.T) {
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-012")
 	Contains(t, "<html>hello</html>", "hello")
 	NotContains(t, "<html>hello</html>", "bad")
 }
 
-// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-020 Scope: Package
+// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-020 Scope: Unit
 func TestKWF_TST_M4P_020_HTTP_Valid(t *testing.T) {
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-020")
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func TestKWF_TST_M4P_020_HTTP_Valid(t *testing.T) {
 	Contains(t, rec.Body.String(), "ok")
 }
 
-// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-031 Scope: Package
+// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-031 Scope: Unit
 func TestKWF_TST_M4P_031_File_Valid(t *testing.T) {
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-031")
 	dir := TempDir(t)
@@ -53,7 +53,7 @@ func TestKWF_TST_M4P_031_File_Valid(t *testing.T) {
 	ReadFile(t, path)
 }
 
-// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-032 Scope: Package
+// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-032 Scope: Unit
 func TestKWF_TST_M4P_032_Golden_Valid(t *testing.T) {
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-032")
 	name := "test_golden_mvp"
@@ -66,7 +66,7 @@ func TestKWF_TST_M4P_032_Golden_Valid(t *testing.T) {
 	_ = os.Remove(path)
 }
 
-// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-040 Scope: Package
+// Spec: KWF-TEST-M4P9Q KWF-TST-M4P-040 Scope: Unit
 func TestKWF_TST_M4P_040_Spec_Valid(t *testing.T) {
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-040")
 	Spec(t, "KWF-TEST-M4P9Q", "KWF-TST-M4P-040")

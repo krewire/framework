@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Spec: KWF-T4X9P FRK-WASM-020 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-020 Scope: Unit
 func TestFRK_WASM_020_VNode_HoldsTagPropsChildrenKeyAndComponentDiscriminator(t *testing.T) {
 	el := El("li", map[string]string{"class": "item"}, Text("x"))
 	if el.Kind != KindElement || el.Tag != "li" || el.Props["class"] != "item" {
@@ -28,7 +28,7 @@ func TestFRK_WASM_020_VNode_HoldsTagPropsChildrenKeyAndComponentDiscriminator(t 
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-021 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-021 Scope: Unit
 func TestFRK_WASM_021_Diff_KeyedReorder_EmitsRemovesThenInserts(t *testing.T) {
 	old := El("ul", nil,
 		keyed("a"), keyed("b"), keyed("c"),
@@ -55,7 +55,7 @@ func TestFRK_WASM_021_Diff_KeyedReorder_EmitsRemovesThenInserts(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-021 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-021 Scope: Unit
 func TestFRK_WASM_021_Diff_NestedKeyedChild_RecursesWithPath(t *testing.T) {
 	old := El("ul", nil, wrap("a", "old"))
 	next := El("ul", nil, wrap("a", "new"))
@@ -72,7 +72,7 @@ func TestFRK_WASM_021_Diff_NestedKeyedChild_RecursesWithPath(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-021 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-021 Scope: Unit
 func TestFRK_WASM_021_Diff_UnkeyedShrink_PairsPositionallyAndTrimsTail(t *testing.T) {
 	old := El("div", nil, Text("1"), Text("2"), Text("3"))
 	next := El("div", nil, Text("1"), Text("9"))
@@ -87,7 +87,7 @@ func TestFRK_WASM_021_Diff_UnkeyedShrink_PairsPositionallyAndTrimsTail(t *testin
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-021 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-021 Scope: Unit
 func TestFRK_WASM_021_Diff_UnkeyedGrow_AppendsInsert(t *testing.T) {
 	old := El("div", nil, Text("1"))
 	next := El("div", nil, Text("1"), Text("2"))
@@ -98,7 +98,7 @@ func TestFRK_WASM_021_Diff_UnkeyedGrow_AppendsInsert(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-021 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-021 Scope: Unit
 func TestFRK_WASM_021_Diff_MixedKeys_UnkeyedConsumesLeftoverSlots(t *testing.T) {
 	old := El("div", nil, keyed("k"), Text("free"))
 	next := El("div", nil, Text("moved"), keyed("k"))
@@ -111,7 +111,7 @@ func TestFRK_WASM_021_Diff_MixedKeys_UnkeyedConsumesLeftoverSlots(t *testing.T) 
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-021 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-021 Scope: Unit
 func TestFRK_WASM_021_Diff_TagOrKindChange_Replaces(t *testing.T) {
 	tagSwap := Diff(El("span", nil), El("div", nil))
 	if len(tagSwap) != 1 || tagSwap[0].Kind != PatchReplace {
@@ -138,7 +138,7 @@ func TestFRK_WASM_021_Diff_TagOrKindChange_Replaces(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-021 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-021 Scope: Unit
 func TestFRK_WASM_021_Diff_PropsChanged_EmitsSingleUpdateProps(t *testing.T) {
 	old := El("input", map[string]string{"type": "text"})
 	next := El("input", map[string]string{"type": "password"})
@@ -157,7 +157,7 @@ func TestFRK_WASM_021_Diff_PropsChanged_EmitsSingleUpdateProps(t *testing.T) {
 	}
 }
 
-// Spec: KWF-T4X9P FRK-WASM-023 Scope: Package
+// Spec: KWF-T4X9P FRK-WASM-023 Scope: Unit
 func TestFRK_WASM_023_Diff_CoversComponentRenameAndNilSiblings(t *testing.T) {
 	rename := Diff(Component("Alpha", "", nil), Component("Beta", "", nil))
 	if len(rename) != 1 || rename[0].Kind != PatchReplace {

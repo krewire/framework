@@ -20,7 +20,13 @@ are written through loose function calls.
 This spec layers an expressive surface **on top of** the existing primitives
 without breaking them: `Get(pattern, h)` keeps working; new APIs compose.
 
-## 2. Goals
+## 2. Problem Statement
+
+- **Current pain:** `net/http` `ServeMux` is verbose for Krewire workloads — no expressive `r.Get("/users/:id", H(...))`, no typed `Request` with `Param`/`Query`/`Bind`, no fluent `Response` (`Status().JSON()`), and no `H`/`HQ` binding that maps validation errors to `400`. Each handler repeats `json.NewDecoder` + `validate`.
+- **Affected consumers:** `framework/web` authors, `app`/`service` handlers, and reviewers auditing route→handler traceability.
+- **Cost of leaving unsolved:** Handler boilerplate hides business logic, validation errors are inconsistent, and `KWF-WEB-P3V8X` routes cannot be `go vet`-checked.
+
+## 3. Goals
 
 - G1 — Fluent route declarations with names, per-route middleware, and reverse URL generation.
 - G2 — Group-scoped middleware (`Group("/admin", requireAdmin)`) without leaking to siblings; global `Use` unchanged.
@@ -29,13 +35,13 @@ without breaking them: `Get(pattern, h)` keeps working; new APIs compose.
 - G5 — Generic handlers `H[Req]`/`HQ[Req]`: bind input, invoke a function returning `(any, error)`, map errors via `Error()`, write JSON or a `*Response`.
 - G6 — Controllers as plain structs registering their own routes (`Router.Register(ctrl)`).
 
-## 3. Non-Goals
+## 4. Non-Goals
 
 - NG1 — No new router algorithm (linear match kept); no radix tree.
 - NG2 — No OpenAPI/codegen; annotations stay out.
 - NG3 — No breaking change to `HandlerFunc`, `Get/Post/…`, `Use`, `Group(prefix)` single-arg calls.
 
-## 4. Requirements
+## 5. Requirements
 
 ### Routing
 
@@ -66,7 +72,7 @@ without breaking them: `Get(pattern, h)` keeps working; new APIs compose.
 - NFR2 — All existing `web` tests pass untouched; new behavior fully table-tested.
 - NFR3 — Zero cost for code paths not using the new layer.
 
-## 6. Success Criteria
+## 7. Success Criteria
 
 - S1 — A controller registers `/users/{id}` under `/api` group with scoped auth middleware; sibling group unaffected; reverse `URL("users.show", …)` yields `/api/users/7`.
 - S2 — `HQ` handler binds `?page=2&tag=a&tag=b` into a struct; invalid int → 400 envelope.
