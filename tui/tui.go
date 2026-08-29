@@ -16,8 +16,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/krewire/libs/vein"
 	"github.com/krewire/libs/term"
+	"github.com/krewire/libs/vein"
 )
 
 // Command is a runnable sub-command.

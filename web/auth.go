@@ -23,8 +23,6 @@ func withIdentity(ctx context.Context, id *auth.Identity) context.Context {
 	return auth.WithIdentity(ctx, id)
 }
 
-
-
 // authParam splits an Authorization header into scheme and parameter.
 func authParam(h string) (scheme, param string, ok bool) {
 	if h == "" {

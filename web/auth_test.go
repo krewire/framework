@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/krewire/libs/auth"
 	ftest "github.com/krewire/framework/test"
+	"github.com/krewire/libs/auth"
 )
 
 var testSecret = []byte("kiw-test-secret")
