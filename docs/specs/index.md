@@ -44,6 +44,8 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-TEST-N8R2Q](./KWF-TEST-N8R2Q-browser-testing-framework.md) | Krewire Browser Testing Framework (`framework/test/browser`) | Draft | Shipped | KWF-TEST-P4R3N |
 | [KWF-AST-K7Q2M](./KWF-AST-K7Q2M-assets-storage-system.md) | Static Assets, Resources & App Storage (`framework/assets`, `framework/storage`) | Draft | Shipped | KWF-M07QS, KWF-C4087 |
 | [KWF-WEB-P3V8X](./KWF-WEB-P3V8X-expressive-http.md) | Expressive HTTP: Routes, Controllers, Request/Response, Middleware | Draft | Shipped | KWF-M07QS |
+| [KWF-WEB-J7K2P](./KWF-WEB-J7K2P-expressive-api-router-controller.md) | Expressive API Router & Controller Completion — Inspired Ergonomics | Draft | Shipped | KWF-M07QS, KWF-WEB-P3V8X, KWF-WEB-Q8T2R, KWF-5ZHQV |
+| [KWF-WEB-Q8T2R](./KWF-WEB-Q8T2R-manual-registry-router.md) | Manual Registry Router — Code-First, Modular Routing for Large Projects | Draft | Shipped | KWF-M07QS, KWF-WEB-P3V8X, KWF-5ZHQV, KWF-DF3PL |
 | [KWF-WEB-R9T4C](./KWF-WEB-R9T4C-http-security-state.md) | HTTP Security & State: Headers, CSRF, XSS, Cache, Session, Cookie | Draft | Shipped | KWF-WEB-P3V8X, KWF-AST-K7Q2M |
 | [KWF-WEB-B2X7D](./KWF-WEB-B2X7D-auth-policy-gates.md) | Auth: Basic, JWT (HS256), Policy Gates (before/after) | Draft | Shipped | KWF-WEB-P3V8X, KWF-WEB-R9T4C |
 
