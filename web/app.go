@@ -102,6 +102,20 @@ func NewApp() *App {
 // Router exposes the underlying router for API routes and middleware.
 func (a *App) Router() *Router { return a.router }
 
+// Register mounts a Registrar / Controller / Module on the underlying router.
+// It is the composition-root entry for manual-registry modules (KWF-WEB-Q8T2R
+// FRK-REG-031): internal/app imports impl only and calls a.Router().Register(module).
+func (a *App) Register(c any) { a.router.Register(c) }
+
+// Routes delegates to Router.Routes for manifest parity between API routes and pages.
+func (a *App) Routes() []RouteInfo { return a.router.Routes() }
+
+// Validate delegates to Router.Validate (duplicate detection).
+func (a *App) Validate() error { return a.router.Validate() }
+
+// DebugString delegates to Router.DebugString.
+func (a *App) DebugString() string { return a.router.DebugString() }
+
 // Use registers middleware applied to every route.
 func (a *App) Use(mw ...Middleware) { a.router.Use(mw...) }
 

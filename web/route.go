@@ -13,9 +13,19 @@ type Controller interface {
 	Register(r *Router)
 }
 
-// Register mounts c's routes onto the router.
-func (r *Router) Register(c Controller) {
-	c.Register(r)
+// Register mounts c's routes onto the router. It accepts both Controller
+// (KWF-WEB-P3V8X) and Registrar (KWF-WEB-Q8T2R) via type switch so Module and
+// func-based registrars work without separate call sites.
+func (r *Router) Register(c any) {
+	if reg, ok := c.(Registrar); ok {
+		reg.RegisterRoutes(r)
+		return
+	}
+	if ctrl, ok := c.(Controller); ok {
+		ctrl.Register(r)
+		return
+	}
+	panic("web: Register expects Controller or Registrar")
 }
 
 // RouteBuilder fluently configures a single route before registration.
@@ -26,6 +36,7 @@ type RouteBuilder struct {
 	pattern string
 	name    string
 	mws     []Middleware
+	where   map[string]string
 }
 
 // Route starts a fluent route declaration:
@@ -61,9 +72,21 @@ func (r *Router) DELETE(pattern string) *RouteBuilder {
 }
 
 // Name tags the route for reverse lookup via Router.URL. Reusing a name
-// overwrites the previous mapping (last wins).
+// overwrites the previous mapping (last wins). The router's namePrefix (e.g. from Router.Name/As) is prepended.
 func (rb *RouteBuilder) Name(name string) *RouteBuilder {
+	if rb.router.namePrefix != "" {
+		name = rb.router.namePrefix + name
+	}
 	rb.name = name
+	return rb
+}
+
+// Where adds a param constraint for this route (introspection only, not enforced yet).
+func (rb *RouteBuilder) Where(param, constraint string) *RouteBuilder {
+	if rb.where == nil {
+		rb.where = map[string]string{}
+	}
+	rb.where[param] = constraint
 	return rb
 }
 
@@ -78,12 +101,28 @@ func (rb *RouteBuilder) Use(mws ...Middleware) *RouteBuilder {
 // middleware runs after any group middleware, immediately around the handler.
 func (rb *RouteBuilder) Handle(h HandlerFunc) {
 	rb.router.Handle(rb.method, rb.pattern, applyChain(rb.mws, h))
-	if rb.name != "" {
-		root := rb.router.root()
-		if root.named == nil {
-			root.named = map[string][]segment{}
+	root := rb.router.root()
+	if len(root.routes) > 0 {
+		last := root.routes[len(root.routes)-1]
+		// merge builder where constraints
+		if len(rb.where) > 0 {
+			if last.constraints == nil {
+				last.constraints = cloneWhere(rb.where)
+			} else {
+				for k, v := range rb.where {
+					last.constraints[k] = v
+				}
+			}
 		}
-		root.named[rb.name] = parsePattern(joinPattern(rb.router.base, rb.pattern))
+		if rb.name != "" {
+			if root.named == nil {
+				root.named = map[string][]segment{}
+			}
+			root.named[rb.name] = parsePattern(joinPattern(rb.router.base, rb.pattern))
+			last.name = rb.name
+		}
+	}
+	if rb.name != "" || len(rb.where) > 0 {
 		rb.router.root().dirty = true
 	}
 }
