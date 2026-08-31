@@ -38,6 +38,40 @@ func TestFRK_WASM_051_Text_ClassOpt(t *testing.T) {
 	}
 }
 
+// Spec: KWF-T4X9P FRK-WASM-050 Scope: Unit
+func TestFRK_WASM_050_StackAndExpanded_GoldenHTML(t *testing.T) {
+	stack := Stack(Text("a"), Text("b"))
+	got := vdom.RenderHTML(stack)
+	want := `<div class="kiw-stack"><span class="kiw-text">a</span><span class="kiw-text">b</span></div>`
+	if got != want {
+		t.Fatalf("stack = %q, want %q", got, want)
+	}
+
+	exp := Expanded(Text("fill"))
+	got = vdom.RenderHTML(exp)
+	want = `<div class="kiw-expanded"><span class="kiw-text">fill</span></div>`
+	if got != want {
+		t.Fatalf("expanded = %q, want %q", got, want)
+	}
+}
+
+// Spec: KWF-T4X9P FRK-WASM-051 Scope: Unit
+func TestFRK_WASM_051_ImageAndIcon_GoldenHTML(t *testing.T) {
+	img := Image("/logo.png", "logo")
+	got := vdom.RenderHTML(img)
+	// Attributes are sorted alphabetically by the HTML renderer.
+	want := `<img alt="logo" src="/logo.png">`
+	if got != want {
+		t.Fatalf("image = %q, want %q", got, want)
+	}
+
+	icon := Icon("home")
+	got = vdom.RenderHTML(icon)
+	if !strings.Contains(got, `data-icon="home"`) || !strings.Contains(got, "kiw-icon") {
+		t.Fatalf("icon = %q", got)
+	}
+}
+
 // Spec: KWF-T4X9P FRK-WASM-052 Scope: Unit
 func TestFRK_WASM_052_Button_ClickDispatchesHandler(t *testing.T) {
 	var pressed int

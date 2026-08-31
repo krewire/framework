@@ -60,6 +60,32 @@ func SizedBox(w, h int) *vdom.VNode {
 	return vdom.El("div", map[string]string{"class": "kiw-sized-box", "style": style})
 }
 
+// Stack layers children on top of each other (FRK-WASM-050).
+func Stack(children ...*vdom.VNode) *vdom.VNode {
+	return vdom.El("div", map[string]string{"class": "kiw-stack"}, children...)
+}
+
+// Expanded fills remaining space in a Row or Column (FRK-WASM-050).
+func Expanded(child *vdom.VNode) *vdom.VNode {
+	return vdom.El("div", map[string]string{"class": "kiw-expanded"}, child)
+}
+
+// Image renders a picture (FRK-WASM-051).
+func Image(src, alt string, opts ...any) *vdom.VNode {
+	return vdom.El("img", applyClass(map[string]string{
+		"src": src,
+		"alt": alt,
+	}, opts))
+}
+
+// Icon renders a symbolic glyph (FRK-WASM-051).
+func Icon(name string, opts ...any) *vdom.VNode {
+	return vdom.El("span", applyClass(map[string]string{
+		"class":     "kiw-icon",
+		"data-icon": name,
+	}, opts), vdom.Text(name))
+}
+
 // Button renders a pressable button; onPress fires on click with the neutral
 // payload (FRK-WASM-052). It must be instantiated while a fiber is rendering
 // because registration uses UseEvent under the hood.
