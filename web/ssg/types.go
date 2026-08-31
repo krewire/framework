@@ -70,6 +70,12 @@ type Site struct {
 	reg       *ui.Registry
 	emitProps bool
 
+	// pipeline holds the asset transform rules (KWF-DR5YU).
+	pipeline []PipelineRule
+	// manifest maps logical asset paths to fingerprinted URLs for the
+	// asset() template helper.
+	manifest map[string]string
+
 	set *template.Template
 	mu  sync.Mutex
 	// used records every component and layout whose styles were referenced
@@ -80,9 +86,16 @@ type Site struct {
 // New returns an empty Site.
 func New() *Site {
 	return &Site{
-		layouts: map[string]*Layout{},
-		comps:   map[string]*Component{},
-		assets:  map[string]string{},
-		used:    map[string]bool{},
+		layouts:  map[string]*Layout{},
+		comps:    map[string]*Component{},
+		assets:   map[string]string{},
+		used:     map[string]bool{},
+		manifest: map[string]string{},
 	}
+}
+
+// Pipeline installs asset transform rules applied at build time (KWF-DR5YU).
+func (s *Site) Pipeline(rules []PipelineRule) *Site {
+	s.pipeline = rules
+	return s
 }

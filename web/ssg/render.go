@@ -131,6 +131,15 @@ func (s *Site) collectedCSS() string {
 	return out.String()
 }
 
+// asset resolves a logical asset path to its fingerprinted URL from the
+// build manifest, falling back to a plain /assets/ path (KWF-DR5YU).
+func (s *Site) asset(name string) string {
+	if u, ok := s.manifest[name]; ok {
+		return u
+	}
+	return assetURL(name)
+}
+
 // dict builds a map from alternating key-value pairs for template calls like
 // {{component "Card" (dict "Title" "Go" "Desc" "...")}} — frontmatter-free.
 func dict(values ...any) (map[string]any, error) {
@@ -160,6 +169,7 @@ func (s *Site) prepare() error {
 	funcs["component"] = s.renderComponent
 	funcs["mount"] = s.renderMount
 	funcs["dict"] = dict
+	funcs["asset"] = s.asset
 	set := template.New("").Funcs(funcs)
 	compNames := make([]string, 0, len(s.comps))
 	for name := range s.comps {

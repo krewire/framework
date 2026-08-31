@@ -35,6 +35,9 @@ type Config struct {
 	Collections []CollectionConfig `yaml:"collections"`
 	// Assets maps output paths (e.g. "favicon.ico") to file contents.
 	Assets map[string]string `yaml:"assets"`
+	// Pipeline declares asset transforms (KWF-DR5YU): fingerprinting,
+	// minification, image resize/format. Applied at build time.
+	Pipeline []PipelineRule `yaml:"pipeline"`
 	// Data is the site-wide data merged into every page's data value.
 	Data map[string]any `yaml:"data"`
 	// IncludeDrafts includes draft pages in build (dev only).
@@ -156,6 +159,9 @@ func (c *Config) Site() *Site {
 	}
 	for name, body := range c.Assets {
 		s.Asset(name, body)
+	}
+	if len(c.Pipeline) > 0 {
+		s.Pipeline(c.Pipeline)
 	}
 	return s
 }

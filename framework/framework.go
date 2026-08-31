@@ -3,19 +3,24 @@
 // Rather than being built as a single, self-contained ecosystem, Krewire
 // composes modules sourced across multiple ecosystems and repositories,
 // orchestrating them into one cohesive, high-level framework.
+
 package framework
 
-import "fmt"
+import (
+	"fmt"
 
-const (
-	// Name is the canonical display name of the Krewire framework.
-	Name = "Krewire Framework"
-	// Version is the semantic version of the framework.
-	Version = "0.4.0"
+	fw "github.com/krewire/framework"
 )
 
-// Banner returns the framework banner identifying the current framework
-// version.
+// Name is the canonical display name of the Krewire framework.
+const Name = "Krewire Framework"
+
+// Version is the semantic version of the framework, aliased from the module
+// root (framework/version.go) so the framework has a single source of truth
+// for its version. kiw release edits only the root declaration.
+var Version = fw.Version
+
+// Banner returns the framework banner identifying the current framework version.
 func Banner() string {
-	return fmt.Sprintf("%s v%s", Name, Version)
+	return fmt.Sprintf("%s v%s", Name, Version.String())
 }

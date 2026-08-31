@@ -9,6 +9,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-ARCH-P7L2Q](./KWF-ARCH-P7L2Q-progressive-pipeline.md) | Progressive Pipeline — Static → Monolith → Services → Mesh | Draft | — | KWF-M8K2Q, KWF-5ZHQV, KWF-T4X9P, KWF-B7N3D, KWF-L5H2F |
 | [KWF-M8K2Q](./KWF-ARCH-M8K2Q-unified-framework-vision.md) | Unified Framework Vision — One Framework for Every Web Service Workload | Draft | — | KWF-CMBZJ |
 | [KWF-CMBZJ](./KWF-META-CMBZJ-krewire-meta-framework.md) | Krewire Meta-Framework — Initial Specification | Draft | Shipped | — |
+| [KWF-COMM-XBRG](./KWF-COMM-XBRG-cross-runtime-bridge.md) | Cross-Runtime Bridge Protocol | Draft | — | KWF-M8K2Q |
 | [KWF-M07QS](./KWF-WEB-M07QS-krewire-web-framework.md) | Krewire Web Framework | Draft | Shipped | KWF-CMBZJ |
 | [KWF-DF3PL](./KWF-SSG-DF3PL-file-site-pipeline.md) | File-Based Site Pipeline (`.kiw` Modules) | Draft | Shipped | KWF-M07QS, KWF-PT8OD |
 | [KWF-N4K8Q](./KWF-DSL-N4K8Q-kiw-unified-dsl.md) | Kiw Unified DSL — Seamless HTML · CSS · JS/TS · Go · Rust in One File | Draft | Planned | KWF-DF3PL, KWF-PT8OD, KWF-0Z671 |
@@ -17,11 +18,11 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-C9WLJ](./KWF-DI-C9WLJ-app-container-service-providers.md) | App Container & Service Providers | Draft | Shipped | KWF-CMBZJ |
 | [KWF-CCI0N](./KWF-STRUCT-CCI0N-app-directory-structure.md) | App Project Directory Structure Standard | Draft | Shipped | KWF-CMBZJ |
 | [KWF-5XJFC](./KWF-CLI-5XJFC-cli-application-model.md) | CLI Application Model | Draft | Shipped | KWF-CMBZJ |
-| [KWF-PZ5JU](./KWF-CLI-PZ5JU-cli-scaffolding.md) | CLI Scaffolding | Draft | Planned | KWF-5XJFC |
+| [KWF-PZ5JU](./KWF-CLI-PZ5JU-cli-scaffolding.md) | CLI Scaffolding | Draft | Shipped | KWF-5XJFC |
 | [KWF-0F2EB](./KWF-WEB-0F2EB-server-frontend-pipeline.md) | Server & Frontend Rendering Pipeline | Draft | Shipped | KWF-M07QS, KWF-PT8OD, KWF-C4087 |
 | [KWF-D57UK](./KWF-SSG-D57UK-ssg-markdown-content-pipeline.md) | SSG Markdown Content Pipeline & Collections | Draft | Shipped | KWF-PT8OD |
-| [KWF-DR5YU](./KWF-SSG-DR5YU-ssg-asset-pipeline.md) | SSG Asset Pipeline | Draft | Planned | KWF-PT8OD |
-| [KWF-99A63](./KWF-SSG-99A63-ssg-incremental-builds.md) | SSG Incremental Builds & Dependency Graph | Draft | Planned | KWF-PT8OD, KWF-D57UK, KWF-DR5YU |
+| [KWF-DR5YU](./KWF-SSG-DR5YU-ssg-asset-pipeline.md) | SSG Asset Pipeline | Draft | Shipped | KWF-PT8OD |
+| [KWF-99A63](./KWF-SSG-99A63-ssg-incremental-builds.md) | SSG Incremental Builds & Dependency Graph | Draft | Shipped | KWF-PT8OD, KWF-D57UK, KWF-DR5YU |
 | [KWF-209JV](./KWF-SSG-209JV-ssg-live-reload-hmr.md) | SSG Live Reload & HMR | Draft | Planned | KWF-PT8OD, KWF-99A63 |
 | [KWF-5ZHQV](./KWF-ARCH-5ZHQV-modular-monolith-architecture.md) | Modular Monolith Architecture Default | Draft | Shipped | KWF-C9WLJ, KWF-CCI0N |
 | [KWF-0Z671](./KWF-UI-0Z671-krewire-ui-framework.md) | Krewire UI Framework | Draft | Shipped | KWF-M07QS |
@@ -34,9 +35,9 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-L5H2F](./KWF-SVC-L5H2F-microservice-patterns.md) | Microservice & Worker Patterns | Draft | Planned | KWF-M8K2Q, KWF-5ZHQV |
 | [KWF-F2TQC](./KWF-JS-F2TQC-js-ts-framework-integration.md) | JS/TS Framework Integration — Future Bridge | Draft | Planned | KWF-0Z671, KWF-PT8OD |
 | [KWF-MFA0T](./KWF-CLI-MFA0T-cli-help-usage.md) | CLI Help & Usage | Draft | Shipped | KWF-5XJFC |
-| [KWF-NPFSE](./KWF-CLI-NPFSE-cli-output-formatting.md) | CLI Output & Formatting | Draft | — | KWF-5XJFC |
+| [KWF-NPFSE](./KWF-CLI-NPFSE-cli-output-formatting.md) | CLI Output & Formatting | Draft | Shipped | KWF-5XJFC |
 | [KWF-KAKQL](./KWF-CLI-KAKQL-cli-errors-diagnostics.md) | CLI Errors & Diagnostics | Draft | Shipped | KWF-5XJFC |
-| [KWF-FGNZ9](./KWF-CLI-FGNZ9-cli-configuration.md) | CLI Configuration | Draft | Planned | KWF-5XJFC |
+| [KWF-FGNZ9](./KWF-CLI-FGNZ9-cli-configuration.md) | CLI Configuration | Draft | Shipped | KWF-5XJFC |
 | [KWF-TEST-M4P9Q](./KWF-TEST-M4P9Q-framework-test-helpers.md) | Framework Test Helpers — MVP (`framework/test`) | Draft | Shipped | KWL-TEST-P8M4L |
 | [KWF-TEST-P4R3N](./KWF-TEST-P4R3N-krewire-testing-framework.md) | Krewire Testing Framework (`framework/test`) | Draft | Shipped | KWF-TEST-M4P9Q, KWL-TEST-P8M4L |
 | [KWF-TEST-H7P4L](./KWF-TEST-H7P4L-http-testing-framework.md) | Krewire HTTP Testing Framework (`framework/test`) | Draft | Shipped | KWF-TEST-P4R3N |

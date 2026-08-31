@@ -28,10 +28,8 @@ func registerHello(fs *flag.FlagSet) {
 
 func hello(fs *flag.FlagSet) core.ExitCode {
 	name := fs.Lookup("name").Value.String()
-	greeting := os.Getenv("GREET_GREETING")
-	if greeting == "" {
-		greeting = "Hello"
-	}
+	// KWF-FGNZ9: standardized <APP>_-prefixed, typed, defaulted config.
+	greeting := tui.NewEnv("greet").GetString("greeting", "Hello")
 	if name == "" {
 		fmt.Fprintln(os.Stderr, "usage: greet hello --name <name>")
 		return core.ExitCodeUsage

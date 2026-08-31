@@ -36,7 +36,7 @@ doesn't scale.
   (components, layouts, Markdown, data, assets) each output page depends on
 - G2 — Incremental `Build`: only re-render pages whose dependency signatures
   changed since last build
-- G3 — Persist dependency graph + content hashes to disk (`build-cache/`)
+- G3 — Persist dependency graph + content hashes to disk (`.krewire/cache/`)
   for incremental CI builds and dev server restarts
 - G4 — Dev server uses incremental render: on file change, re-render only
   affected pages and push updates via HMR (separate spec)
@@ -59,13 +59,13 @@ doesn't scale.
 | FRK-INC-001   | During `prepare()`, record every `component` call, layout reference, | Must     |
 |               | asset path, and data access per page                                 |          |
 | FRK-INC-002   | Compute content hash (SHA256) for every source file at build start  | Must     |
-| FRK-INC-003   | Persist graph + hashes to `build-cache/depgraph.json` after build   | Must     |
+| FRK-INC-003   | Persist graph + hashes to `.krewire/cache/depgraph.json` after build   | Must     |
 
 ### 5.2 Incremental Build
 
 | ID            | Requirement                                                          | Priority |
 | ------------- | -------------------------------------------------------------------- | -------- |
-| FRK-INC-010   | `Site.BuildIncremental(outDir, cache)` re-renders only pages whose  | Must     |
+| FRK-INC-010   | `Site.BuildIncremental(outDir, force)` re-renders only pages whose  | Must     |
 |               | dependency hashes differ from cache                                  |          |
 | FRK-INC-011   | New pages (not in cache) are rendered; deleted pages remove output  | Must     |
 | FRK-INC-012   | Asset pipeline changes invalidate dependent pages                   | Must     |
@@ -75,7 +75,7 @@ doesn't scale.
 
 | ID            | Requirement                                                          | Priority |
 | ------------- | -------------------------------------------------------------------- | -------- |
-| FRK-INC-020   | Cache directory: `outDir/.krewire-cache/` (gitignored)               | Must     |
+| FRK-INC-020   | Cache directory: `.krewire/cache/` (gitignored)                     | Must     |
 | FRK-INC-021   | Cache format: JSON with version header; corrupted cache = full rebuild | Must |
 | FRK-INC-022   | `krewire build --force` ignores cache and writes fresh               | Must     |
 
