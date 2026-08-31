@@ -77,14 +77,49 @@ func newJob(el js.Value, name string) (*job, error) {
 
 // attach seeds the fiber with the live DOM and applies the first diff,
 // which for parity-clean SSR is empty — listeners attach without touching
-// text nodes (FRK-WASM-041 text parity).
+// text nodes (FRK-WASM-041 text parity). On text mismatch, a console
+// warning identifies the mount point name without crashing (FRK-WASM-043).
 func (j *job) attach() error {
 	tree := vdom.FromDOM(firstElement(j.el))
 	if tree == nil {
 		return nil
 	}
 	j.fiber.Seed(tree)
-	return vdom.Apply(j.el, j.fiber.Reconcile(j.props))
+	patches := j.fiber.Reconcile(j.props)
+	if mismatch := detectMismatch(j.name, tree, j.fiber.Render()); mismatch != "" {
+		js.Global().Get("console").Call("warn", "[kiw] hydration mismatch at "+j.name+": "+mismatch)
+	}
+	return vdom.Apply(j.el, patches)
+}
+
+// detectMismatch compares the SSR DOM tree with the first client render.
+// It returns a human-readable description of the first difference, or "" if
+// the trees match (FRK-WASM-043).
+func detectMismatch(name string, ssr *vdom.VNode, client *vdom.VNode) string {
+	if ssr == nil && client == nil {
+		return ""
+	}
+	if ssr == nil {
+		return "SSR missing, client rendered"
+	}
+	if client == nil {
+		return "client missing, SSR rendered"
+	}
+	if ssr.Kind != client.Kind {
+		return "kind mismatch"
+	}
+	if ssr.Text != client.Text {
+		return "text mismatch: ssr=" + ssr.Text + " client=" + client.Text
+	}
+	if len(ssr.Children) != len(client.Children) {
+		return "child count mismatch"
+	}
+	for i := range ssr.Children {
+		if m := detectMismatch(name, ssr.Children[i], client.Children[i]); m != "" {
+			return m
+		}
+	}
+	return ""
 }
 
 func (j *job) paint() {
