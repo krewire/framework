@@ -26,6 +26,21 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	mimeCSS      = "text/css; charset=utf-8"
+	mimeJS       = "text/javascript; charset=utf-8"
+	mimeSVG      = "image/svg+xml"
+	mimeJSON     = "application/json; charset=utf-8"
+	mimeHTML     = "text/html; charset=utf-8"
+	mimeText     = "text/plain; charset=utf-8"
+	mimeMarkdown = "text/markdown; charset=utf-8"
+	mimeXML      = "application/xml; charset=utf-8"
+	mimeWoff2    = "font/woff2"
+	mimeWoff     = "font/woff"
+	mimeTTF      = "font/ttf"
+	mimeICO      = "image/x-icon"
+)
+
 // Store is a searchable set of asset sources.
 type Store struct {
 	sources []fs.FS
@@ -196,29 +211,29 @@ func YAML[T any](s *Store, name string) (*T, error) {
 func ContentType(name string) string {
 	switch strings.ToLower(path.Ext(name)) {
 	case ".css":
-		return "text/css; charset=utf-8"
+		return mimeCSS
 	case ".js", ".mjs":
-		return "text/javascript; charset=utf-8"
+		return mimeJS
 	case ".svg":
-		return "image/svg+xml"
+		return mimeSVG
 	case ".json", ".map", ".webmanifest":
-		return "application/json; charset=utf-8"
+		return mimeJSON
 	case ".html", ".htm":
-		return "text/html; charset=utf-8"
+		return mimeHTML
 	case ".txt":
-		return "text/plain; charset=utf-8"
+		return mimeText
 	case ".md":
-		return "text/markdown; charset=utf-8"
+		return mimeMarkdown
 	case ".xml":
-		return "application/xml; charset=utf-8"
+		return mimeXML
 	case ".woff2":
-		return "font/woff2"
+		return mimeWoff2
 	case ".woff":
-		return "font/woff"
+		return mimeWoff
 	case ".ttf":
-		return "font/ttf"
+		return mimeTTF
 	case ".ico":
-		return "image/x-icon"
+		return mimeICO
 	}
 	if t := mime.TypeByExtension(strings.ToLower(path.Ext(name))); t != "" {
 		return t

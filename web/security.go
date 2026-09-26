@@ -12,8 +12,6 @@ import (
 )
 
 // SecurityOptions tunes the security-headers middleware.
-//
-// Deprecated: use sec.SecurityOptions.
 type SecurityOptions = sec.SecurityOptions
 
 var tagStripper = regexp.MustCompile(`<[^>]*>`)

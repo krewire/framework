@@ -118,5 +118,5 @@ func GatewayTimeout(message string) *HTTPError {
 // These are alternatives to returning HTTPError from H handlers.
 
 func UnauthorizedResponse(msg string) *Response {
-	return &Response{status: http.StatusUnauthorized, header: http.Header{}, body: map[string]string{"code": "unauthorized", "message": msg}, ctype: "application/json; charset=utf-8"}
+	return &Response{status: http.StatusUnauthorized, header: http.Header{}, body: map[string]string{"code": "unauthorized", "message": msg}, ctype: MimeJSON}
 }

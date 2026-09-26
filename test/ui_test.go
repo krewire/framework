@@ -34,8 +34,8 @@ func TestKWF_TST_U9K_012_ThemeSnapshot_Valid(t *testing.T) {
 	path := filepath.Join("testdata", name+".golden")
 	_ = os.Remove(path)
 	t.Setenv("UPDATE_GOLDEN", "1")
-	ThemeSnapshot(t, name, `<html data-theme="dark"><style>:root{--primary:#00c853}</style></html>`)
+	ThemeSnapshot(t, name, `<html data-theme="dark"><style>:root{--primary:#ff6b00}</style></html>`)
 	t.Setenv("UPDATE_GOLDEN", "")
-	ThemeSnapshot(t, name, `<html data-theme="dark"><style>:root{--primary:#00c853}</style></html>`)
+	ThemeSnapshot(t, name, `<html data-theme="dark"><style>:root{--primary:#ff6b00}</style></html>`)
 	_ = os.Remove(path)
 }

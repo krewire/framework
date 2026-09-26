@@ -6,9 +6,15 @@ import (
 	"net/http"
 )
 
+const (
+	MimeJSON = "application/json; charset=utf-8"
+	MimeHTML = "text/html; charset=utf-8"
+	MimeText = "text/plain; charset=utf-8"
+)
+
 // HTML writes an HTML response with the given status code.
 func HTML(w http.ResponseWriter, code int, body string) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Type", MimeHTML)
 	w.WriteHeader(code)
 	io.WriteString(w, body)
 }
@@ -53,21 +59,21 @@ func (rs *Response) Set(key, value string) *Response {
 // JSON sets the body, encoded as JSON on Write.
 func (rs *Response) JSON(v any) *Response {
 	rs.body = v
-	rs.ctype = "application/json; charset=utf-8"
+	rs.ctype = MimeJSON
 	return rs
 }
 
 // Text sets a plain-text body.
 func (rs *Response) Text(s string) *Response {
 	rs.raw = []byte(s)
-	rs.ctype = "text/plain; charset=utf-8"
+	rs.ctype = MimeText
 	return rs
 }
 
 // HTML sets an HTML body on the Response builder.
 func (rs *Response) HTML(s string) *Response {
 	rs.raw = []byte(s)
-	rs.ctype = "text/html; charset=utf-8"
+	rs.ctype = MimeHTML
 	return rs
 }
 
@@ -109,7 +115,7 @@ func (rs *Response) Write(w http.ResponseWriter) {
 	w.WriteHeader(rs.status)
 	switch {
 	case rs.body != nil:
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Content-Type", MimeJSON)
 		_ = json.NewEncoder(w).Encode(rs.body)
 	case len(rs.raw) > 0:
 		_, _ = w.Write(rs.raw)

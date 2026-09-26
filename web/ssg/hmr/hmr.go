@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+const DefaultHeartbeatInterval = 25 * time.Second
+
 // EventType is the kind of HMR event (KWF-209JV).
 type EventType string
 
@@ -83,7 +85,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.mu.RUnlock()
 
 	// Heartbeat to keep connection alive
-	ticker := time.NewTicker(25 * time.Second)
+	ticker := time.NewTicker(DefaultHeartbeatInterval)
 	defer ticker.Stop()
 
 	for {

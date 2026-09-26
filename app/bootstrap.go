@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const DefaultStopTimeout = 10 * time.Second
+
 // Application is the built container with lifecycle management. It is the
 // canonical entrypoint for an app process: Bootstrap builds, starts the
 // lifecycle, then Run blocks until graceful shutdown.
@@ -51,7 +53,7 @@ func (a *Application) App() *App { return a.app }
 func (a *Application) Stop(ctx context.Context) error {
 	if _, ok := ctx.Deadline(); !ok {
 		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, 10*time.Second)
+		ctx, cancel = context.WithTimeout(ctx, DefaultStopTimeout)
 		defer cancel()
 	}
 	return a.app.Stop(ctx, a.container)

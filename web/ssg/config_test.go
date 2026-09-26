@@ -16,8 +16,8 @@ func testConfig() *Config {
 		Description: "A meta-framework written in Go.",
 		Theme: &ThemeConfig{
 			Default: "auto",
-			Light:   map[string]string{"primary": "#00c853"},
-			Dark:    map[string]string{"primary": "#5cff8e"},
+			Light:   map[string]string{"primary": "#ff6b00"},
+			Dark:    map[string]string{"primary": "#ff8c42"},
 		},
 		Components: []ComponentConfig{
 			{Name: "badge", Body: `<span class="badge">{{html .}}</span>`, Style: `.badge { color: var(--primary); }`},
@@ -91,11 +91,11 @@ func TestConfigSiteEscapesUntrustedData(t *testing.T) {
 func TestConfigThemePaletteOverrides(t *testing.T) {
 	cfg := testConfig()
 	th := cfg.theme()
-	if string(th.Light.Primary) != "#00c853" {
-		t.Errorf("light primary = %q, want #00c853", th.Light.Primary)
+	if string(th.Light.Primary) != "#ff6b00" {
+		t.Errorf("light primary = %q, want #ff6b00", th.Light.Primary)
 	}
-	if string(th.Dark.Primary) != "#5cff8e" {
-		t.Errorf("dark primary = %q, want #5cff8e", th.Dark.Primary)
+	if string(th.Dark.Primary) != "#ff8c42" {
+		t.Errorf("dark primary = %q, want #ff8c42", th.Dark.Primary)
 	}
 	if th.Light.Base1 != "" {
 		t.Error("unset tokens must stay empty and fall back at render time")

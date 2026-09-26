@@ -14,6 +14,8 @@ import (
 	"github.com/krewire/framework/web/ssg"
 )
 
+const DefaultShutdownTimeout = 10 * time.Second
+
 // Handler returns the assembled http.Handler: routes, middleware, pages, and
 // static mounts. It is safe for tests and embedding in larger servers.
 func (a *App) Handler() http.Handler {
@@ -91,7 +93,7 @@ func (a *App) Run(addr string) error {
 	case <-ctx.Done():
 	}
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), DefaultShutdownTimeout)
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		_ = srv.Close()

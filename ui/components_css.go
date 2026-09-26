@@ -116,7 +116,7 @@ const CardCSS = `.card {
   overflow: hidden;
   transition: all var(--ui-transition);
 }
-.card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 8px 24px rgba(0, 200, 83, 0.07); }
+.card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 8px 24px rgba(255, 107, 0, 0.07); }
 .card-header, .card-body, .card-footer { padding: 1.5rem; }
 .card-header { border-bottom: 1px solid var(--base-3); font-weight: 600; }
 .card-footer { border-top: 1px solid var(--base-3); }`
@@ -174,7 +174,7 @@ const BadgeCSS = `.badge {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.badge-primary { color: var(--primary); background: rgba(0, 200, 83, 0.1); border: 1px solid rgba(0, 200, 83, 0.2); }
+.badge-primary { color: var(--primary); background: rgba(255, 107, 0, 0.1); border: 1px solid rgba(255, 107, 0, 0.2); }
 .badge-neutral { color: var(--neutral-content); background: var(--neutral); border: 1px solid var(--base-3); }
 .badge-success { color: var(--success); background: rgba(21, 128, 61, 0.1); border: 1px solid rgba(21, 128, 61, 0.2); }
 .badge-info { color: var(--info); background: rgba(13, 148, 136, 0.1); border: 1px solid rgba(13, 148, 136, 0.2); }
@@ -196,8 +196,8 @@ const ButtonCSS = `.btn {
   cursor: pointer;
   transition: all var(--ui-transition);
 }
-.btn-primary { background: var(--primary); color: var(--primary-content); box-shadow: 0 4px 16px rgba(92, 255, 142, 0.25); }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(92, 255, 142, 0.4); }
+.btn-primary { background: var(--primary); color: var(--primary-content); box-shadow: 0 4px 16px rgba(255, 140, 66, 0.25); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(255, 140, 66, 0.4); }
 .btn-ghost { background: var(--base-2); color: var(--base-1-content); border: 1px solid var(--base-3); }
 .btn-ghost:hover { background: var(--base-3); border-color: var(--primary); transform: translateY(-2px); }
 .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }

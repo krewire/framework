@@ -15,7 +15,7 @@ Tailwind CSS is supported as an **optional PostCSS plugin** for `site` workloads
 
 ## 2. Background & Context
 
-- `KWF-DSL-N4K8Q` defines `.kiw` authoring (HTML/Markdown + scoped CSS + tiered scripts) and `KWF-PT8OD` the file-based `site` pipeline (`pages/**/*.kiw` → `site/`). `KWF-0Z671` provides theme vars (`--color-primary` `#00c853`) but no utility framework.
+- `KWF-DSL-N4K8Q` defines `.kiw` authoring (HTML/Markdown + scoped CSS + tiered scripts) and `KWF-PT8OD` the file-based `site` pipeline (`pages/**/*.kiw` → `site/`). `KWF-0Z671` provides theme vars (`--color-primary` `#ff6b00`) but no utility framework.
 - Landing `krewire/krewire` currently uses hand-written scoped CSS for hero/cards. Adopting Tailwind as a plugin reduces custom CSS and validates the `site` pipeline with a real-world utility framework, while keeping the core framework agnostic — Tailwind is one of many possible PostCSS plugins, not a built-in.
 - Modern frameworks treat Tailwind as an **integration**: `npx astro add tailwind` adds `tailwind()` to `astro.config.mjs` and creates `tailwind.config.mjs`; `npx tailwindcss init -p` creates `tailwind.config.js` + `postcss.config.js` and `globals.css` with `@tailwind` directives. Krewire mirrors this: the presence of `tailwind.config.js` at the project root is the opt-in signal, not a `tailwind:` key in `krewire.yaml`.
 
@@ -84,7 +84,7 @@ module.exports = {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@layer base { :root { --color-primary: #00c853; } }
+@layer base { :root { --color-primary: #ff6b00; } }
 ```
 
 No `krewire.yaml` change — the presence of `tailwind.config.js` is the plugin signal (like `astro.config.mjs` with `tailwind()`).
