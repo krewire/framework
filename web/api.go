@@ -243,7 +243,7 @@ func Error(w http.ResponseWriter, err error) {
 	}
 	var ve *validate.ValidationError
 	if errors.As(err, &ve) {
-		writeError(w, http.StatusBadRequest, "validation_error", ve.Error(), nil)
+		writeError(w, http.StatusBadRequest, "validation_error", ve.Error(), ve.Fields)
 		return
 	}
 	writeError(w, http.StatusInternalServerError, "internal_error", "internal server error", nil)

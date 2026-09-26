@@ -111,11 +111,12 @@ func (rs *Response) Write(w http.ResponseWriter) {
 	}
 	if rs.ctype != "" {
 		w.Header().Set("Content-Type", rs.ctype)
+	} else if rs.body != nil {
+		w.Header().Set("Content-Type", MimeJSON)
 	}
 	w.WriteHeader(rs.status)
 	switch {
 	case rs.body != nil:
-		w.Header().Set("Content-Type", MimeJSON)
 		_ = json.NewEncoder(w).Encode(rs.body)
 	case len(rs.raw) > 0:
 		_, _ = w.Write(rs.raw)
