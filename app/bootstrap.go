@@ -81,7 +81,7 @@ func (a *Application) Bootstrap(ctx context.Context) error {
 		a.container = New()
 	}
 	if a.app != nil && !a.appStarted {
-		if err := a.app.Bootstrap(ctx, a.container); err != nil {
+		if err := a.app.Start(ctx, a.container); err != nil {
 			return err
 		}
 		a.appStarted = true
