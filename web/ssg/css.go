@@ -68,11 +68,15 @@ func scopeRule(scope, head, body string, compound bool) string {
 }
 
 func scopeAtRule(scope, head, body string, compound bool) string {
-	fields := strings.Fields(head)
-	if len(fields) == 0 {
-		return head + "{" + body + "}"
+	trimmed := strings.TrimSpace(head)
+	name := trimmed
+	for i, r := range trimmed {
+		if r == '(' || r == ' ' || r == '\t' || r == '\n' || r == '\r' {
+			name = trimmed[:i]
+			break
+		}
 	}
-	switch fields[0] {
+	switch name {
 	case "@media", "@supports", "@layer":
 		return head + "{" + scopeCSS(scope, body, compound) + "}"
 	default:

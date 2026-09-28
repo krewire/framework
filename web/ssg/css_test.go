@@ -11,6 +11,7 @@ h1 { color: red; }
 h1, .x a:hover { margin: 0; }
 :root { --a: 1; }
 @media (max-width: 48rem) { .m { padding: 0; } }
+@media(min-width: 640px) { .n { margin: 0; } }
 @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
 @font-face { font-family: X; src: url(x.woff2); }
 .x::before { content: "a, b"; }
@@ -21,6 +22,7 @@ h1, .x a:hover { margin: 0; }
 		`[data-kiw-component="c"] h1, [data-kiw-component="c"]h1, [data-kiw-component="c"] .x a:hover{ margin: 0; }`,
 		`:root{ --a: 1; }`,
 		`@media (max-width: 48rem) {[data-kiw-component="c"] .m, [data-kiw-component="c"].m{ padding: 0; }}`,
+		`@media(min-width: 640px) {[data-kiw-component="c"] .n, [data-kiw-component="c"].n{ margin: 0; }}`,
 		`@keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }`,
 		`@font-face { font-family: X; src: url(x.woff2); }`,
 		`[data-kiw-component="c"] .x::before, [data-kiw-component="c"].x::before{ content: "a, b"; }`,
