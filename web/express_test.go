@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 func mw(tag string, marks *[]string) Middleware {

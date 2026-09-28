@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/krewire/libs/validate"
+	validation "github.com/krewire/libs/validation"
 )
 
 // maxBodyBytes bounds request bodies decoded by ReadJSON.
@@ -161,12 +161,12 @@ func ReadJSON(r *http.Request, dst any) error {
 }
 
 // DecodeAndValidate decodes a JSON body and validates dst through
-// libs/validate in one call.
+// libs/validation in one call.
 func DecodeAndValidate(r *http.Request, dst any) error {
 	if err := ReadJSON(r, dst); err != nil {
 		return err
 	}
-	return validate.Struct(dst)
+	return validation.Struct(dst)
 }
 
 // HTTPError carries an HTTP status for an error response. It implements error
@@ -241,7 +241,7 @@ func Error(w http.ResponseWriter, err error) {
 		writeError(w, he.Status, he.Code, he.Message, he.Details)
 		return
 	}
-	var ve *validate.ValidationError
+	var ve *validation.ValidationError
 	if errors.As(err, &ve) {
 		writeError(w, http.StatusBadRequest, "validation_error", ve.Error(), ve.Fields)
 		return

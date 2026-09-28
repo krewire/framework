@@ -41,7 +41,7 @@ The ecosystem needs a minimal `framework/test` package that is stdlib-only (exce
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| KWF-TST-M4P-001 | Package `test` at `framework/test` (`import "github.com/krewire/framework/test"`), Go 1.22, `gofmt` clean, `go vet` clean, no external deps beyond stdlib. May optionally import `github.com/krewire/libs/core` for spec types but must not require it at runtime. | Must |
+| KWF-TST-M4P-001 | Package `test` at `framework/test` (`import "github.com/krewire/framework/testing"`), Go 1.22, `gofmt` clean, `go vet` clean, no external deps beyond stdlib. May optionally import `github.com/krewire/libs/core` for spec types but must not require it at runtime. | Must |
 | KWF-TST-M4P-002 | Scope `Package` — helpers live in the same package for reuse; no separate `testutil` needed. | Must |
 
 ### 4.2 Core Assertions (MVP)

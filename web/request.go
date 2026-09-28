@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/krewire/libs/validate"
+	validation "github.com/krewire/libs/validation"
 )
 
 // Request is the framework's HTTP request wrapper. It is the foundation for
@@ -115,7 +115,7 @@ func (r *Request) IsForm() bool {
 // MethodIs reports whether the request method equals m.
 func (r *Request) MethodIs(m string) bool { return r.Method == m }
 
-// Bind decodes the JSON body into dst and validates it (via libs/validate).
+// Bind decodes the JSON body into dst and validates it (via libs/validation).
 // See DecodeAndValidate for limits (1MiB, DisallowUnknownFields).
 func (r *Request) Bind(dst any) error {
 	return DecodeAndValidate(r.Request, dst)
@@ -204,10 +204,10 @@ func (r *Request) BindMap(dst any) error {
 	return r.BindForm(dst)
 }
 
-// Validate validates dst using libs/validate (validate tags). It is the
+// Validate validates dst using libs/validation (validate tags). It is the
 // primitive used by Bind* and is exposed for FormRequest validators.
 func (r *Request) Validate(dst any) error {
-	if err := validate.Struct(dst); err != nil {
+	if err := validation.Struct(dst); err != nil {
 		return err
 	}
 	return nil
@@ -260,7 +260,7 @@ func ValidateFormRequest(r *Request, fr FormRequest, dst any) error {
 	if fr != nil && !fr.Authorize(r) {
 		return Forbidden("unauthorized")
 	}
-	return validate.Struct(dst)
+	return validation.Struct(dst)
 }
 
 // H wraps fn into a HandlerFunc with JSON-body binding:
@@ -307,7 +307,7 @@ func bindHandler[Q any](fn func(*Request, *Q) (any, error), bind func(*Request, 
 }
 
 func validateStruct(dst any) error {
-	return validate.Struct(dst)
+	return validation.Struct(dst)
 }
 
 func setFromQuery(field reflect.Value, vs []string) error {

@@ -93,7 +93,7 @@ A `krewire new <name>` app project follows this layout by default:
 | FRK-STR-002 | The entry point is `cmd/<name>/main.go` (a root `main.go` is allowed for single-command apps); it must stay thin — load config, build the app, call `App.Run` — never host business logic. | Must |
 | FRK-STR-003 | App logic lives in `internal/` packages by default; anything importable by the outside world belongs under `pkg/` and is the project's choice. | Must |
 | FRK-STR-004 | Full assembly composes in `internal/app` (e.g. `app.New(cfg, store) *web.App`); `cmd` only calls it. | Should |
-| FRK-STR-005 | Configuration is a typed struct in `internal/config`, loaded through `libs/config` (KWL-2X1QZ) and validated through `libs/validate` (KWL-LHANF); the config file is `krewire.yaml` at the repo root. | Must |
+| FRK-STR-005 | Configuration is a typed struct in `internal/config`, loaded through `libs/config` (KWL-2X1QZ) and validated through `libs/validation` (KWL-LHANF); the config file is `krewire.yaml` at the repo root. | Must |
 | FRK-STR-006 | Frontend sources (components, layouts, pages, theme, styles) live under `web/` by default and register into the app at assembly time; built-in components come from the `ui` registry (KWF-PPUWX). | Must |
 | FRK-STR-007 | Static assets served as-is live under `public/` and are embedded via `//go:embed public/...` into the binary. | Must |
 | FRK-STR-008 | An optional book source is `manuscript/` (KWN-1QGI2); an optional exported SSG site is `site/`. Apps may serve either through `App.Static`. | Should |

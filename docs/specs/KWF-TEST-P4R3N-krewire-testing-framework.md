@@ -42,7 +42,7 @@ This spec is the **parent** for the Krewire Testing Framework. It does not ship 
 
 | ID | Requirement | Scope | Priority |
 |----|-------------|-------|----------|
-| KWF-TFW-P4R-001 | Package `test` at `framework/test` remains `import "github.com/krewire/framework/test"`; browser helpers live in `framework/test/browser` to keep the core stdlib-only. | Module | Must |
+| KWF-TFW-P4R-001 | Package `test` at `framework/test` remains `import "github.com/krewire/framework/testing"`; browser helpers live in `framework/test/browser` to keep the core stdlib-only. | Module | Must |
 | KWF-TFW-P4R-002 | Go 1.22+, `gofmt`/`go vet` clean; core has no `chromedp` dep; `browser` may import `chromedp` optionally and must `t.Skip` when Chrome is unavailable. | Module | Must |
 | KWF-TFW-P4R-003 | Every helper calls `t.Helper()` and is usable with or without `ftest.Spec(t, ...)`. | Unit | Must |
 

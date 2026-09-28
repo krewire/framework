@@ -36,7 +36,7 @@ This spec extends `framework/test` with UI-aware helpers that stay stdlib-friend
 
 | ID | Requirement | Scope | Priority |
 |----|-------------|-------|----------|
-| KWF-TST-U9K-001 | Package `test` stays `import "github.com/krewire/framework/test"`; Go 1.22+, `gofmt`/`go vet` clean, stdlib + `golang.org/x/net/html` only. | Module | Must |
+| KWF-TST-U9K-001 | Package `test` stays `import "github.com/krewire/framework/testing"`; Go 1.22+, `gofmt`/`go vet` clean, stdlib + `golang.org/x/net/html` only. | Module | Must |
 | KWF-TST-U9K-010 | `HTML(t, html string) *HTMLAssert` — wraps `golang.org/x/net/html` parse. Methods: `Has(selector string, wantCount int)` (simple CSS: `tag`, `.class`, `#id`, `tag.class`), `HasText(selector, want string)`, `ContainsText(want string)`, `Attr(selector, attr, want string)`, `Count(selector string) int`. Selector engine is tiny (≈80 lines), no external query dep. | Unit | Must |
 | KWF-TST-U9K-011 | `Snapshot(t, name, html string)` — normalized snapshot: trims whitespace, sorts attrs, strips hashed `assets/*.hash.css` to `assets/*.css` before golden compare. Uses `Golden(t, name, normalized)`; honors `UPDATE_GOLDEN=1`. | Unit | Must |
 | KWF-TST-U9K-012 | `ThemeSnapshot(t, name, html string)` — asserts `ui.Theme` Script/Style presence (`data-theme` + `var(--primary)`) — no visual mismatch between SSR and hydrated markup. | Unit | Should |

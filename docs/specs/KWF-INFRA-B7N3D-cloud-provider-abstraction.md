@@ -78,7 +78,7 @@ always referenced, never committed.
 | ID            | Requirement                                                            | Priority |
 | ------------- | ---------------------------------------------------------------------- | -------- |
 | FRK-INFRA-010 | `infra/schema` maps Go structs (tags `validate:"required"`) to JSON    | Must     |
-|               | schema via `libs/validate`; schema is used both at decode and at `Plan`.|         |
+|               | schema via `libs/validation`; schema is used both at decode and at `Plan`.|         |
 | FRK-INFRA-011 | Common kinds share a canonical schema: `Compute`, `Database`,           | Must     |
 |               | `Storage`, `Network`, `DNS`, `Certificate`, `SecretRef`.                |          |
 | FRK-INFRA-012 | Provider-specific fields live under a `provider:` namespace and are     | Must     |

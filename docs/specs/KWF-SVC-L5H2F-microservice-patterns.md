@@ -92,7 +92,7 @@ delivery, only its vocabulary of services and endpoints.
 | FRK-SVC-011  | Hot reload: watchers push changes; registered callbacks receive them      | Must     |
 |              | atomically and the process does not restart.                              |          |
 | FRK-SVC-012  | Backends: etcd, Consul, S3, Git, local/file. Typed decode uses           | Must     |
-|              | `libs/config` + `libs/validate` so the same schema validates local and   |          |
+|              | `libs/config` + `libs/validation` so the same schema validates local and   |          |
 |              | remote config.                                                            |          |
 | FRK-SVC-013  | Config center composes with `infra/state` for secrets — secret values    | Should   |
 |              | are refs resolved at use time, not stored in config center state.        |          |

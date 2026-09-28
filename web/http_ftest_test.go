@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 // Spec: KWF-TEST-M4P9Q KWF-TST-M4P-051 Scope: Unit

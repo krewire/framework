@@ -23,7 +23,7 @@ This spec extends the MVP with a fluent HTTP chain that remains stdlib-only and 
 
 ## 3. Goals
 
-- G1 — Single import `ftest "github.com/krewire/framework/test"` gives a fluent HTTP chain: request builder → `Do(handler)` → `Response` assertions.
+- G1 — Single import `ftest "github.com/krewire/framework/testing"` gives a fluent HTTP chain: request builder → `Do(handler)` → `Response` assertions.
 - G2 — Covers the 90% of `framework/web` patterns: method/path/headers/cookies/query/form/JSON/body, status/header/cookie/JSON/redirect assertions, and `httptest.Server` lifecycle.
 - G3 — Backward compatible: existing `NewRequest`/`Record`/`EqualStatus` remain and delegate to the new builder (no breaking change).
 
@@ -39,7 +39,7 @@ This spec extends the MVP with a fluent HTTP chain that remains stdlib-only and 
 
 | ID | Requirement | Scope | Priority |
 |----|-------------|-------|----------|
-| KWF-TST-H7P-001 | Package `test` at `framework/test` stays `import "github.com/krewire/framework/test"`; Go 1.22+, `gofmt`/`go vet` clean, stdlib-only. | Module | Must |
+| KWF-TST-H7P-001 | Package `test` at `framework/test` stays `import "github.com/krewire/framework/testing"`; Go 1.22+, `gofmt`/`go vet` clean, stdlib-only. | Module | Must |
 | KWF-TST-H7P-002 | Every new helper calls `t.Helper()` and is usable with or without `ftest.Spec(t, ...)`. | Unit | Must |
 
 ### 4.2 HTTP — Fluent Chain

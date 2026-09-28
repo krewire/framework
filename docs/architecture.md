@@ -10,7 +10,7 @@ framework/
 ├── web/                  # HTTP layer: expressive routes/groups/controllers, request/response, generic handlers; security headers, CSRF/XSS, cache, sessions/cookies; Basic/JWT auth + policy gates; middleware, html/template
 │   └── ssg/              # File-based SSG: .kiw DSL (pages/components/layouts) → .krewire/build
 ├── dsl/                  # Kiw DSL (.kiw) — YAML frontmatter + html/template + style/script, Go & JS/TS native
-├── test/                 # Test helpers — generic, no spec required
+├── testing/              # Test helpers — generic, no spec required
 ├── ui/                   # Theme, palette, scoped CSS (data-kiw-component/layout)
 ├── assets/               # Static assets & resources — multi-source Store (dir/embed.FS), ETag/Cache-Control, fingerprint manifest
 ├── storage/              # App KV storage — Memory/File backends, context-aware, Provider for DI

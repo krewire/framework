@@ -15,7 +15,7 @@ The `web` package (KWF-M07QS) provides routing, template rendering, and static
 export on `net/http`. To power fullstack monolith apps, it needs an **HTTP &
 API layer**: a middleware chain for cross-cutting concerns (auth, logging,
 recovery), a JSON contract for API endpoints, structured error mapping, and
-request decoding that reuses `libs/validate` for typed DTOs.
+request decoding that reuses `libs/validation` for typed DTOs.
 
 This pipeline is the "backend/API" half of the monolith. It is additive to the
 existing `web` package and never forces a project to use it (a pure static site
@@ -39,7 +39,7 @@ Krewire apps. A shared pipeline fixes this once in the framework.
 
 - G1 — Provide a `net/http`-compatible middleware chain composable with stdlib handlers.
 - G2 — Provide JSON encode/decode helpers with strict, bounded decoding.
-- G3 — Integrate `libs/validate` so request DTOs validate automatically in one call.
+- G3 — Integrate `libs/validation` so request DTOs validate automatically in one call.
 - G4 — Provide an error type carrying an HTTP status with deterministic error→status mapping.
 - G5 — Keep the API purely additive to `web`: routing, templates, and export behavior unchanged.
 - G6 — Build on the standard library + `libs` only.
@@ -73,7 +73,7 @@ Krewire apps. A shared pipeline fixes this once in the framework.
 | FRK-API-010 | Provide `JSON(w, status int, v any)` writing the value as JSON with `Content-Type: application/json`. | Must |
 | FRK-API-011 | Provide `ReadJSON(r *http.Request, dst any) error` decoding the body with a bounded reader and one trailing-value check. | Must |
 | FRK-API-012 | `ReadJSON` returns a wrapped error classifying malformed JSON (`ErrInvalidJSON`). | Must |
-| FRK-API-013 | Provide `DecodeAndValidate(r *http.Request, dst any) error` that decodes then validates `dst` via `libs/validate`. | Must |
+| FRK-API-013 | Provide `DecodeAndValidate(r *http.Request, dst any) error` that decodes then validates `dst` via `libs/validation`. | Must |
 | FRK-API-014 | Empty bodies decode into zero `dst`; unknown fields are rejected on the top-level object. | Should |
 
 ### 5.3 Errors & Status

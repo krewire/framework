@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 // Spec: KWF-TEST-N8R2Q KWF-TST-N8R-001 Scope: Service

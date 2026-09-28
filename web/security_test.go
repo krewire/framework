@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/krewire/framework/storage"
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 func headerValues(h http.Header, key string) []string { return h.Values(key) }

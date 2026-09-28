@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/krewire/framework/app"
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 // kvBackends returns every backend so behavior tests run against the contract.

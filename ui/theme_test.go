@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 func TestThemeScriptDefaults(t *testing.T) {

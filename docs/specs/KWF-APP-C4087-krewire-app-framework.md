@@ -44,7 +44,7 @@ the "magic main" that other fullstack Go frameworks were criticized for
 - G1 — Define the app-project contract: an explicit, idiomatic `main.go` that builds a `web.App`.
 - G2 — Keep static/book sites entirely config-driven (unchanged convention); exempt only app projects from the no-`cmd` rule.
 - G3 — Make app assembly declarative enough that `krewire run`/`dev` can predict project shape and lifecycle.
-- G4 — Support configuration via `libs/config` + `libs/validate` with env overrides.
+- G4 — Support configuration via `libs/config` + `libs/validation` with env overrides.
 - G5 — Support single-binary deployment with embedded assets, static export, and API in one artifact.
 - G6 — Keep the framework dependency direction: projects → framework → libs; never reverse.
 
@@ -72,7 +72,7 @@ the "magic main" that other fullstack Go frameworks were criticized for
 | ID          | Requirement                                                       | Priority |
 | ----------- | ----------------------------------------------------------------- | -------- |
 | FRK-APP-010 | Provide `web.NewApp()` as the sole assembly entry; middleware/API via KWF-230KF, pages via KWF-0F2EB. | Must |
-| FRK-APP-011 | App configuration loads through `libs/config` (KWL-2X1QZ) and validates through `libs/validate` (KWL-LHANF) before use. | Must |
+| FRK-APP-011 | App configuration loads through `libs/config` (KWL-2X1QZ) and validates through `libs/validation` (KWL-LHANF) before use. | Must |
 | FRK-APP-012 | Config precedence is env > file > zero (as specified in KWL-2X1QZ §5.3). | Must |
 | FRK-APP-013 | A startup configuration/validation error exits non-zero with a clear message (mapped through `core` exit codes). | Must |
 

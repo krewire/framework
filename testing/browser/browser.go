@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 	"golang.org/x/net/html"
 )
 

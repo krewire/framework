@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 	"github.com/krewire/libs/auth"
 )
 
-var testSecret = []byte("kiw-test-secret")
+var testSecret = []byte("kiw-test-secret-0123456789abcdef")
 
 // Spec: KWF-WEB-B2X7D FRK-AUTH-010 Scope: Unit
 func TestFRK_AUTH_010_BasicAuth(t *testing.T) {

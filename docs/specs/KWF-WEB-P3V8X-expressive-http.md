@@ -30,7 +30,7 @@ without breaking them: `Get(pattern, h)` keeps working; new APIs compose.
 
 - G1 — Fluent route declarations with names, per-route middleware, and reverse URL generation.
 - G2 — Group-scoped middleware (`Group("/admin", requireAdmin)`) without leaking to siblings; global `Use` unchanged.
-- G3 — A `Request` value wrapping `*http.Request` + `Params` with typed accessors and one-call binding (JSON body / query) through `libs/validate`.
+- G3 — A `Request` value wrapping `*http.Request` + `Params` with typed accessors and one-call binding (JSON body / query) through `libs/validation`.
 - G4 — A fluent `Response` builder (status, headers, JSON/Text/HTML/Blob/Redirect) flushed in one `Write`.
 - G5 — Generic handlers `H[Req]`/`HQ[Req]`: bind input, invoke a function returning `(any, error)`, map errors via `Error()`, write JSON or a `*Response`.
 - G6 — Controllers as plain structs registering their own routes (`Router.Register(ctrl)`).

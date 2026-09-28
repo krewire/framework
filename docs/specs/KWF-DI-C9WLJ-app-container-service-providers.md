@@ -90,7 +90,7 @@ that is built and resolved at a single, explicit composition root.
 | FRK-CNT-012 | `app.App` (or equivalent) aggregates providers: `New(providers...)`, runs every `Register` in order, then every `Boot` in order, then returns the container for resolution. | Must |
 | FRK-CNT-013 | Provider order is explicit and stable (call order); it is the documented contract for construction and startup sequencing. | Must |
 | FRK-CNT-014 | `Boot` may resolve dependencies to validate wiring and run initializers; any returned error aborts startup with a structured failure naming the provider. | Must |
-| FRK-CNT-015 | A provider that requires runtime configuration declares it through `libs/config` + `libs/validate` bindings (FRK-STR-005), so config/validation errors surface during `Register`/`Boot`, before serving. | Must |
+| FRK-CNT-015 | A provider that requires runtime configuration declares it through `libs/config` + `libs/validation` bindings (FRK-STR-005), so config/validation errors surface during `Register`/`Boot`, before serving. | Must |
 | FRK-CNT-016 | Providers live in the canonical layout: assembly in `internal/app`, additional providers under `internal/app/<group>` or `internal/providers/` (KWF-CCI0N). | Should |
 
 ### 5.3 Dependency Injection & Composition

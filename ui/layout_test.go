@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 func TestLayoutRenderCompleteDocument(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 // Spec: KWF-WEB-J7K2P FRK-LRV-001 Scope: Unit

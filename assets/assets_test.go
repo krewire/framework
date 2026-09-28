@@ -8,7 +8,7 @@ import (
 	"testing"
 	"testing/fstest"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 func testStore() *Store {

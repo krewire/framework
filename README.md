@@ -41,7 +41,7 @@ framework/
 ├── storage/    # App KV storage: memory + filesystem backends, context-aware, app.Provider DI binding
 ├── app/        # Fullstack assembly, DI container & lifecycle
 ├── runner/     # Workload runtime contract
-├── test/       # Test helpers (generic, spec-driven opt-in)
+├── testing/    # Test helpers (generic, spec-driven opt-in)
 ├── runtime/    # Client runtime (WASM) — planned
 ├── worker/     # Background jobs — planned
 ├── service/    # Microservice patterns — planned
@@ -92,7 +92,7 @@ For Krewire ecosystem development, requirements live in `docs/specs/` with `KWF-
 - `KWF-INFRA-B7N3D` Cloud provider abstraction
 - `KWF-SVC-L5H2F` Microservice & worker patterns
 
-Testing helpers live in `framework/test` — usable with or without spec tagging (`ftest.Spec` is optional, helpers like `Equal`, `Contains`, `NewRequest` are generic).
+Testing helpers live in `framework/testing` — usable with or without spec tagging (`ftest.Spec` is optional, helpers like `Equal`, `Contains`, `NewRequest` are generic).
 
 ## Contributing
 

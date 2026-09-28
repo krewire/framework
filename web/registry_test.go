@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 // Spec: KWF-WEB-Q8T2R FRK-REG-003 Scope: Unit

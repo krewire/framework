@@ -84,7 +84,7 @@ reintroduces the fragmentation Krewire exists to remove.
 | ID           | Requirement                                                              | Priority |
 | ------------ | ------------------------------------------------------------------------ | -------- |
 | FRK-UNI-010  | All configuration lives in `krewire.yaml`; typed structs loaded via        | Must     |
-|              | `libs/config`, validated via `libs/validate` tags.                        |          |
+|              | `libs/config`, validated via `libs/validation` tags.                        |          |
 | FRK-UNI-011  | Kind-specific sections (`worker:`, `service:`, `infra:`) are optional     | Must     |
 |              | and validated only when the matching kind is selected.                    |          |
 | FRK-UNI-012  | Secrets are referenced, never stored: `${env:NAME}` or secrets-manager    | Must     |
