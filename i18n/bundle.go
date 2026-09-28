@@ -122,7 +122,9 @@ func (b *Bundle) Load() error {
 	defer b.mu.Unlock()
 
 	b.files = make(map[string]any)
-	b.locales = make(map[string]struct{})
+	if b.locales == nil {
+		b.locales = make(map[string]struct{})
+	}
 
 	// Determine root directory to walk:
 	// If basePath is specified and exists in fsys, walk from basePath.

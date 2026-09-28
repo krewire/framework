@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/krewire/framework/dsl"
+	"github.com/krewire/framework/i18n"
 	"github.com/krewire/framework/ui"
 	"gopkg.in/yaml.v3"
 )
@@ -14,6 +15,44 @@ import (
 func LoadFromDir(root string) (*Site, error) {
 	site := New()
 	meta := loadMeta(root)
+
+	// Internationalization: load lang/ directory if present
+	langPath := "lang"
+	if meta.I18n != nil && meta.I18n.BasePath != "" {
+		langPath = meta.I18n.BasePath
+	}
+	if st, err := os.Stat(filepath.Join(root, langPath)); err == nil && st.IsDir() {
+		var opts []i18n.Option
+		opts = append(opts, i18n.WithBasePath(langPath))
+		if meta.I18n != nil {
+			if meta.I18n.DefaultLocale != "" {
+				opts = append(opts, i18n.WithDefaultLocale(meta.I18n.DefaultLocale))
+			}
+			if meta.I18n.FallbackLocale != "" {
+				opts = append(opts, i18n.WithFallbackLocale(meta.I18n.FallbackLocale))
+			}
+		}
+		if bundle, err := i18n.New(os.DirFS(root), opts...); err == nil {
+			defaultLoc := bundle.DefaultLocale()
+			site.Func("t", func(key string, args ...any) string {
+				return bundle.Translate(defaultLoc, key, args...)
+			})
+			site.Func("translate", func(key string, args ...any) string {
+				return bundle.Translate(defaultLoc, key, args...)
+			})
+			site.Func("tLocale", func(locale, key string, args ...any) string {
+				return bundle.Translate(locale, key, args...)
+			})
+			site.Func("locales", func() []string {
+				return bundle.Locales()
+			})
+			if meta.Data == nil {
+				meta.Data = map[string]any{}
+			}
+			meta.Data["Locales"] = bundle.Locales()
+			meta.Data["DefaultLocale"] = defaultLoc
+		}
+	}
 
 	for _, p := range findKiwFiles(filepath.Join(root, "components")) {
 		mod, err := dsl.ParseKiwFile(p)
@@ -275,6 +314,7 @@ func loadMeta(root string) *meta {
 				Light   map[string]string `yaml:"light"`
 				Dark    map[string]string `yaml:"dark"`
 			} `yaml:"theme"`
+			I18n *I18nConfig `yaml:"i18n"`
 		}
 		if err := yaml.Unmarshal(b, &raw); err == nil {
 			if raw.Title != "" {
@@ -299,6 +339,13 @@ func loadMeta(root string) *meta {
 				}
 				m.Data["Theme"] = t
 			}
+			if raw.I18n != nil {
+				m.I18n = raw.I18n
+				if m.Data == nil {
+					m.Data = map[string]any{}
+				}
+				m.Data["I18n"] = raw.I18n
+			}
 		}
 		break
 	}
@@ -310,6 +357,7 @@ type meta struct {
 	Description string
 	Data        map[string]any
 	ThemeCSS    string
+	I18n        *I18nConfig
 }
 
 func mergeMeta(base map[string]any, fm map[string]any) map[string]any {

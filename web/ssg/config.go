@@ -44,6 +44,16 @@ type Config struct {
 	IncludeDrafts bool `yaml:"include_drafts"`
 	// IncludeFuture includes future-dated pages in build (dev only).
 	IncludeFuture bool `yaml:"include_future"`
+	// I18n configures internationalization (default/fallback locale, supported locales).
+	I18n *I18nConfig `yaml:"i18n"`
+}
+
+// I18nConfig configures internationalization for declarative sites.
+type I18nConfig struct {
+	DefaultLocale  string   `yaml:"default_locale"`
+	FallbackLocale string   `yaml:"fallback_locale"`
+	BasePath       string   `yaml:"base_path"`
+	Locales        []string `yaml:"locales"`
 }
 
 // ThemeConfig configures the theming system for a declarative site.

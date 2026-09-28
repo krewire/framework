@@ -18,6 +18,15 @@ func (s *Site) Funcs(f template.FuncMap) *Site {
 	return s
 }
 
+// Func registers a single template function available to components and layouts.
+func (s *Site) Func(name string, fn any) *Site {
+	if s.funcs == nil {
+		s.funcs = template.FuncMap{}
+	}
+	s.funcs[name] = fn
+	return s
+}
+
 // Component registers a component by name.
 func (s *Site) Component(c Component) *Site {
 	s.comps[c.Name] = &c

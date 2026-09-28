@@ -7,9 +7,11 @@ import (
 	"sync"
 	"testing"
 	"testing/fstest"
+	"time"
 
 	"github.com/krewire/framework/app"
 	"github.com/krewire/framework/i18n"
+	svcconfig "github.com/krewire/framework/service/config"
 )
 
 func sampleFileSystem() fstest.MapFS {
@@ -375,3 +377,97 @@ func TestBundle_Concurrency(t *testing.T) {
 
 	wg.Wait()
 }
+
+func TestConfigAndCenter(t *testing.T) {
+	fsys := sampleFileSystem()
+	cfg := i18n.DefaultConfig()
+	cfg.DefaultLocale = "id"
+	cfg.FallbackLocale = "en"
+	cfg.Locales = []string{"id", "en", "es"}
+
+	bundle, err := i18n.NewFromConfig(fsys, cfg)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if bundle.DefaultLocale() != "id" {
+		t.Errorf("expected default locale 'id', got '%s'", bundle.DefaultLocale())
+	}
+	if !bundle.HasLocale("es") {
+		t.Error("expected locale 'es' to be registered from config")
+	}
+
+	// Test framework config center integration
+	center := svcconfig.NewMemoryCenter()
+	ctx := context.Background()
+
+	// Store YAML config in center
+	yamlData := `
+default_locale: fr
+fallback_locale: en
+locales: [fr, en, de]
+`
+	if err := center.Set(ctx, "i18n.settings", yamlData); err != nil {
+		t.Fatalf("failed to set center config: %v", err)
+	}
+
+	loadedCfg, err := i18n.LoadConfigFromCenter(ctx, center, "i18n.settings")
+	if err != nil {
+		t.Fatalf("failed to load config from center: %v", err)
+	}
+	if loadedCfg.DefaultLocale != "fr" {
+		t.Errorf("expected loaded default locale 'fr', got '%s'", loadedCfg.DefaultLocale)
+	}
+
+	// Watch center for hot-reload
+	cancel, err := i18n.WatchCenter(ctx, center, "i18n.settings", bundle)
+	if err != nil {
+		t.Fatalf("failed to watch center: %v", err)
+	}
+	defer cancel()
+
+	// Update in center
+	updatedData := `{"default_locale": "de", "locales": ["de", "en"]}`
+	if err := center.Set(ctx, "i18n.settings", updatedData); err != nil {
+		t.Fatalf("failed to update center: %v", err)
+	}
+
+	// Give watcher a moment to process change
+	for i := 0; i < 20; i++ {
+		if bundle.DefaultLocale() == "de" {
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+
+	if bundle.DefaultLocale() != "de" {
+		t.Errorf("expected hot-reloaded locale 'de', got '%s'", bundle.DefaultLocale())
+	}
+}
+
+func TestProviderWithConfig(t *testing.T) {
+	fsys := sampleFileSystem()
+	cfg := i18n.Config{
+		DefaultLocale:  "id",
+		FallbackLocale: "en",
+	}
+
+	bundle, err := i18n.New(fsys)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	container, err := app.NewApp(i18n.ProviderWithConfig(bundle, cfg)).Build()
+	if err != nil {
+		t.Fatalf("failed to build container: %v", err)
+	}
+
+	resolvedTranslator, err := app.Resolve[*i18n.Translator](container)
+	if err != nil {
+		t.Fatalf("failed to resolve translator: %v", err)
+	}
+	if resolvedTranslator.Locale() != "id" {
+		t.Errorf("expected locale 'id', got '%s'", resolvedTranslator.Locale())
+	}
+}
+
