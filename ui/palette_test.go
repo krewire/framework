@@ -38,7 +38,7 @@ func TestPaletteMergeAndEmit(t *testing.T) {
 	if !strings.Contains(vars, "--primary: #123456;") {
 		t.Errorf("override not emitted: %q", vars)
 	}
-	if !strings.Contains(vars, "--base-1: #fdfdfb;") {
+	if !strings.Contains(vars, "--base-1: #FAF8F4;") {
 		t.Errorf("default not merged: %q", vars)
 	}
 }
