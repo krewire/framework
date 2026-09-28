@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log/slog"
 	"net/http"
@@ -11,6 +12,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/krewire/framework/runner"
+	"github.com/krewire/framework/service"
 	"github.com/krewire/framework/web/ssg"
 )
 
@@ -73,18 +76,25 @@ func serveAsset(w http.ResponseWriter, name, body string) {
 	_, _ = io.WriteString(w, body)
 }
 
-// Run serves the App over HTTP on addr, shutting down gracefully on
-// SIGINT/SIGTERM.
-func (a *App) Run(addr string) error {
-	srv := &http.Server{Addr: addr, Handler: a.Handler()}
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
+// Serve runs the HTTP server listening on addr until ctx is cancelled, then
+// shuts down gracefully with a 10-second timeout. Timeouts are configured to
+// prevent connection exhaustion and Slowloris attacks.
+func (a *App) Serve(ctx context.Context, addr string) error {
+	srv := &http.Server{
+		Addr:         addr,
+		Handler:      a.Handler(),
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
 
 	errCh := make(chan error, 1)
 	go func() {
 		slog.Info("krewire server started", "addr", addr)
-		errCh <- srv.ListenAndServe()
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			errCh <- err
+		}
+		close(errCh)
 	}()
 
 	select {
@@ -101,4 +111,20 @@ func (a *App) Run(addr string) error {
 	}
 	slog.Info("krewire server stopped")
 	return nil
+}
+
+// Runner adapts the App into a runner.Runner that serves HTTP on addr
+// within an Application lifecycle.
+func (a *App) Runner(addr string) runner.Runner {
+	return runner.Func(func(ctx context.Context, _ service.Registry) error {
+		return a.Serve(ctx, addr)
+	})
+}
+
+// Run serves the App over HTTP on addr, shutting down gracefully on
+// SIGINT/SIGTERM.
+func (a *App) Run(addr string) error {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	return a.Serve(ctx, addr)
 }

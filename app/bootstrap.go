@@ -155,14 +155,31 @@ func (a *Application) Run(ctx context.Context, runners ...Runner) error {
 		return err
 	}
 	if len(runners) > 0 {
-		var runErrs []error
+		var (
+			wg      sync.WaitGroup
+			mu      sync.Mutex
+			runErrs []error
+		)
+		runCtx, cancelRunners := context.WithCancel(ctx)
+		defer cancelRunners()
+
 		for _, r := range runners {
-			if r != nil {
-				if err := r.Run(ctx, a.container); err != nil {
-					runErrs = append(runErrs, err)
-				}
+			if r == nil {
+				continue
 			}
+			workload := r
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				if err := workload.Run(runCtx, a.container); err != nil && !errors.Is(err, context.Canceled) {
+					mu.Lock()
+					runErrs = append(runErrs, err)
+					mu.Unlock()
+					cancelRunners()
+				}
+			}()
 		}
+		wg.Wait()
 		stopErr := a.Stop(ctx)
 		if stopErr != nil {
 			runErrs = append(runErrs, stopErr)

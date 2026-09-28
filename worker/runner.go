@@ -2,10 +2,14 @@ package worker
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"runtime"
 	"sync"
+
+	"github.com/krewire/framework/runner"
+	"github.com/krewire/framework/service"
 )
 
 // Runner drains a Queue: it dequeues tasks with bounded concurrency, invokes
@@ -19,6 +23,17 @@ type Runner struct {
 
 	mu   sync.Mutex
 	stop chan struct{}
+}
+
+// AsRunner adapts Runner into a framework/runner.Runner contract for use with app.Application.Run.
+func (r *Runner) AsRunner() runner.Runner {
+	return runner.Func(func(ctx context.Context, _ service.Registry) error {
+		err := r.Run(ctx)
+		if errors.Is(err, context.Canceled) {
+			return nil
+		}
+		return err
+	})
 }
 
 // RunnerOption configures a Runner.
