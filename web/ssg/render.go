@@ -93,8 +93,15 @@ func (s *Site) renderPage(p *Page) (string, error) {
 		return "", err
 	}
 	body := string(scoped)
+	var allScripts []string
+	if l, ok := s.layouts[p.Layout]; ok && len(l.Scripts) > 0 {
+		allScripts = append(allScripts, l.Scripts...)
+	}
 	if len(p.Scripts) > 0 {
-		body = injectScripts(body, p.Scripts)
+		allScripts = append(allScripts, p.Scripts...)
+	}
+	if len(allScripts) > 0 {
+		body = injectScripts(body, allScripts)
 	}
 	return body, nil
 }

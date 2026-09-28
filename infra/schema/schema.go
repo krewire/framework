@@ -1,12 +1,12 @@
 // Package schema provides typed resource schemas and validation for common
 // infrastructure primitives (KWF-B7N3D FRK-INFRA-010/011/012). Schemas map Go
-// structs with validation tags to JSON schema via libs/validate.
+// structs with validation tags to JSON schema via libs/validation.
 package schema
 
 import (
 	"fmt"
 
-	"github.com/krewire/libs/validate"
+	validation "github.com/krewire/libs/validation"
 )
 
 // Kind constants for common infrastructure primitives (FRK-INFRA-011).
@@ -68,7 +68,7 @@ type SecretRef struct {
 
 // Validate checks a typed resource struct (FRK-INFRA-010).
 func Validate(v any) error {
-	if err := validate.Struct(v); err != nil {
+	if err := validation.Struct(v); err != nil {
 		return fmt.Errorf("schema: %w", err)
 	}
 	return nil

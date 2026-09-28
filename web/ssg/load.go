@@ -1,6 +1,7 @@
 package ssg
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -37,7 +38,16 @@ func LoadFromDir(root string) (*Site, error) {
 			continue
 		}
 		style := strings.Join(mod.Styles, "\n")
-		site.Layout(Layout{Name: name, Body: mod.Body, Style: style})
+		var scripts []string
+		for i, sc := range mod.Scripts {
+			if strings.TrimSpace(sc) == "" {
+				continue
+			}
+			spath := "/" + filepath.Join("assets", fmt.Sprintf("layout-%s-%d.js", name, i))
+			site.Asset(strings.TrimPrefix(spath, "/"), sc)
+			scripts = append(scripts, spath)
+		}
+		site.Layout(Layout{Name: name, Body: mod.Body, Style: style, Scripts: scripts})
 	}
 
 	// Content collections: every dir under content/ is a collection
@@ -202,16 +212,23 @@ func LoadFromDir(root string) (*Site, error) {
 			rootName = "page:" + route + ":body"
 			site.Component(Component{Name: rootName, Body: body})
 		}
-		site.Page(Page{
-			Path:   route,
-			Title:  title,
-			Layout: layout,
-			Root:   rootName,
-			Data:   data,
-		})
+		var scriptPaths []string
 		for i, sc := range mod.Scripts {
-			site.Asset(filepath.Join("assets", "page"+strings.ReplaceAll(route, "/", "-")+string(rune('0'+i))+".js"), sc)
+			if strings.TrimSpace(sc) == "" {
+				continue
+			}
+			spath := "/" + filepath.Join("assets", "page"+strings.ReplaceAll(route, "/", "-")+string(rune('0'+i))+".js")
+			site.Asset(strings.TrimPrefix(spath, "/"), sc)
+			scriptPaths = append(scriptPaths, spath)
 		}
+		site.Page(Page{
+			Path:    route,
+			Title:   title,
+			Layout:  layout,
+			Root:    rootName,
+			Data:    data,
+			Scripts: scriptPaths,
+		})
 	}
 
 	publicDir := filepath.Join(root, "public")

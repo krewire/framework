@@ -1,6 +1,6 @@
 // Package config defines the typed application configuration
 // (FRK-STR-005): a struct loaded through libs/config and validated with
-// libs/validate. The config file is krewire.yaml at the project root.
+// libs/validation. The config file is krewire.yaml at the project root.
 package config
 
 import (
@@ -8,7 +8,7 @@ import (
 	"os"
 
 	rconfig "github.com/krewire/libs/config"
-	"github.com/krewire/libs/validate"
+	validation "github.com/krewire/libs/validation"
 )
 
 // Config is the typed application configuration.
@@ -27,7 +27,7 @@ func Load(path string) (*Config, error) {
 	if err := rconfig.Override(cfg, os.LookupEnv); err != nil {
 		return nil, err
 	}
-	if err := validate.Struct(cfg); err != nil {
+	if err := validation.Struct(cfg); err != nil {
 		return nil, fmt.Errorf("config: %w", err)
 	}
 	return cfg, nil

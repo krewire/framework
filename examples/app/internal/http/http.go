@@ -7,7 +7,7 @@ import (
 
 	rvapp "github.com/krewire/framework/app"
 	rvweb "github.com/krewire/framework/web"
-	"github.com/krewire/libs/validate"
+	validation "github.com/krewire/libs/validation"
 )
 
 // Handler serves the JSON API endpoints.
@@ -36,7 +36,7 @@ func (h *Handler) Contact(w http.ResponseWriter, r *http.Request, _ rvweb.Params
 		rvweb.Error(w, err)
 		return
 	}
-	if err := validate.Struct(&req); err != nil {
+	if err := validation.Struct(&req); err != nil {
 		rvweb.Error(w, &rvweb.HTTPError{Status: http.StatusBadRequest, Code: "invalid", Message: err.Error()})
 		return
 	}

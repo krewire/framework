@@ -19,9 +19,10 @@ type Component struct {
 // value (fields Title, Content, Data). Style is scoped to the layout's root
 // element.
 type Layout struct {
-	Name  string
-	Body  string
-	Style string
+	Name    string
+	Body    string
+	Style   string
+	Scripts []string
 }
 
 // LayoutData is the value passed to a layout template.
