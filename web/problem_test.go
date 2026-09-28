@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 func TestWebProblem_WriteProblem(t *testing.T) {

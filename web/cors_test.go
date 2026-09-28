@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	ftest "github.com/krewire/framework/test"
+	ftest "github.com/krewire/framework/testing"
 )
 
 func TestWebCORS_Integration(t *testing.T) {

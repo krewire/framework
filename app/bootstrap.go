@@ -32,6 +32,30 @@ type Application struct {
 	serviceMu        sync.Mutex
 }
 
+// Bootstrap builds the container from providers (Register then Boot) and starts
+// the lifecycle (provider Starters then App hooks). It returns the Application
+// ready to serve. The caller must call Stop to shutdown gracefully.
+func Bootstrap(ctx context.Context, providers ...Provider) (*Application, error) {
+	return BootstrapWithOptions(ctx, nil, providers...)
+}
+
+// BootstrapWithOptions is like Bootstrap but applies container Options (e.g.
+// WithLogger, WithTrace) before Build.
+func BootstrapWithOptions(ctx context.Context, opts []Option, providers ...Provider) (*Application, error) {
+	a := NewApp(providers...)
+	if len(opts) > 0 {
+		a.Options(opts...)
+	}
+	c, err := a.Build()
+	if err != nil {
+		return nil, err
+	}
+	if err := a.Start(ctx, c); err != nil {
+		return nil, err
+	}
+	return &Application{container: c, app: a, appStarted: true}, nil
+}
+
 // NewApplication creates an application with an empty service container.
 func NewApplication() *Application {
 	return &Application{container: New()}
@@ -87,20 +111,23 @@ func (a *Application) Bootstrap(ctx context.Context) error {
 		a.appStarted = true
 	}
 	a.serviceMu.Lock()
-	defer a.serviceMu.Unlock()
 	for _, provider := range a.serviceProviders {
 		if err := provider.Register(a.container); err != nil {
+			a.serviceMu.Unlock()
 			return fmt.Errorf("app: register %q: %w", provider.Name(), err)
 		}
 	}
 	for _, provider := range a.serviceProviders {
 		if starter, ok := provider.(service.Starter); ok {
 			if err := starter.Start(ctx, a.container); err != nil {
+				a.serviceMu.Unlock()
+				_ = a.Stop(ctx)
 				return fmt.Errorf("app: start %q: %w", provider.Name(), err)
 			}
 			a.startedProviders = append(a.startedProviders, provider)
 		}
 	}
+	a.serviceMu.Unlock()
 	return nil
 }
 
