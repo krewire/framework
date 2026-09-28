@@ -39,7 +39,8 @@ framework/
 ├── ui/         # Theme, palette, scoped CSS
 ├── assets/     # Static assets & resources: multi-source store (dir/embed), ETag+Cache-Control, fingerprint manifest
 ├── storage/    # App KV storage: memory + filesystem backends, context-aware, app.Provider DI binding
-├── app/        # Fullstack assembly + DI container
+├── app/        # Fullstack assembly, DI container & lifecycle
+├── runner/     # Workload runtime contract
 ├── test/       # Test helpers (generic, spec-driven opt-in)
 ├── runtime/    # Client runtime (WASM) — planned
 ├── worker/     # Background jobs — planned

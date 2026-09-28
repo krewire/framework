@@ -15,6 +15,7 @@ framework/
 ├── assets/               # Static assets & resources — multi-source Store (dir/embed.FS), ETag/Cache-Control, fingerprint manifest
 ├── storage/              # App KV storage — Memory/File backends, context-aware, Provider for DI
 ├── app/                  # Fullstack assembly, DI container, modular monolith (KWF-5ZHQV)
+├── runner/               # Workload runtime contract (`runner.Runner`, `runner.Func`)
 ├── runtime/              # WASM client runtime — planned (KWF-T4X9P)
 │   ├── js/               # DOM bridge (syscall/js)
 │   ├── vdom/             # VNode, diff/patch, RenderHTML/PatchDOM
@@ -23,7 +24,7 @@ framework/
 │   ├── layout/           # Flexbox engine (Go)
 │   └── style/            # Theme → CSS vars
 ├── worker/               # Background jobs — planned (KWF-L5H2F)
-├── service/              # Microservice patterns — planned (KWF-L5H2F)
+├── service/              # Service provider contracts (`Provider`, `Registry`, `Starter`, `Stopper`) & microservice patterns
 │   ├── registry/         # Consul/etcd/NATS/DNS
 │   ├── config/           # Distributed config, Watch
 │   ├── gateway/          # Route table, middleware, rate limit

@@ -15,15 +15,19 @@ import (
 	"reflect"
 	"sync"
 	"time"
+
+	"github.com/krewire/framework/service"
 )
 
 // Container is the composition root. Bindings are registered with Provide or
-// Singleton and resolved with Resolve. It is safe for concurrent use after
-// registration.
+// Singleton and resolved with Resolve. It also implements service.Registry
+// for named service storage. It is safe for concurrent use after registration.
 type Container struct {
 	mu       sync.Mutex
 	bindings map[reflect.Type]*binding
 	order    []reflect.Type
+
+	services map[string]any
 
 	locked bool
 
@@ -72,12 +76,67 @@ type Tracer interface {
 func New(opts ...Option) *Container {
 	c := &Container{
 		bindings: make(map[reflect.Type]*binding),
+		services: make(map[string]any),
 		logger:   slog.Default(),
 	}
 	for _, o := range opts {
 		o(c)
 	}
 	return c
+}
+
+// NewContainer creates an empty service container with the given options applied.
+func NewContainer(opts ...Option) *Container {
+	return New(opts...)
+}
+
+// Set registers a service under name (implements service.Registry). Duplicate
+// names are rejected.
+func (c *Container) Set(name string, value any) error {
+	if c == nil {
+		return fmt.Errorf("app: nil container")
+	}
+	if name == "" {
+		return fmt.Errorf("app: service name is required")
+	}
+	if value == nil {
+		return fmt.Errorf("app: service %q must not be nil", name)
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.services == nil {
+		c.services = make(map[string]any)
+	}
+	if _, exists := c.services[name]; exists {
+		return fmt.Errorf("app: service %q already registered", name)
+	}
+	c.services[name] = value
+	return nil
+}
+
+// Get resolves a service by name (implements service.Registry).
+func (c *Container) Get(name string) (any, bool) {
+	if c == nil {
+		return nil, false
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.services == nil {
+		return nil, false
+	}
+	value, ok := c.services[name]
+	return value, ok
+}
+
+// ResolveNamed returns a typed service by name from the container.
+func ResolveNamed[T any](c *Container, name string) (T, bool) {
+	var zero T
+	value, ok := c.Get(name)
+	if !ok {
+		return zero, false
+	}
+	resolved, ok := value.(T)
+	return resolved, ok
 }
 
 // Provide registers a factory for T: an ordinary function
@@ -255,3 +314,5 @@ func pathNames(path []reflect.Type) []string {
 	}
 	return names
 }
+
+var _ service.Registry = (*Container)(nil)
