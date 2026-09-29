@@ -156,10 +156,47 @@ func (a *App) Run(tokens []string) vein.ExitCode {
 	}
 
 	a.logger.Debug("dispatching command", "command", cmd.Name)
-	if err := fs.Parse(rest); err != nil {
+	parsedArgs := reorderArgs(fs, rest)
+	if err := fs.Parse(parsedArgs); err != nil {
 		return vein.ExitCodeUsage
 	}
 	return cmd.Run(fs)
+}
+
+func reorderArgs(fs *flag.FlagSet, args []string) []string {
+	var flags []string
+	var positionals []string
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		if arg == "--" {
+			positionals = append(positionals, args[i:]...)
+			break
+		}
+		if strings.HasPrefix(arg, "-") {
+			name := strings.TrimLeft(arg, "-")
+			hasEqual := strings.Contains(name, "=")
+			if hasEqual {
+				flags = append(flags, arg)
+				continue
+			}
+			f := fs.Lookup(name)
+			if f != nil {
+				if bf, ok := f.Value.(interface{ IsBoolFlag() bool }); ok && bf.IsBoolFlag() {
+					flags = append(flags, arg)
+				} else if i+1 < len(args) {
+					flags = append(flags, arg, args[i+1])
+					i++
+				} else {
+					flags = append(flags, arg)
+				}
+			} else {
+				flags = append(flags, arg)
+			}
+		} else {
+			positionals = append(positionals, arg)
+		}
+	}
+	return append(flags, positionals...)
 }
 
 // findCommand returns the Command with the given name, or nil.
