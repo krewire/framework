@@ -121,3 +121,55 @@ func TestLoadFromDir_ContentSlugPages(t *testing.T) {
 		t.Errorf("slug page missing content: %s", html)
 	}
 }
+
+func TestLoadFromDir_ComponentSyntaxParity(t *testing.T) {
+	dir := t.TempDir()
+	os.MkdirAll(filepath.Join(dir, "components"), 0o755)
+	os.MkdirAll(filepath.Join(dir, "layouts"), 0o755)
+	os.MkdirAll(filepath.Join(dir, "pages"), 0o755)
+
+	os.WriteFile(filepath.Join(dir, "components", "Badge.kiw"),
+		[]byte(`<span class="badge">{{.Text}}</span><style>.badge{padding:2px}</style>`), 0o644)
+	os.WriteFile(filepath.Join(dir, "components", "Navbar.kiw"),
+		[]byte(`<header><nav>Brand</nav></header><style>header{height:40px}</style>`), 0o644)
+	os.WriteFile(filepath.Join(dir, "layouts", "Base.kiw"),
+		[]byte(`<!doctype html><html><body>{{.Content}}</body></html>`), 0o644)
+
+	// Page uses both <ComponentName /> and {{component "ComponentName"}}
+	os.WriteFile(filepath.Join(dir, "pages", "index.kiw"), []byte(`---
+title: Parity Test
+layout: Base
+---
+<Navbar />
+<div class="content">
+  <Badge Text="TagBadge" />
+  {{component "Badge" (dict "Text" "MustacheBadge")}}
+</div>
+`), 0o644)
+
+	site, err := LoadFromDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := t.TempDir()
+	if _, err := site.Build(out); err != nil {
+		t.Fatal(err)
+	}
+
+	b, err := os.ReadFile(filepath.Join(out, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	html := string(b)
+
+	// Both <Navbar /> and components must render properly
+	if !strings.Contains(html, "Brand") {
+		t.Errorf("expected Navbar to be rendered, got %s", html)
+	}
+	if !strings.Contains(html, `<span class="badge" data-kiw-component="Badge">TagBadge</span>`) {
+		t.Errorf("expected <Badge Text=\"TagBadge\" /> to render scoped component, got %s", html)
+	}
+	if !strings.Contains(html, `<span class="badge" data-kiw-component="Badge">MustacheBadge</span>`) {
+		t.Errorf("expected {{component \"Badge\"}} to render scoped component, got %s", html)
+	}
+}

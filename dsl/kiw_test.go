@@ -1,7 +1,10 @@
 // Tests for KWF-DF3PL
 package dsl
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestParseKiw_FrontmatterAndTemplate(t *testing.T) {
 	src := "---\ntitle: Landing\nlayout: Base\n---\n<h1>{{.Title}}</h1>\n<style>h1{color:red}</style>\n<script>console.log(1)</script>"
@@ -88,5 +91,69 @@ func TestKWF_N4K8Q_StyleScoped(t *testing.T) {
 	}
 	if mod.StyleBlocks[1].Scoped {
 		t.Errorf("second style should not be scoped")
+	}
+}
+
+func TestParseKiw_ComponentMustacheAndJSXEquivalence(t *testing.T) {
+	// Case 1: Simple {{component "Navbar"}} vs <Navbar />
+	srcMustache := `<div>{{component "Navbar"}}</div>`
+	srcJSX := `<div><Navbar /></div>`
+
+	mod1, err := ParseKiw(srcMustache)
+	if err != nil {
+		t.Fatalf("ParseKiw mustache error: %v", err)
+	}
+	mod2, err := ParseKiw(srcJSX)
+	if err != nil {
+		t.Fatalf("ParseKiw JSX error: %v", err)
+	}
+
+	// Both should yield the exact same Body for the template engine
+	if mod1.Body != mod2.Body {
+		t.Errorf("body mismatch: mustache=%q, jsx=%q", mod1.Body, mod2.Body)
+	}
+	if len(mod2.ComponentNames) != 1 || mod2.ComponentNames[0] != "Navbar" {
+		t.Errorf("expected component 'Navbar', got %v", mod2.ComponentNames)
+	}
+	if len(mod1.ComponentNames) != 1 || mod1.ComponentNames[0] != "Navbar" {
+		t.Errorf("expected component 'Navbar', got %v", mod1.ComponentNames)
+	}
+}
+
+func TestParseKiw_ComponentWithProps(t *testing.T) {
+	src := `
+<Navbar ShowSidebarToggle=true Version=.Version />
+<ThemeSwitch />
+<Button Variant="primary" Count=42 Active={true}>Save Changes</Button>
+`
+	mod, err := ParseKiw(src)
+	if err != nil {
+		t.Fatalf("ParseKiw error: %v", err)
+	}
+
+	if len(mod.ComponentNames) != 3 {
+		t.Fatalf("expected 3 components, got %d: %v", len(mod.ComponentNames), mod.ComponentNames)
+	}
+
+	// Verify desugared body contains proper Go template calls
+	if !strings.Contains(mod.Body, `{{component "Navbar" (dict "ShowSidebarToggle" true "Version" .Version)}}`) {
+		t.Errorf("expected desugared Navbar with dict props, got:\n%s", mod.Body)
+	}
+	if !strings.Contains(mod.Body, `{{component "ThemeSwitch"}}`) {
+		t.Errorf("expected desugared ThemeSwitch, got:\n%s", mod.Body)
+	}
+	if !strings.Contains(mod.Body, `{{component "Button" (dict "Variant" "primary" "Count" 42 "Active" true "Body" "Save Changes")}}`) {
+		t.Errorf("expected desugared Button with body, got:\n%s", mod.Body)
+	}
+}
+
+func TestDesugarTemplate_Direct(t *testing.T) {
+	out, err := DesugarTemplate(`<Card Title="My Card" />`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := `{{component "Card" (dict "Title" "My Card")}}`
+	if out != want {
+		t.Errorf("got %q, want %q", out, want)
 	}
 }

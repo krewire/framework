@@ -14,17 +14,21 @@ import (
 
 // renderComponent renders a component with data, marks it used, and injects
 // its scope attribute onto the rendered root element.
-func (s *Site) renderComponent(name string, data any) (template.HTML, error) {
+func (s *Site) renderComponent(name string, data ...any) (template.HTML, error) {
+	var d any
+	if len(data) > 0 {
+		d = data[0]
+	}
 	if _, ok := s.comps[name]; ok {
 		s.markUsed(name)
 		var buf bytes.Buffer
-		if err := s.set.ExecuteTemplate(&buf, name, data); err != nil {
+		if err := s.set.ExecuteTemplate(&buf, name, d); err != nil {
 			return "", err
 		}
 		return scopeFragment(name, buf.String())
 	}
 	if s.reg != nil {
-		if out, err := s.reg.Render(name, componentProps(data)); err == nil {
+		if out, err := s.reg.Render(name, componentProps(d)); err == nil {
 			return out, nil
 		} else if !strings.HasPrefix(err.Error(), "ui: undefined component") {
 			return "", err
