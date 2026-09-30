@@ -9,7 +9,7 @@ framework/
 ├── tui/                  # CLI app model — flag/slog/term, `tui.App` harness
 ├── web/                  # HTTP layer: expressive routes/groups/controllers, request/response, generic handlers; security headers, CSRF/XSS, cache, sessions/cookies; Basic/JWT auth + policy gates; middleware, html/template
 │   └── ssg/              # File-based SSG: .kiw DSL (pages/components/layouts) → .krewire/build
-├── dsl/                  # Kiw DSL (.kiw) — YAML frontmatter + html/template + style/script, Go & JS/TS native
+├── web/ssg/              # Static-site renderer; `.kiw` parsing is owned by kiw/dsl
 ├── testing/              # Test helpers — generic, no spec required
 ├── ui/                   # Theme, palette, scoped CSS (data-kiw-component/layout)
 ├── assets/               # Static assets & resources — multi-source Store (dir/embed.FS), ETag/Cache-Control, fingerprint manifest

@@ -35,7 +35,7 @@ framework/
 ├── tui/        # CLI application model
 ├── web/        # HTTP server, routing, middleware
 │   └── ssg/    # File-based SSG (Astro-inspired, .kiw DSL)
-├── dsl/        # Kiw DSL (.kiw) — frontmatter YAML + html/template + scoped CSS, parseable to Go & JS/TS
+├── web/ssg/     # Static-site renderer; `.kiw` parsing is owned by kiw/dsl
 ├── ui/         # Theme, palette, scoped CSS
 ├── assets/     # Static assets & resources: multi-source store (dir/embed), ETag+Cache-Control, fingerprint manifest
 ├── storage/    # App KV storage: memory + filesystem backends, context-aware, app.Provider DI binding
