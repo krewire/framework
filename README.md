@@ -56,7 +56,7 @@ Related primitives live in [`libs`](https://github.com/krewire/libs) (`core`, `k
 
 ### Prerequisites
 
-- Go 1.22+ — https://go.dev/dl/
+- Go 1.26+ — https://go.dev/dl/
 
 The framework depends on `github.com/krewire/libs` (fetched via its git URL); no local checkout is required for `go build`.
 
