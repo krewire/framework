@@ -163,6 +163,12 @@ func dict(values ...any) (map[string]any, error) {
 		if !ok {
 			return nil, fmt.Errorf("dict: key must be string, got %T", values[i])
 		}
+		if k == "Body" {
+			if s, ok := values[i+1].(string); ok {
+				m[k] = template.HTML(s)
+				continue
+			}
+		}
 		m[k] = values[i+1]
 	}
 	return m, nil
@@ -176,6 +182,12 @@ func (s *Site) prepare() error {
 	funcs := template.FuncMap{}
 	for name, fn := range s.funcs {
 		funcs[name] = fn
+	}
+	funcs["safeHTML"] = func(s any) template.HTML {
+		return template.HTML(fmt.Sprint(s))
+	}
+	funcs["raw"] = func(s any) template.HTML {
+		return template.HTML(fmt.Sprint(s))
 	}
 	funcs["component"] = s.renderComponent
 	funcs["mount"] = s.renderMount
