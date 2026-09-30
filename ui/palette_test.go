@@ -10,7 +10,7 @@ func TestDefaultPalettesComplete(t *testing.T) {
 		"light": DefaultLightPalette,
 		"dark":  DefaultDarkPalette,
 	} {
-		vars := p.cssVars(Palette{})
+		vars := p.CSSVars(Palette{})
 		for _, token := range []string{
 			"base-1", "base-1-content",
 			"base-2", "base-2-content",
@@ -34,7 +34,7 @@ func TestDefaultPalettesComplete(t *testing.T) {
 
 func TestPaletteMergeAndEmit(t *testing.T) {
 	p := Palette{Primary: "#123456"}
-	vars := p.cssVars(DefaultLightPalette)
+	vars := p.CSSVars(DefaultLightPalette)
 	if !strings.Contains(vars, "--primary: #123456;") {
 		t.Errorf("override not emitted: %q", vars)
 	}

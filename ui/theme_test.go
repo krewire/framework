@@ -48,13 +48,13 @@ func TestThemeButton(t *testing.T) {
 }
 
 func TestThemeStorageKeyAndDefault(t *testing.T) {
-	if got := (Theme{}).storageKey(); got != "krewire-theme" {
+	if got := (Theme{}).StorageKeyOrDefault(); got != "krewire-theme" {
 		t.Errorf("default storage key = %q", got)
 	}
-	if got := (Theme{Default: "bogus"}).defaultTheme(); got != "auto" {
+	if got := (Theme{Default: "bogus"}).DefaultTheme(); got != "auto" {
 		t.Errorf("invalid default = %q, want auto", got)
 	}
-	if got := (Theme{Default: "light"}).defaultTheme(); got != "light" {
+	if got := (Theme{Default: "light"}).DefaultTheme(); got != "light" {
 		t.Errorf("default = %q, want light", got)
 	}
 }
