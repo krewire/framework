@@ -15,7 +15,7 @@ The **`.kiw` unified DSL** is Krewire's single-file component format that unifie
 
 ## 2. Background & Context
 
-Today `.kiw` is minimal (`framework/dsl/kiw.go`, `framework/dsl/kiw.ts`, `KWF-DF3PL FRK-FLS-010`): optional frontmatter, an `html/template` body, and `<style>`/`<script>` extractions. It solved the `krewire.yaml`-inline anti-pattern, but three gaps remain:
+Today `.kiw` is minimal (`kiw/dsl/kiw.go`, `kiw/dsl/kiw.ts`, `KWF-DF3PL FRK-FLS-010`): optional frontmatter, an `html/template` body, and `<style>`/`<script>` extractions. It solved the `krewire.yaml`-inline anti-pattern, but three gaps remain:
 
 - `web/ssg` renders `html/template` on the server; client interactivity and the WASM runtime (`KWF-T4X9P`, `KWF-F2TQC`) need tiered code.
 - Go and Rust have no first-class blocks for server `Load`/`Action` or WASM compute.
@@ -58,7 +58,7 @@ Today `.kiw` is minimal (`framework/dsl/kiw.go`, `framework/dsl/kiw.ts`, `KWF-DF
 | A1 | Go 1.22+, `krewire.yaml` is metadata-only (`KWF-DF3PL FRK-FLS-002`) | Assumption | `go vet` |
 | A2 | Rust toolchain (`rustc`+`cargo`+`wasm32-unknown-unknown`) optional; missing → `compute` errors with actionable `ExitCodeUsage` | Assumption | `krewire build --check` |
 | A3 | TS compiles via `esbuild` (vendored or via `go:embed` JS glue); no `node_modules` for hello-world | Assumption | fixture build |
-| C1 | `framework/dsl` stays stdlib + `gopkg.in/yaml.v3` + `gomarkdown/markdown` + `x/net/html` only; no `framework` import | Constraint | `go vet ./framework/dsl` |
+| C1 | `kiw/dsl` stays stdlib + `gopkg.in/yaml.v3` + `gomarkdown/markdown` + `x/net/html` only; no `framework` import | Constraint | `go vet ./kiw/dsl` |
 | C2 | Generated code never overwrites author files; all outputs under `.krewire/` and `site/_assets/` | Constraint | build test |
 | C3 | Scoped CSS contract (`data-kiw-component="name"`) unchanged from `KWF-DF3PL FRK-FLS-013` | Constraint | `css_test.go` |
 
@@ -143,7 +143,7 @@ High-impact effortless: **Go is primary for client** (WASM `KWF-T4X9P`), `js/ts`
 | NFR2 | Size | Rust `compute` hello-world WASM ≤ 50KB gzipped; TS mount JS ≤ 30KB gzipped (esbuild minify) |
 | NFR3 | Quality Gates | `gofmt -l .` empty, `go vet ./...` clean, `go test ./...` passes in `framework` and `krewire`; `cargo check`/`cargo fmt --check` pass when Rust blocks present |
 | NFR4 | Compatibility | Existing `.kiw` files (no `lang`, bare `<style>`/`<script>`) **MUST** build without changes |
-| NFR5 | Security | No `unsafe` in `framework/dsl`; generated server code runs with `html/template` auto-escaping; `compute` WASM sandboxed (no FS/net unless explicitly imported) |
+| NFR5 | Security | No `unsafe` in `kiw/dsl`; generated server code runs with `html/template` auto-escaping; `compute` WASM sandboxed (no FS/net unless explicitly imported) |
 | NFR6 | Portability | Build works on `linux/amd64` without Docker; Rust `compute` requires `wasm32-unknown-unknown` target only when `compute` blocks exist |
 
 ## 6. Detailed Design / Proposal
@@ -168,14 +168,14 @@ pages/counter.kiw
         alongside <template> — same content pipeline, no separate tier.
 ```
 
-Module: `framework/dsl` owns parsing/codegen (no `framework` import); `framework/web/ssg` consumes `*KiwModule` → `Site`; `framework/runtime` consumes mount points; `kiw/internal/commands` drives `krewire build` dispatch.
+Module: `kiw/dsl` owns parsing/codegen (no `framework` import); `framework/web/ssg` consumes `*KiwModule` → `Site`; `framework/runtime` consumes mount points; `kiw/internal/commands` drives `krewire build` dispatch.
 
-Dependencies: `framework/dsl` → `libs/core` (Kind/ExitCode) + `libs/config` (props validation) + `gopkg.in/yaml.v3` + `gomarkdown/markdown`; `framework/web/ssg` → `dsl`; `runtime` → `dsl` (types).
+Dependencies: `kiw/dsl` → `libs/core` (Kind/ExitCode) + `libs/config` (props validation) + `gopkg.in/yaml.v3` + `gomarkdown/markdown`; `framework/web/ssg` → `dsl`; `runtime` → `dsl` (types).
 
 ### 6.2 API Design
 
 ```go
-// framework/dsl — extended
+// kiw/dsl — extended
 type KiwModule struct {
   Frontmatter map[string]any `json:"frontmatter"`
   Props       PropsSchema    `json:"props"`      // parsed from frontmatter.props
@@ -334,7 +334,7 @@ Decision uses impact-to-effort ordering: foundations (parser + types) before bun
 ### 6.5 System Context & Diagrams
 
 ```
-framework/dsl (parse, desugar, scope, codegen)
+kiw/dsl (parse, desugar, scope, codegen)
       ↑           ↑           ↑
 web/ssg ────────┘           │
 runtime (VDOM/hydration) ───┘
@@ -361,7 +361,7 @@ krewire build
 | Aspect | Estimate | Notes |
 |--------|----------|-------|
 | Dev cost | M (2–3 weeks) | Parser 3d, types 3d, desugar 2d, Go/Rust/TS pipelines 5d, tests/docs 3d |
-| Runtime cost | Zero when unused | `framework/dsl` only linked when `.kiw` present; hello-world without `rust` has no `cargo` dep |
+| Runtime cost | Zero when unused | `kiw/dsl` only linked when `.kiw` present; hello-world without `rust` has no `cargo` dep |
 | Build perf | <2s cold, <200ms warm | Per-block hashing, incremental tier |
 
 ### 6.7 Security, Privacy & Compliance
@@ -384,7 +384,7 @@ krewire build
 ## 7. Dependencies & Impact
 
 - **Depends On:** `KWF-DF3PL` (file pipeline), `KWF-PT8OD` (SSG), `KWF-0Z671` (ui/theme), `KWL-CORE-K1N2Q` (Kind/ExitCode)
-- **Impacts:** `framework/dsl` (parser, types, desugar, scope), `framework/web/ssg` (consume `KiwModule.Props/Scripts/Markdown`), `framework/runtime` (mount points + WASM compute loader), `framework/ui` (theme vars), `kiw/internal/commands` (`build` tier dispatch + `fmt`), `guild` (template for `.kiw` scaffolding)
+- **Impacts:** `kiw/dsl` (parser, types, desugar, scope), `framework/web/ssg` (consume `KiwModule.Props/Scripts/Markdown`), `framework/runtime` (mount points + WASM compute loader), `framework/ui` (theme vars), `kiw/internal/commands` (`build` tier dispatch + `fmt`), `guild` (template for `.kiw` scaffolding)
 - **Migration:** Legacy `.kiw` (no `lang`, no `<markdown>`, frontmatter-free components) builds unchanged; `krewire fmt` migrates formatting only.
 
 ## 8. Risks & Mitigations
@@ -400,17 +400,17 @@ krewire build
 
 ## 9. Testing & Verification Plan
 
-- **Unit (`framework/dsl`):** `ParseKiw` frontmatter optional (no `---` required) + `Markdown` extraction/rendering + props schema + template desugar + `ScopeCSS`; table-driven golden tests for `{expr}`/`{#if}`/`@click` → `{{}}` and `<markdown># Hi</markdown>` → `<h1>` (FRK-DSL-010/014/020).
+- **Unit (`kiw/dsl`):** `ParseKiw` frontmatter optional (no `---` required) + `Markdown` extraction/rendering + props schema + template desugar + `ScopeCSS`; table-driven golden tests for `{expr}`/`{#if}`/`@click` → `{{}}` and `<markdown># Hi</markdown>` → `<h1>` (FRK-DSL-010/014/020).
 - **Types:** `GenerateTypes` fixture produces `props.go` that `go vet` passes, `props.ts` that `tsc --noEmit` passes, `props.rs` that `cargo check` passes.
 - **Integration (`framework/web/ssg`):** fixture `pages/counter.kiw` (go+ts+rust+markdown) builds to `site/counter.html` with scoped CSS link, `site/_assets/counter.<hash>.{js,wasm,css}`; `curl` output readable without JS (SSR parity `KWF-T4X9P` NFR1).
 - **Tier isolation:** fixture without `rust` block builds without `cargo`; without `client` block emits no JS; without `<markdown>` parses identically to before.
-- **Spec traceability:** Each `Must` row has a test `// Tests for KWF-N4K8Q FRK-DSL-xxx` in `framework/dsl`, `framework/web/ssg`, and `kiw` fixture.
+- **Spec traceability:** Each `Must` row has a test `// Tests for KWF-N4K8Q FRK-DSL-xxx` in `kiw/dsl`, `framework/web/ssg`, and `kiw` fixture.
 - **Gates:** `gofmt -l .` empty, `go vet ./...` clean, `go test ./...` pass (including `dsl`), `krewire build` fixture, `cargo fmt --check` when `compute` present.
 
 ## 10. Rollout & Operations
 
 - **Phase:** Phase 1 (WASM runtime) + Phase 4 (DX unification) per `internal/docs/project-vision.md`; impact high, effort medium → after `KWF-T4X9P` VDOM merge.
-- **Rollout steps:** Spec draft → review (arch-guard) → `framework/dsl` parser + types (+ Markdown) → `ssg`/`runtime` integration → `kiw build` tier dispatch → `gofmt`/`go vet`/`go test`+`cargo check`+`tsc` → `push`+`tag` `framework v0.1.0` → bump `kiw` `go.mod` → rebuild `bin/kiw` → update `docs/specs/index.md` Impl Status `Planned`→`Shipped`.
+- **Rollout steps:** Spec draft → review (arch-guard) → `kiw/dsl` parser + types (+ Markdown) → `ssg`/`runtime` integration → `kiw build` tier dispatch → `gofmt`/`go vet`/`go test`+`cargo check`+`tsc` → `push`+`tag` `framework v0.1.0` → bump `kiw` `go.mod` → rebuild `bin/kiw` → update `docs/specs/index.md` Impl Status `Planned`→`Shipped`.
 - **Timeline:** Week 1 spec review, Week 2 `dsl` + `ssg`, Week 3 `runtime` + `kiw` + docs sync (M).
 - **Monitoring:** `krewire build --verbose` timing; CI fixture size budget (NFR2).
 - **Rollback:** `git revert` single spec commit; legacy `.kiw` still builds.
@@ -431,7 +431,7 @@ krewire build
 - S3 — `props: {initial: int}` generates `CounterProps` in `.krewire/gen/kiw/counter/props.{go,ts,rs}` and type mismatch errors at build with source location.
 - S4 — `krewire fmt` formats each block with native formatter and `gofmt -l .` empty.
 - S5 — Fixture without `rust` builds without `cargo`; without `client` or `<markdown>` emits no extra assets (tier isolation).
-- S6 — `go doc github.com/krewire/framework/dsl` lists `ParseKiw`, `GenerateTypes`, `DesugarTemplate`.
+- S6 — `go doc github.com/krewire/kiw/dsl` lists `ParseKiw`, `GenerateTypes`, `DesugarTemplate`.
 
 ## 13. Related Specifications
 
@@ -452,7 +452,7 @@ krewire build
 
 - `internal/docs/project-vision.md` — unified workload matrix (9 workloads, one CLI)
 - `docs/specs/index.md (framework)` — implementation matrix (Spec vs Impl Status)
-- Code: `framework/dsl/kiw.go`, `framework/dsl/kiw.ts`, `framework/web/ssg/css.go`, `framework/runtime/vdom/html.go`, `framework/web/ssg/content.go`
+- Code: `kiw/dsl/kiw.go`, `kiw/dsl/kiw.ts`, `framework/web/ssg/css.go`, `framework/runtime/vdom/html.go`, `framework/web/ssg/content.go`
 - Astro islands architecture (prior art): https://docs.astro.build/en/concepts/islands/
 - React hydration (`hydrateRoot`): https://react.dev/reference/react-dom/client/hydrateRoot
 - Svelte SFC: https://svelte.dev/docs/svelte/single-file-components
@@ -475,7 +475,7 @@ handoff:
   Task: "Kiw Unified DSL — KWF-N4K8Q"
   Kind: "site"
   Spec: "KWF-N4K8Q"
-  Files: "framework/dsl/kiw.go, framework/dsl/*.ts, framework/web/ssg/*, framework/runtime/*, kiw/internal/commands/build.go"
+  Files: "kiw/dsl/kiw.go, kiw/dsl/*.ts, framework/web/ssg/*, framework/runtime/*, kiw/internal/commands/build.go"
   Gates: "gofmt -l ., go vet ./..., go test ./..., cargo check (if rust), tsc --noEmit (if ts), krewire build fixture"
 gates: ["gofmt -l .", "go vet ./...", "go test ./...", "arch-guard Pass", "sync-docs In-sync"]
 ```

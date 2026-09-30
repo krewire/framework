@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/krewire/forge"
-	"github.com/krewire/framework/dsl"
 	"github.com/krewire/framework/i18n"
 	"github.com/krewire/framework/ui"
+	"github.com/krewire/kiw/dsl"
 	"gopkg.in/yaml.v3"
 )
 

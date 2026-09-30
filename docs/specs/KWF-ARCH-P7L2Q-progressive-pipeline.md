@@ -114,7 +114,7 @@ P6  MESH                    library mesh (ceiling)          registry/gateway/res
 |-------|------------------------------|------------------|----------------------------------|
 | P0 | `site` or `book` | `framework/web/ssg` or `mdbind`, `framework/ui` | `kiw build`, `kiw serve` |
 | P1 | `site`/`book` + `runtime` opt-in | `framework/runtime`, `framework/ui` Theme | `kiw build` now also builds WASM |
-| P2 | `app` | `framework/web`, `framework/app`, `framework/dsl` | `kiw run`, `kiw dev` |
+| P2 | `app` | `framework/web`, `framework/app`, `kiw/dsl` | `kiw run`, `kiw dev` |
 | P3 | `app` (structured) | `KWF-5ZHQV` conventions (`internal/<d>`) | same; `krewire verify modules` (future) |
 | P4 | `app` + `site` (two deploys) | `framework/runtime` split + CORS/CSRF | `kiw build` (frontend) + `kiw run` (API) |
 | P5 | `service`, `worker`, `infra` (any subset) | `framework/service`, `framework/worker`, `framework/infra` | `kiw worker`, `kiw deploy`, `kiw deploy --preview` |

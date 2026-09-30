@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/krewire/framework/dsl"
+	"github.com/krewire/kiw/dsl"
 )
 
 func TestLoadFromDir_Landing(t *testing.T) {

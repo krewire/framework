@@ -46,7 +46,7 @@ Tailwind CSS is supported as an **optional PostCSS plugin** for `site` workloads
 |----|-------------------------|------|------------|
 | A1 | Node.js + `tailwindcss` CLI available in CI when `tailwind.config.js` exists (via `npx tailwindcss` or `node_modules/.bin/tailwindcss`) | Assumption | `krewire build --check` |
 | A2 | `tailwind.config.js` `content` covers `pages/**/*.kiw`, `components/**/*.kiw`, `layouts/**/*.kiw`, `content/**/*.md` (like Astro/Next) | Assumption | fixture build |
-| C1 | `framework/dsl` and `framework/web/ssg` remain Go-only; Tailwind CLI is invoked as an external PostCSS process from `kiw`/`ssg`, not embedded | Constraint | `go vet ./framework/...` |
+| C1 | `kiw/dsl` and `framework/web/ssg` remain Go-only; Tailwind CLI is invoked as an external PostCSS process from `kiw`/`ssg`, not embedded | Constraint | `go vet ./framework/...` |
 | C2 | Tailwind output is hashed and linked deterministically, like other assets | Constraint | build test |
 | C3 | Tailwind is one PostCSS plugin among many; the pipeline must not hardcode Tailwind as a core dependency | Constraint | `go vet` |
 
