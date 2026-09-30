@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/krewire/forge"
 	"github.com/krewire/framework/dsl"
 	"github.com/krewire/framework/i18n"
 	"github.com/krewire/framework/ui"
@@ -54,6 +55,27 @@ func LoadFromDir(root string) (*Site, error) {
 		}
 	}
 
+	// 1. Built-in atomic & reusable UI components from Krewire Forge
+	if entries, err := forge.ComponentsFS.ReadDir("."); err == nil {
+		for _, e := range entries {
+			if e.IsDir() || !strings.HasSuffix(e.Name(), ".kiw") {
+				continue
+			}
+			content, err := forge.ComponentsFS.ReadFile(e.Name())
+			if err != nil {
+				continue
+			}
+			mod, err := dsl.ParseKiw(string(content))
+			if err != nil {
+				continue
+			}
+			name := strings.TrimSuffix(e.Name(), ".kiw")
+			style := strings.Join(mod.Styles, "\n")
+			site.Component(Component{Name: name, Body: mod.Body, Style: style})
+		}
+	}
+
+	// 2. Project-specific components (overrides built-in Forge components if same name)
 	for _, p := range findKiwFiles(filepath.Join(root, "components")) {
 		mod, err := dsl.ParseKiwFile(p)
 		if err != nil {

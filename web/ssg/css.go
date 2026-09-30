@@ -41,7 +41,7 @@ func scopeCSS(scope, css string, compound bool) string {
 
 func scopeRule(scope, head, body string, compound bool) string {
 	head = strings.TrimSpace(head)
-	if head == "" || strings.Contains(head, ":root") {
+	if head == "" || strings.Contains(head, ":root") || strings.HasPrefix(head, "html") || strings.HasPrefix(head, ".dark") {
 		return head + "{" + body + "}"
 	}
 	var out strings.Builder
