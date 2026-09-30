@@ -4,11 +4,8 @@ go 1.26.0
 
 require (
 	github.com/krewire/forge v0.1.0
-	github.com/krewire/libs v0.4.0
+	github.com/krewire/libs v0.1.0
 )
-
-replace github.com/krewire/forge => ../forge
-
 
 require (
 	github.com/chai2010/webp v1.4.0
