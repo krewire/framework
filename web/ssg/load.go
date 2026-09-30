@@ -331,7 +331,12 @@ func loadMeta(root string) *meta {
 			Title       string `yaml:"title"`
 			Description string `yaml:"description"`
 			Version     string `yaml:"version"`
-			Theme       *struct {
+			Project     *struct {
+				Name    string `yaml:"name"`
+				Kind    string `yaml:"kind"`
+				Version string `yaml:"version"`
+			} `yaml:"project"`
+			Theme *struct {
 				Default string            `yaml:"default"`
 				Light   map[string]string `yaml:"light"`
 				Dark    map[string]string `yaml:"dark"`
@@ -339,6 +344,9 @@ func loadMeta(root string) *meta {
 			I18n *I18nConfig `yaml:"i18n"`
 		}
 		if err := yaml.Unmarshal(b, &raw); err == nil {
+			if raw.Version == "" && raw.Project != nil && raw.Project.Version != "" {
+				raw.Version = raw.Project.Version
+			}
 			if raw.Title != "" {
 				m.Title = raw.Title
 			}
