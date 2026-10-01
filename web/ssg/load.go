@@ -105,7 +105,7 @@ func LoadFromDir(root string) (*Site, error) {
 				continue
 			}
 			spath := "/" + filepath.Join("assets", fmt.Sprintf("layout-%s-%d.js", name, i))
-			site.Asset(strings.TrimPrefix(spath, "/"), sc)
+			site.ScriptAsset(strings.TrimPrefix(spath, "/"), sc)
 			scripts = append(scripts, spath)
 		}
 		site.Layout(Layout{Name: name, Body: mod.Body, Style: style, Scripts: scripts})
@@ -279,7 +279,7 @@ func LoadFromDir(root string) (*Site, error) {
 				continue
 			}
 			spath := "/" + filepath.Join("assets", "page"+strings.ReplaceAll(route, "/", "-")+string(rune('0'+i))+".js")
-			site.Asset(strings.TrimPrefix(spath, "/"), sc)
+			site.ScriptAsset(strings.TrimPrefix(spath, "/"), sc)
 			scriptPaths = append(scriptPaths, spath)
 		}
 		site.Page(Page{
@@ -317,6 +317,11 @@ func LoadFromDir(root string) (*Site, error) {
 		}
 	}
 
+	// Asset injection settings from krewire.yaml `auto_assets:` (default on).
+	if meta.AutoAssets != nil {
+		site.AutoAssets(meta.AutoAssets)
+	}
+
 	return site, nil
 }
 
@@ -341,7 +346,8 @@ func loadMeta(root string) *meta {
 				Light   map[string]string `yaml:"light"`
 				Dark    map[string]string `yaml:"dark"`
 			} `yaml:"theme"`
-			I18n *I18nConfig `yaml:"i18n"`
+			I18n       *I18nConfig      `yaml:"i18n"`
+			AutoAssets *AutoAssetConfig `yaml:"auto_assets"`
 		}
 		if err := yaml.Unmarshal(b, &raw); err == nil {
 			if raw.Version == "" && raw.Project != nil && raw.Project.Version != "" {
@@ -376,6 +382,9 @@ func loadMeta(root string) *meta {
 				}
 				m.Data["I18n"] = raw.I18n
 			}
+			if raw.AutoAssets != nil {
+				m.AutoAssets = raw.AutoAssets
+			}
 		}
 		break
 	}
@@ -388,6 +397,7 @@ type meta struct {
 	Data        map[string]any
 	ThemeCSS    string
 	I18n        *I18nConfig
+	AutoAssets  *AutoAssetConfig
 }
 
 func mergeMeta(base map[string]any, fm map[string]any) map[string]any {

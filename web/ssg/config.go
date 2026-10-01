@@ -38,6 +38,9 @@ type Config struct {
 	// Pipeline declares asset transforms (KWF-DR5YU): fingerprinting,
 	// minification, image resize/format. Applied at build time.
 	Pipeline []PipelineRule `yaml:"pipeline"`
+	// AutoAssets configures automatic CSS/JS injection into rendered
+	// documents. Unset means enabled.
+	AutoAssets *AutoAssetConfig `yaml:"auto_assets"`
 	// Data is the site-wide data merged into every page's data value.
 	Data map[string]any `yaml:"data"`
 	// IncludeDrafts includes draft pages in build (dev only).
@@ -172,6 +175,9 @@ func (c *Config) Site() *Site {
 	}
 	if len(c.Pipeline) > 0 {
 		s.Pipeline(c.Pipeline)
+	}
+	if c.AutoAssets != nil {
+		s.AutoAssets(c.AutoAssets)
 	}
 	return s
 }
