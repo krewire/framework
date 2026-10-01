@@ -19,10 +19,10 @@ It is the engine behind [`mdbind`](https://github.com/krewire/mdbind), [`kiw`](h
 | Static sites (`site`) | `framework/web/ssg` — declarative layouts/components/pages + assets | ✅ Shipped |
 | Documentation sites (`book`) | [`mdbind`](https://github.com/krewire/mdbind) — manuscript compiler | ✅ Shipped |
 | Fullstack / Monolith (`app`) | `framework/app` — assembly + DI container, modular layout | ✅ Shipped |
-| Frontend client (`site`) | `runtime` — Go→WASM, VDOM, widgets, hydration islands | 🔜 KWF-T4X9P |
-| Workers (`worker`) | `worker` — queues, cron, retries, DLQ | 🔜 KWF-L5H2F |
-| Microservice (`service`) | `service` — registry, gateway, resilience, tracing | 🔜 KWF-L5H2F |
-| Cloud Infra (`infra`) | `infra` — provider abstraction, state/locking, AWS + Kubernetes | 🔜 KWF-B7N3D |
+| Frontend client (`site`) | `runtime` — Go→WASM, VDOM, widgets, hydration islands | ✅ Shipped |
+| Workers (`worker`) | `worker` — queues, cron, retries, DLQ | ✅ Shipped |
+| Microservice (`service`) | `service` — registry, gateway, resilience, tracing | ✅ Shipped |
+| Cloud Infra (`infra`) | `infra` — provider abstraction, state/locking, AWS + Kubernetes | ✅ Shipped |
 
 Cross-cutting packages (not workloads): `ui` — Theme, palette, scoped CSS · `assets` — multi-source store, ETag/cache, fingerprint+manifest · `storage` — KV (memory/file) + DI provider.
 
@@ -42,10 +42,10 @@ framework/
 ├── app/        # Fullstack assembly, DI container & lifecycle
 ├── runner/     # Workload runtime contract
 ├── testing/    # Test helpers (generic, spec-driven opt-in)
-├── runtime/    # Client runtime (WASM) — planned
-├── worker/     # Background jobs — planned
-├── service/    # Microservice patterns — planned
-├── infra/     # Cloud provider abstraction — planned
+├── runtime/    # Client runtime (WASM)
+├── worker/     # Background jobs
+├── service/    # Microservice patterns
+├── infra/      # Cloud provider abstraction
 ├── framework/  # Meta-package re-exports (if applicable)
 └── examples/   # Runnable examples (greet, app)
 ```
