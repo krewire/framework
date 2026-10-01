@@ -36,6 +36,9 @@ type LayoutData struct {
 	// Version is the site version from krewire.yaml, exposed for layout
 	// chrome (badges) as {{.Version}}.
 	Version string
+	// AssetVersion is a cache-busting token derived from Version (strips "v" prefix).
+	// Used with {{assetLinks .AssetVersion}} to auto-inject CSS/JS tags.
+	AssetVersion string
 }
 
 // Page is one output page of the site.
