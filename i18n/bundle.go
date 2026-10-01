@@ -215,16 +215,16 @@ func (b *Bundle) AddTranslation(locale, filename string, data map[string]any) {
 
 // Translate resolves key for the specified locale and applies parameter interpolation.
 // Lookup hierarchy:
-// 1. Target locale:
-//    a. lang/{locale}/{key}.json (namespaced file)
-//    b. lang/{locale}.json (fallback file)
-// 2. Fallback locale:
-//    a. lang/{fallbackLocale}/{key}.json
-//    b. lang/{fallbackLocale}.json
-// 3. Default locale:
-//    a. lang/{defaultLocale}/{key}.json
-//    b. lang/{defaultLocale}.json
-// 4. Returns key itself if not found.
+//  1. Target locale:
+//     a. lang/{locale}/{key}.json (namespaced file)
+//     b. lang/{locale}.json (fallback file)
+//  2. Fallback locale:
+//     a. lang/{fallbackLocale}/{key}.json
+//     b. lang/{fallbackLocale}.json
+//  3. Default locale:
+//     a. lang/{defaultLocale}/{key}.json
+//     b. lang/{defaultLocale}.json
+//  4. Returns key itself if not found.
 func (b *Bundle) Translate(locale, key string, args ...any) string {
 	params := normalizeParams(args)
 	loc := strings.ToLower(locale)

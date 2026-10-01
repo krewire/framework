@@ -69,9 +69,9 @@ type PayloadJob struct {
 	Handler func(ctx context.Context, payload []byte) error `json:"-"`
 }
 
-func (p *PayloadJob) JobType() string                 { return p.Type }
-func (p *PayloadJob) Encode() ([]byte, error)        { return p.Data, nil }
-func (p *PayloadJob) Decode(b []byte) error          { p.Data = b; return nil }
+func (p *PayloadJob) JobType() string         { return p.Type }
+func (p *PayloadJob) Encode() ([]byte, error) { return p.Data, nil }
+func (p *PayloadJob) Decode(b []byte) error   { p.Data = b; return nil }
 func (p *PayloadJob) Run(ctx context.Context) error {
 	if p.Handler != nil {
 		return p.Handler(ctx, p.Data)

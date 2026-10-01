@@ -161,6 +161,7 @@ func (s *Site) asset(name string) string {
 	}
 	return assetURL(name)
 }
+
 // assetLinks generates <link rel="stylesheet"> and <script src> HTML tags for
 // all CSS and JS assets in a deterministic order.
 //

@@ -17,7 +17,7 @@ type mockEmailJob struct {
 	Subject string `json:"subject"`
 }
 
-func (m *mockEmailJob) JobType() string          { return "email" }
+func (m *mockEmailJob) JobType() string         { return "email" }
 func (m *mockEmailJob) Encode() ([]byte, error) { return json.Marshal(m) }
 func (m *mockEmailJob) Decode(b []byte) error   { return json.Unmarshal(b, m) }
 func (m *mockEmailJob) Run(ctx context.Context) error {

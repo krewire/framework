@@ -470,4 +470,3 @@ func TestProviderWithConfig(t *testing.T) {
 		t.Errorf("expected locale 'id', got '%s'", resolvedTranslator.Locale())
 	}
 }
-

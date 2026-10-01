@@ -207,7 +207,6 @@ func resizeImage(img image.Image, r PipelineRule) image.Image {
 	return imaging.Resize(img, r.Width, r.Height, imaging.Lanczos)
 }
 
-
 // fingerprint appends the first 8 hex chars of the SHA256 of content before
 // the file extension: "style.css" -> "style.a1b2c3d4.css".
 func fingerprint(p string, content []byte) string {
