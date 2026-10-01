@@ -79,6 +79,14 @@ type Site struct {
 	// manifest maps logical asset paths to fingerprinted URLs for the
 	// asset() template helper.
 	manifest map[string]string
+	// auto drives automatic CSS/JS injection into rendered documents.
+	auto autoAssets
+	// scriptAssets records assets that belong to a single layout or page, so
+	// they are never injected site-wide.
+	scriptAssets map[string]bool
+	// declared records asset paths produced outside the build (plugins), which
+	// are injected but never written by Build.
+	declared map[string]bool
 
 	set *template.Template
 	mu  sync.Mutex
@@ -90,11 +98,16 @@ type Site struct {
 // New returns an empty Site.
 func New() *Site {
 	return &Site{
-		layouts:  map[string]*Layout{},
-		comps:    map[string]*Component{},
-		assets:   map[string]string{},
-		used:     map[string]bool{},
-		manifest: map[string]string{},
+		layouts:      map[string]*Layout{},
+		comps:        map[string]*Component{},
+		assets:       map[string]string{},
+		used:         map[string]bool{},
+		manifest:     map[string]string{},
+		scriptAssets: map[string]bool{},
+		declared:     map[string]bool{},
+		// Automatic CSS/JS injection is on by default, with scripts in <head>
+		// so first-paint scripts such as theme bootstrapping still run early.
+		auto: autoAssets{enabled: true, jsInHead: true},
 	}
 }
 

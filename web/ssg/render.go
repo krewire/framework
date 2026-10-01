@@ -101,6 +101,13 @@ func (s *Site) renderPage(p *Page) (string, error) {
 		return "", err
 	}
 	body := string(scoped)
+	// Auto-inject CSS/JS after layout scoping and before page scripts are
+	// appended, so injected tags sit inside <head>/<body> and page-scoped
+	// scripts keep landing last.
+	body, err = s.injectAssets(body, assetVersion)
+	if err != nil {
+		return "", err
+	}
 	var allScripts []string
 	if l, ok := s.layouts[p.Layout]; ok && len(l.Scripts) > 0 {
 		allScripts = append(allScripts, l.Scripts...)
