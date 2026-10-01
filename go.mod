@@ -1,6 +1,6 @@
 module github.com/krewire/framework
 
-go 1.26.0
+go 1.27.1
 
 require (
 	github.com/krewire/forge v0.1.0
