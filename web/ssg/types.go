@@ -87,6 +87,17 @@ type Site struct {
 	// declared records asset paths produced outside the build (plugins), which
 	// are injected but never written by Build.
 	declared map[string]bool
+	// assetMeta holds per-asset ordering metadata (layer, order, kind, scoped).
+	// It is the backing store for the resolved asset plan.
+	assetMeta map[string]assetMeta
+	// autoOrderErr collects configuration errors from AutoAssets, such as an
+	// unknown layer name, so a bad entry is reported without failing the build.
+	autoOrderErr []error
+	// assetSeq assigns each asset a registration sequence, used as the final
+	// tie-break so the plan order is deterministic.
+	assetSeq map[string]int
+	// assetSeqNext is the next registration sequence number.
+	assetSeqNext int
 
 	set *template.Template
 	mu  sync.Mutex
@@ -105,6 +116,8 @@ func New() *Site {
 		manifest:     map[string]string{},
 		scriptAssets: map[string]bool{},
 		declared:     map[string]bool{},
+		assetMeta:    map[string]assetMeta{},
+		assetSeq:     map[string]int{},
 		// Automatic CSS/JS injection is on by default, with scripts in <head>
 		// so first-paint scripts such as theme bootstrapping still run early.
 		auto: autoAssets{enabled: true, jsInHead: true},

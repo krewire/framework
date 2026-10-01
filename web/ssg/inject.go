@@ -2,8 +2,8 @@ package ssg
 
 import (
 	"bytes"
+	"fmt"
 	"path"
-	"sort"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -24,6 +24,11 @@ type AutoAssetConfig struct {
 	// the {{assetLinks}} behavior where theme scripts run before first paint) or
 	// "body" (end of body, for scripts that only need the DOM to exist).
 	JSPlacement string `yaml:"js_placement"`
+	// Order pins the load position of individual assets, keyed by asset path
+	// or base name (e.g. "assets/theme.css" or "theme.css"). It is the escape
+	// hatch for a project that needs a plugin stylesheet to load before or
+	// after a specific site asset without changing the framework.
+	Order map[string]AssetOrder `yaml:"order"`
 }
 
 // jsInHead reports whether scripts are injected into <head>.
@@ -66,9 +71,14 @@ func (a autoAssets) skips(name string) bool {
 // AutoAssets configures automatic CSS/JS injection. Passing nil keeps the
 // default (enabled, scripts in head). This is the pipeline entry point for
 // programmatic sites; krewire.yaml drives the same setting via `auto_assets:`.
+//
+// A configured layer name that does not parse is ignored here and reported by
+// AutoAssetErrors, so one bad entry cannot abort a build while still staying
+// visible to the caller.
 func (s *Site) AutoAssets(c *AutoAssetConfig) *Site {
 	if c == nil {
 		s.auto = autoAssets{enabled: true, jsInHead: true}
+		s.applyOrderOverrides(nil)
 		return s
 	}
 	s.auto = autoAssets{
@@ -76,8 +86,40 @@ func (s *Site) AutoAssets(c *AutoAssetConfig) *Site {
 		exclude:  append([]string(nil), c.Exclude...),
 		jsInHead: c.jsInHead(),
 	}
+	s.applyOrderOverrides(c.Order)
 	return s
 }
+
+// applyOrderOverrides applies configured layer/order pins onto recorded asset
+// metadata, matching either the full asset path or its base name.
+func (s *Site) applyOrderOverrides(order map[string]AssetOrder) {
+	s.autoOrderErr = nil
+	for key, spec := range order {
+		if spec.Layer == "" {
+			continue
+		}
+		layer, err := ParseLayer(spec.Layer)
+		if err != nil {
+			s.autoOrderErr = append(s.autoOrderErr, fmt.Errorf("%q: %w", key, err))
+			continue
+		}
+		for name := range s.assetMeta {
+			if name != key && path.Base(name) != key {
+				continue
+			}
+			m := s.assetMeta[name]
+			m.layer = layer
+			m.order = spec.Order
+			m.known = false // an explicit layer wins over the builtin default
+			s.assetMeta[name] = m
+		}
+	}
+}
+
+// AutoAssetErrors returns configuration errors collected by AutoAssets, such as
+// an unknown layer name. Callers that surface warnings should check it after
+// configuring; the build itself continues with the defaults.
+func (s *Site) AutoAssetErrors() []error { return s.autoOrderErr }
 
 // DeclareAsset registers an asset path that is produced outside the SSG build —
 // a plugin (e.g. Tailwind) or an external tool writing into the output
@@ -90,6 +132,21 @@ func (s *Site) DeclareAsset(names ...string) *Site {
 			continue
 		}
 		s.declared[name] = true
+		s.recordAsset(name, defaultMeta(name))
+	}
+	return s
+}
+
+// DeclareAssetWith is DeclareAsset with an explicit layer and order, for a
+// plugin whose CSS must load after or before specific site assets.
+func (s *Site) DeclareAssetWith(names []string, opts ...assetOption) *Site {
+	for _, name := range names {
+		name = strings.TrimPrefix(strings.TrimSpace(name), "/")
+		if name == "" {
+			continue
+		}
+		s.declared[name] = true
+		s.recordAsset(name, s.assetOptions(defaultMeta(name), opts))
 	}
 	return s
 }
@@ -169,40 +226,18 @@ func (s *Site) injectAssets(doc, version string) (string, error) {
 	return buf.String(), nil
 }
 
-// autoAssetSet returns the CSS and JS assets eligible for site-wide injection.
-// Only names under assets/ qualify, because that is the prefix the emitted URL
-// (assetURL) and the written output path (writeAssets) agree on; anything else
-// (e.g. a stray public/scripts/tailwind.css) is left to the template. Page- and
-// layout-scoped scripts and exclude matches are skipped as well.
+// autoAssetSet returns the CSS and JS assets eligible for site-wide injection,
+// in resolved plan order. It no longer sorts alphabetically: cascade order is
+// decided by AssetLayer, so a plugin stylesheet can be placed deliberately
+// instead of landing wherever its filename sorts.
 func (s *Site) autoAssetSet() (css, js []string) {
-	names := make([]string, 0, len(s.assets)+len(s.declared))
-	for n := range s.assets {
-		names = append(names, n)
-	}
-	for n := range s.declared {
-		if _, ok := s.assets[n]; !ok {
-			names = append(names, n)
+	for _, a := range s.injectedPlan() {
+		switch a.kind {
+		case AssetCSS:
+			css = append(css, a.name)
+		case AssetJS:
+			js = append(js, a.name)
 		}
-	}
-	sort.Strings(names)
-	for _, name := range names {
-		if !strings.HasPrefix(name, "assets/") {
-			continue
-		}
-		if s.scriptAssets[name] || s.auto.skips(name) {
-			continue
-		}
-		switch strings.ToLower(path.Ext(name)) {
-		case ".css":
-			css = append(css, name)
-		case ".js":
-			js = append(js, name)
-		}
-	}
-	// The scoped component/layout stylesheet is generated during the build, not
-	// registered as an asset, so it is prepended here to stay reachable.
-	if s.hasScopedCSS() && !s.auto.skips("assets/style.css") {
-		css = append([]string{"assets/style.css"}, css...)
 	}
 	return css, js
 }
@@ -270,5 +305,8 @@ func findElement(n *html.Node, name string) *html.Node {
 func (s *Site) ScriptAsset(name, body string) *Site {
 	s.assets[name] = body
 	s.scriptAssets[name] = true
+	m := defaultMeta(name)
+	m.scoped = true
+	s.recordAsset(name, m)
 	return s
 }

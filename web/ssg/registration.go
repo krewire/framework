@@ -46,10 +46,28 @@ func (s *Site) Page(p Page) *Site {
 }
 
 // Asset registers a static file by its output path, e.g. "favicon.ico" or
-// "assets/theme.css".
+// "assets/theme.css". Ordering follows the site's asset plan; use AssetWith
+// to pin a specific layer.
 func (s *Site) Asset(name, body string) *Site {
 	s.assets[name] = body
+	s.recordAsset(name, defaultMeta(name))
 	return s
+}
+
+// AssetWith registers a static file and pins its load position, e.g.
+// AssetWith("assets/print.css", body, WithLayer(LayerTheme)).
+func (s *Site) AssetWith(name, body string, opts ...assetOption) *Site {
+	s.assets[name] = body
+	s.recordAsset(name, s.assetOptions(defaultMeta(name), opts))
+	return s
+}
+
+// assetOptions applies registration options to base metadata.
+func (s *Site) assetOptions(m assetMeta, opts []assetOption) assetMeta {
+	for _, o := range opts {
+		o(&m)
+	}
+	return m
 }
 
 // Assets returns the names of all registered assets in sorted order.
