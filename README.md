@@ -42,11 +42,12 @@ framework/
 ├── app/        # Fullstack assembly, DI container & lifecycle
 ├── runner/     # Workload runtime contract
 ├── testing/    # Test helpers (generic, spec-driven opt-in)
+├── i18n/       # Localization bundles, translators, interpolation & middleware
 ├── runtime/    # Client runtime (WASM)
 ├── worker/     # Background jobs
 ├── service/    # Microservice patterns
 ├── infra/      # Cloud provider abstraction
-├── framework/  # Meta-package re-exports (if applicable)
+├── framework/  # Meta-package re-exports (Name, Version, Banner)
 └── examples/   # Runnable examples (greet, app)
 ```
 
