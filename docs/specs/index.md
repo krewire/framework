@@ -22,6 +22,7 @@ Ordered by **impact-to-effort** (high impact, low effort first) and **dependency
 | [KWF-0F2EB](./KWF-WEB-0F2EB-server-frontend-pipeline.md) | Server & Frontend Rendering Pipeline | Draft | Shipped | KWF-M07QS, KWF-PT8OD, KWF-C4087 |
 | [KWF-D57UK](./KWF-SSG-D57UK-ssg-markdown-content-pipeline.md) | SSG Markdown Content Pipeline & Collections | Draft | Shipped | KWF-PT8OD |
 | [KWF-DR5YU](./KWF-SSG-DR5YU-ssg-asset-pipeline.md) | SSG Asset Pipeline | Draft | Shipped | KWF-PT8OD |
+| [KWF-AI7Q2](./KWF-SSG-AI7Q2-automatic-asset-injection.md) | Automatic CSS/JS Asset Injection | Draft | Shipped | KWF-DR5YU, KWF-DF3PL |
 | [KWF-99A63](./KWF-SSG-99A63-ssg-incremental-builds.md) | SSG Incremental Builds & Dependency Graph | Draft | Shipped | KWF-PT8OD, KWF-D57UK, KWF-DR5YU |
 | [KWF-209JV](./KWF-SSG-209JV-ssg-live-reload-hmr.md) | SSG Live Reload & HMR | Draft | Planned | KWF-PT8OD, KWF-99A63 |
 | [KWF-5ZHQV](./KWF-ARCH-5ZHQV-modular-monolith-architecture.md) | Modular Monolith Architecture Default | Draft | Shipped | KWF-C9WLJ, KWF-CCI0N |
