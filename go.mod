@@ -5,7 +5,6 @@ go 1.26.0
 require (
 	github.com/krewire/forge v0.1.0
 	github.com/krewire/libs v0.1.0
-	github.com/krewire/kiw v0.1.0
 )
 
 require (
