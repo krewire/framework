@@ -188,6 +188,19 @@ func BuildFromConfig(cfg *Config, outDir string) ([]string, error) {
 	return cfg.Site().Build(outDir)
 }
 
+// BuildFromConfigSite builds the site and also returns it, so a caller that
+// must keep rendering more output into the same directory — a book mounted into
+// an ssg site, for example — can ask the site for its resolved asset plan
+// instead of guessing which assets exist and in what order.
+func BuildFromConfigSite(cfg *Config, outDir string) (*Site, []string, error) {
+	s := cfg.Site()
+	created, err := s.Build(outDir)
+	if err != nil {
+		return nil, nil, err
+	}
+	return s, created, nil
+}
+
 // pageData builds the site-wide data injected into every page.
 func (c *Config) pageData() map[string]any {
 	data := map[string]any{}
