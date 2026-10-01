@@ -25,6 +25,14 @@ or point-and-click consoles for infrastructure, Spring-ish stacks for service
 discovery and resilience, Celery/Sidekiq for background work. Each addition
 reintroduces the fragmentation Krewire exists to remove.
 
+Krewire is not merely a framework but an end-to-end **digital SDLC ecosystem**
+— one Go-native path from specification (upstream) through implementation and
+packaging to deployment, operations, and maintenance (downstream) — held to
+three pillars: **secure**, **sustainable**, and **scalable**. The readable
+statement of that positioning is `internal/docs/project-vision.md` (Three
+Pillars and SDLC Coverage); this specification covers the workload and command
+surface that makes it true.
+
 ## 2. Problem Statement
 
 - Building a product that spans CLI + site + API + workers + infra requires
